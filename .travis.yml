@@ -5,4 +5,4 @@ jdk:
 
 after_success:
   # Run test coverage with JaCoCo and submit to Coveralls
-  - ./gradlew jacocoTestReport coveralls
+  - gradle jacocoTestReport coveralls
