@@ -5,6 +5,7 @@ buildscript {
 
   dependencies {
     classpath group: "net.carlosgsouza", name: "gradle-console", version: "1.+"
+    classpath group: "org.kt3k.gradle.plugin", name: "coveralls-gradle-plugin", version: "2.+"
   }
 }
 
@@ -12,6 +13,8 @@ apply plugin: "java"
 apply plugin: "application"
 apply plugin: "checkstyle"
 apply plugin: "console"
+apply plugin: "cobertura"
+apply plugin: "com.github.kt3k.coveralls"
 
 repositories {
   mavenCentral()
@@ -28,3 +31,10 @@ dependencies {
 }
 
 mainClassName = "Main"
+
+jacocoTestReport {
+  reports {
+    xml.enabled = true
+    html.enabled = true
+  }
+}
