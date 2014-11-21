@@ -22,28 +22,14 @@ public enum Driver {
    *
    * http://mvnrepository.com/artifact/mysql/mysql-connector-java/5.1.6
    */
-  MYSQL("com.mysql.jdbc.Driver"),
+  MYSQL,
 
   /**
    * SQLite driver.
    *
    * http://mvnrepository.com/artifact/org.xerial/sqlite-jdbc/3.8.7
    */
-  SQLITE("org.sqlite.JDBC");
-
-  /**
-   * The JDBC driver class.
-   */
-  private String driver;
-
-  /**
-   * Initialize a database driver.
-   *
-   * @param driver The JDBC driver class.
-   */
-  private Driver(final String driver) {
-    this.driver = driver;
-  }
+  SQLITE;
 
   /**
    * Initialize a connection to a database via a JDBC-compatible driver.
@@ -74,17 +60,7 @@ public enum Driver {
         break;
       case SQLITE:
       default:
-        if (!database.equals(":memory:")) {
-          database += ".db";
-        }
-
-        connectionUrl = String.format("sqlite:%s", database);
-    }
-
-    try {
-      Class.forName(this.driver);
-    } catch (ClassNotFoundException e) {
-      throw new IllegalArgumentException("Driver was not found");
+        connectionUrl = String.format("sqlite:%s.db", database);
     }
 
     return DriverManager.getConnection("jdbc:" + connectionUrl);

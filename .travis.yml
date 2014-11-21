@@ -3,6 +3,10 @@ language: java
 jdk:
   - oraclejdk8
 
-script:
-  # Run tests, code coverage and submit to Coveralls
-  - gradle test jacocoTestReport coveralls
+before_script:
+  # Create a test database
+  - mysql -e "create database test;"
+
+after_success:
+  # Run test coverage and submit to Coveralls
+  - gradle jacocoTestReport coveralls
