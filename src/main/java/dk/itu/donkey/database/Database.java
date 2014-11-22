@@ -88,8 +88,8 @@ public final class Database {
       boolean response = statement.execute();
 
       // If the query didn't generate a response, it means that the executed
-      // query was a DML (Data Manipulation Language). Simply return an empty
-      // response to the caller in this case.
+      // query was a DML (Data Manipulation Language) or DCL (Data Control
+      // Language). Simply return an empty response to the caller in this case.
       if (!response) {
         return null;
       }

@@ -51,7 +51,7 @@ public final class Schema {
    * @throws SQLException In case of a SQL error.
    */
   public void run() throws SQLException {
-    this.db.execute(this.grammar.buildCreate());
+    this.db.execute(this.grammar.compileCreate());
   }
 
   /**
@@ -63,7 +63,7 @@ public final class Schema {
    */
   public void drop(final String table) throws SQLException {
     this.grammar.addTable(table);
-    this.db.execute(this.grammar.buildDrop());
+    this.db.execute(this.grammar.compileDrop());
   }
 
   /**
@@ -74,7 +74,7 @@ public final class Schema {
    * @return        The current {@link Schema} object, for chaining.
    */
   public Schema string(final String column, final int length) {
-    this.grammar.addDataType(column, "varchar", length);
+    this.grammar.addDataType(column, "varchar", length, true);
 
     return this;
   }
@@ -96,7 +96,7 @@ public final class Schema {
    * @return        The current {@link Schema} object, for chaining.
    */
   public Schema text(final String column) {
-    this.grammar.addDataType(column, "text");
+    this.grammar.addDataType(column, "text", true);
 
     return this;
   }
@@ -108,7 +108,7 @@ public final class Schema {
    * @return        The current {@link Schema} object, for chaining.
    */
   public Schema integer(final String column) {
-    this.grammar.addDataType(column, "integer");
+    this.grammar.addDataType(column, "integer", true);
 
     return this;
   }
@@ -134,7 +134,7 @@ public final class Schema {
    * @return        The current {@link Schema} object, for chaining.
    */
   public Schema bool(final String column) {
-    this.grammar.addDataType(column, "bool");
+    this.grammar.addDataType(column, "bool", true);
 
     return this;
   }
@@ -146,7 +146,7 @@ public final class Schema {
    * @return        The current {@link Schema} object, for chaining.
    */
   public Schema date(final String column) {
-    this.grammar.addDataType(column, "date");
+    this.grammar.addDataType(column, "date", true);
 
     return this;
   }
@@ -158,7 +158,7 @@ public final class Schema {
    * @return        The current {@link Schema} object, for chaining.
    */
   public Schema dateTime(final String column) {
-    this.grammar.addDataType(column, "datetime");
+    this.grammar.addDataType(column, "datetime", true);
 
     return this;
   }
@@ -170,7 +170,7 @@ public final class Schema {
    * @return        The current {@link Schema} object, for chaining.
    */
   public Schema time(final String column) {
-    this.grammar.addDataType(column, "time");
+    this.grammar.addDataType(column, "time", true);
 
     return this;
   }

@@ -3,17 +3,17 @@
  */
 package dk.itu.donkey.database;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.After;
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+
+import static org.junit.Assert.assertEquals;
+
+import org.junit.After;
+import org.junit.Test;
 
 /**
  * Database class unit tests.
@@ -100,57 +100,44 @@ public final class DatabaseTest {
   }
 
   /**
-   * Test general SQL query execution of each database.
+   * Test SQL query execution of each database.
    *
    * @throws SQLException In case of a SQL error.
    */
   @Test
   public void testQueryExecution() throws SQLException {
     for (Database db: this.databases) {
-      // Create a test table in the databases with a single column.
+      // Test table creation.
       db.execute("create table test (test varchar(255))");
 
-      // Insert a row into the newly created database table.
-      db.execute("insert into test (test) values ('test')");
+      List<Object> values1 = new ArrayList<>();
+      values1.add("test");
 
-      // Select all rows in the test table.
-      List<Row> res = db.execute("select test from test");
+      // Test row insertion.
+      db.execute("insert into test (test) values (?)", values1);
+      List<Row> res1 = db.execute("select test from test");
+      assertEquals(1, res1.size());
+      assertEquals("test", res1.get(0).get("test"));
 
-      // Verify that the result is what was inserted above.
-      assertEquals(res.size(), 1);
-      assertEquals(res.get(0).get("test"), "test");
+      List<Object> values2 = new ArrayList<>();
+      values2.add("tset");
+      values2.add("test");
 
-      // Nuke the test table.
-      db.execute("drop table test");
-    }
-  }
+      // Test updating.
+      db.execute("update test set test = ? where test = ?");
+      List<Row> res2 = db.execute("select test from test", values2);
+      assertEquals(1, res2.size());
+      assertEquals("tset", res2.get(0).get("test"));
 
-  /**
-   * Test parametized SQL query execution of each database.
-   *
-   * @throws SQLException In case of a SQL error.
-   */
-  @Test
-  public void testParametizedQueryExecution() throws SQLException {
-    for (Database db: this.databases) {
-      // Create a test table in the databases with a single column.
-      db.execute("create table test(test varchar(255))");
+      List<Object> values3 = new ArrayList<>();
+      values3.add("tset");
 
-      // Create a list of values for use in a parametized query.
-      List<Object> values = new ArrayList<>();
-      values.add("test");
+      // Test row deletion.
+      db.execute("delete from person where test = ?", values3);
+      List<Row> res3 = db.execute("select test from test");
+      assertEquals(0, res3.size());
 
-      // Insert a row into the newly created database table.
-      db.execute("insert into test (test) values (?)", values);
-
-      // Select all rows in the test table.
-      List<Row> res = db.execute("select test from test");
-
-      // Verify that the result is what was inserted above.
-      assertEquals(res.size(), 1);
-      assertEquals(res.get(0).get("test"), "test");
-
-      // Nuke the test table.
+      // Test table deletion.
       db.execute("drop table test");
     }
   }

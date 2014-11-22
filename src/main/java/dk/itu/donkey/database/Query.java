@@ -68,7 +68,7 @@ public final class Query {
       this.grammar.addValue(value);
     }
 
-    this.db.execute(this.grammar.buildInsert(), this.grammar.getValues());
+    this.db.execute(this.grammar.compileInsert(), this.grammar.getValues());
   }
 
   /**
@@ -85,10 +85,14 @@ public final class Query {
    */
   public void update(final Row row) throws SQLException {
     for (String column: row.getColumns()) {
-      this.grammar.addSet(column, row.get(column));
+      this.grammar.addColumn(column);
     }
 
-    this.db.execute(this.grammar.buildUpdate(), this.grammar.getValues());
+    for (Object value: row.getValues()) {
+      this.grammar.addValue(value);
+    }
+
+    this.db.execute(this.grammar.compileUpdate(), this.grammar.getValues());
   }
 
   /**
@@ -102,7 +106,7 @@ public final class Query {
    * @throws SQLException In case of a SQL error.
    */
   public void delete() throws SQLException {
-    this.db.execute(this.grammar.buildDelete());
+    this.db.execute(this.grammar.compileDelete());
   }
 
   /**
@@ -189,7 +193,7 @@ public final class Query {
    * @return        The current {@link Query} object, for chaining.
    */
   public Query orderBy(final String column) {
-    return this.orderBy(column, "asc");
+    return this.orderBy(column, "desc");
   }
 
   /**
@@ -225,7 +229,7 @@ public final class Query {
    */
   public List<Row> get() throws SQLException {
     return this.db.execute(
-      this.grammar.buildSelect(), this.grammar.getValues()
+      this.grammar.compileSelect(), this.grammar.getValues()
     );
   }
 

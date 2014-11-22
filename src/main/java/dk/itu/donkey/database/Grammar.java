@@ -19,37 +19,37 @@ public final class Grammar {
   private String table;
 
   /**
-   * List of columns.
+   * List of formatted columns.
    */
   private List<String> columns = new ArrayList<>();
 
   /**
-   * List of values.
+   * List of formatted values.
    */
-  private List<Object> values = new ArrayList<>();
+  private List<String> values = new ArrayList<>();
 
   /**
-   * List of wheres.
+   * List of raw values.
+   */
+  private List<Object> rawValues = new ArrayList<>();
+
+  /**
+   * List of formatted wheres.
    */
   private List<String> wheres = new ArrayList<>();
 
   /**
-   * List of orders.
+   * List of formatted orders.
    */
   private List<String> orders = new ArrayList<>();
 
   /**
-   * List of foreign keys.
-   */
-  private List<String> foreignKeys = new ArrayList<>();
-
-  /**
-   * Result limit.
+   * Formatted result limit.
    */
   private String limit = "";
 
   /**
-   * Result offset.
+   * Formatted result offset.
    */
   private String offset = "";
 
@@ -59,8 +59,8 @@ public final class Grammar {
    * @param table The table to format.
    * @return      The formatted table.
    */
-  public String buildTable(final String table) {
-    return String.format("%s", table);
+  public static String buildTable(final String table) {
+    return table.trim();
   }
 
   /**
@@ -78,17 +78,18 @@ public final class Grammar {
    * @param column  The column to format.
    * @return        The formatted column.
    */
-  public String buildColumn(final String column) {
+  public static String buildColumn(final String column) {
     return column.trim();
   }
 
   /**
-   * Build a list of columns currently added to the grammar.
+   * Build a list of formatted columns.
    *
-   * @return A comma-seprated list of columns.
+   * @param columns The formatted columns.
+   * @return        A comma-seprated list of columns.
    */
-  public String buildColumns() {
-    return String.join(", ", this.columns);
+  public static String buildColumns(final List<String> columns) {
+    return String.join(", ", columns);
   }
 
   /**
@@ -109,25 +110,17 @@ public final class Grammar {
    * @param value The value to format.
    * @return      The formatted value.
    */
-  public String buildValue(final Object value) {
+  public static String buildValue(final Object value) {
     return "?";
   }
 
   /**
-   * Build a list of values currently added to the grammar.
+   * Build a list of formatted values.
    *
-   * This method simply builds a list of comman-separated "?"-characters as all
-   * values are removed from statements prior to pre-compilation.
-   *
-   * @return A comma-separated list of values.
+   * @param values  The formatted values.
+   * @return        A comma-separated list of values.
    */
-  public String buildValues() {
-    List<String> values = new ArrayList<>();
-
-    for (Object value: this.values) {
-      values.add("?");
-    }
-
+  public static String buildValues(final List<String> values) {
     return String.join(", ", values);
   }
 
@@ -137,7 +130,8 @@ public final class Grammar {
    * @param value The value to add.
    */
   public void addValue(final Object value) {
-    this.values.add(value);
+    this.rawValues.add(value);
+    this.values.add(this.buildValue(value));
   }
 
   /**
@@ -146,49 +140,39 @@ public final class Grammar {
    * @return A list of all values.
    */
   public List<Object> getValues() {
-    return this.values;
+    return this.rawValues;
   }
 
   /**
    * Build a formatted set clause.
    *
-   * @param column  The column of set clause.
-   * @param value   The value of the set clause.
+   * @param column  The formatted column of the set clause.
+   * @param value   The formatted value of the set clause.
    * @return        The formatted set clause.
    */
-  public String buildSet(final String column, final Object value) {
-    return String.format(
-      "%s = %s",
-      column.trim(),
-      this.buildValue(value)
-    );
+  public static String buildSet(final String column, final String value) {
+    return String.format("%s = %s", column, value);
   }
 
   /**
-   * Build a list of set clauses currently added to the grammar.
+   * Build a list of formatted set clauses.
    *
-   * @return A list of comma-separated set clauses.
+   * @param columns The columns of the set clause.
+   * @param values  The values of the set clause.
+   * @return        A list of comma-separated set clauses.
    */
-  public String buildSets() {
+  public static String buildSets(
+    final List<String> columns,
+    final List<String> values
+  ) {
     List<String> sets = new ArrayList<>();
-    int length = this.columns.size();
+    int length = columns.size();
 
     for (int i = 0; i < length; i++) {
-      sets.add(this.buildSet(this.columns.get(i), this.values.get(i)));
+      sets.add(Grammar.buildSet(columns.get(i), values.get(i)));
     }
 
-    return String.join(", ", sets);
-  }
-
-  /**
-   * Add a set clause to the grammar.
-   *
-   * @param column  The column of the set clause.
-   * @param value   The value of the set clause.
-   */
-  public void addSet(final String column, final Object value) {
-    this.addColumn(column);
-    this.addValue(value);
+    return (!sets.isEmpty()) ? "set " + String.join(", ", sets) : "";
   }
 
   /**
@@ -200,7 +184,7 @@ public final class Grammar {
    * @param comparator  The comparator to use.
    * @return            The formatted where clause.
    */
-  public String buildWhere(
+  public static String buildWhere(
     final String column,
     final String operator,
     final Object value,
@@ -209,21 +193,21 @@ public final class Grammar {
     return String.format(
       "%s %s %s %s",
       comparator.trim(),
-      column.trim(),
+      Grammar.buildColumn(column),
       operator.trim(),
-      this.buildValue(value)
+      Grammar.buildValue(value)
     );
   }
 
   /**
-   * Build a list of where clauses currently added to the grammar.
+   * Build a list of formatted where clauses.
    *
-   * @return A comma-separated list of where clauses.
+   * @param wheres  The formatted where clauses.
+   * @return        A comma-separated list of where clauses.
    */
-  public String buildWheres() {
-    if (!this.wheres.isEmpty()) {
-      return "where " + String.join(" ", this.wheres)
-                              .replaceAll("^and |^or ", "");
+  public static String buildWheres(final List<String> wheres) {
+    if (!wheres.isEmpty()) {
+      return "where " + String.join(" ", wheres).replaceAll("^and |^or ", "");
     }
     else {
       return "";
@@ -254,22 +238,23 @@ public final class Grammar {
    * @param direction The direction of the ordering.
    * @return          The formatted order by clause.
    */
-  public String buildOrder(final String column, final String direction) {
+  public static String buildOrder(final String column, final String direction) {
     return String.format(
       "%s %s",
-      column.trim(),
+      Grammar.buildColumn(column),
       direction.trim()
     );
   }
 
   /**
-   * Build a list of order by clauses currently added to the grammer.
+   * Build a list of formatetd order by clauses.
    *
-   * @return A comma-separated list of order by clauses.
+   * @param orders  The formatted order by clauses.
+   * @return        A comma-separated list of order by clauses.
    */
-  public String buildOrders() {
-    if (!this.orders.isEmpty()) {
-      return "order by " + String.join(", ", this.orders);
+  public static String buildOrders(final List<String> orders) {
+    if (!orders.isEmpty()) {
+      return "order by " + String.join(", ", orders);
     }
     else {
       return "";
@@ -292,7 +277,7 @@ public final class Grammar {
    * @param limit The limit.
    * @return      The formatted limit clause.
    */
-  public String buildLimit(final int limit) {
+  public static String buildLimit(final int limit) {
     return (limit > 0) ? "limit " + limit : "";
   }
 
@@ -311,7 +296,7 @@ public final class Grammar {
    * @param offset  The offset.
    * @return        The formatted offset.
    */
-  public String buildOffset(final int offset) {
+  public static String buildOffset(final int offset) {
     return (offset > 0) ? "offset " + offset : "";
   }
 
@@ -333,7 +318,7 @@ public final class Grammar {
    * @param required  Whether or not this column is required.
    * @return          The formatted column clause.
    */
-  public String buildDataType(
+  public static String buildDataType(
     final String column,
     final String type,
     final int length,
@@ -352,7 +337,7 @@ public final class Grammar {
    * @param required  Whether or not this column is required.
    * @return          The formatted column clause.
    */
-  public String buildDataType(
+  public static String buildDataType(
     final String column,
     final String type,
     final boolean required
@@ -395,31 +380,6 @@ public final class Grammar {
   }
 
   /**
-   * Add a column with a data type to the grammar.
-   *
-   * @param column    The column.
-   * @param type      The type of the column.
-   * @param length    The length of the column.
-   */
-  public void addDataType(
-    final String column,
-    final String type,
-    final int length
-  ) {
-    this.addColumn(this.buildDataType(column, type, length, false));
-  }
-
-  /**
-   * Add a column with a data type to the grammar.
-   *
-   * @param column    The column.
-   * @param type      The type of the column.
-   */
-  public void addDataType(final String column, final String type) {
-    this.addColumn(this.buildDataType(column, type, false));
-  }
-
-  /**
    * Build a formatted foreign key clause.
    *
    * @param column        The column.
@@ -427,7 +387,7 @@ public final class Grammar {
    * @param foreignColumn The foreign column.
    * @return              The formatted foreign key clause.
    */
-  public String buildForeignKey(
+  public static String buildForeignKey(
     final String column,
     final String foreignTable,
     final String foreignColumn
@@ -452,17 +412,17 @@ public final class Grammar {
     final String foreignTable,
     final String foreignColumn
   ) {
-    this.foreignKeys.add(this.buildForeignKey(
+    this.columns.add(this.buildForeignKey(
       column, foreignTable, foreignColumn
     ));
   }
 
   /**
-   * Build a select statement based on the current state of the grammar.
+   * Compile a select statement based on the current state of the grammar.
    *
    * @return The full select statement.
    */
-  public String buildSelect() {
+  public String compileSelect() {
     if (this.columns.isEmpty()) {
       this.addColumn("*");
     }
@@ -471,81 +431,84 @@ public final class Grammar {
     // possible integer as the limit if it hasn't been set. This is strangely
     // enough the official advice:
     // http://dev.mysql.com/doc/refman/5.0/en/select.html
-    if (this.limit == null && this.offset != null) {
-      this.addLimit((int) Math.pow(2, 31) - 1);
+    if (this.limit.isEmpty() && !this.offset.isEmpty()) {
+      this.addLimit(Integer.MAX_VALUE);
     }
 
     return String.format(
       "select %s from %s %s %s %s %s",
-      this.buildColumns(),
+      this.buildColumns(this.columns),
       this.table,
-      this.buildWheres(),
-      this.buildOrders(),
+      this.buildWheres(this.wheres),
+      this.buildOrders(this.orders),
       this.limit,
       this.offset
-    ).trim();
+    ).trim().replaceAll(" {2,}", " ");
   }
 
   /**
-   * Build an insert statement based on the current state of the grammar.
+   * Compile an insert statement based on the current state of the grammar.
    *
    * @return The full insert statement.
    */
-  public String buildInsert() {
+  public String compileInsert() {
     return String.format(
       "insert into %s (%s) values (%s)",
       this.table,
-      this.buildColumns(),
-      this.buildValues()
-    ).trim();
+      this.buildColumns(this.columns),
+      this.buildValues(this.values)
+    ).trim().replaceAll(" {2,}", " ");
   }
 
   /**
-   * Build an update statement based on the current state of the grammar.
+   * Compile an update statement based on the current state of the grammar.
    *
    * @return The full update statement.
    */
-  public String buildUpdate() {
+  public String compileUpdate() {
     return String.format(
-      "update %s set %s %s",
+      "update %s %s %s",
       this.table,
-      this.buildSets(),
-      this.buildWheres()
-    ).trim();
+      this.buildSets(this.columns, this.values),
+      this.buildWheres(this.wheres)
+    ).trim().replaceAll(" {2,}", " ");
   }
 
   /**
-   * Build a delete statement based on the current state of the grammar.
+   * Compile a delete statement based on the current state of the grammar.
    *
    * @return The full delete statement.
    */
-  public String buildDelete() {
+  public String compileDelete() {
     return String.format(
       "delete from %s %s",
       this.table,
-      this.buildWheres()
-    ).trim();
+      this.buildWheres(this.wheres)
+    ).trim().replaceAll(" {2,}", " ");
   }
 
   /**
-   * Build a create statement based on the current state of the grammar.
+   * Compile a create statement based on the current state of the grammar.
    *
    * @return The full create statement.
    */
-  public String buildCreate() {
+  public String compileCreate() {
     return String.format(
       "create table if not exists %s (%s)",
       this.table,
-      this.buildColumns()
-    ).trim();
+      this.buildColumns(this.columns)
+    ).trim().replaceAll(" {2,}", " ");
   }
 
   /**
-   * Build a drop statement based on the current state of the grammar.
+   * Compile a drop statement based on the current state of the grammar.
    *
    * @return The full drop statement.
    */
-  public String buildDrop() {
-    return String.format("drop table if exists %s", this.table).trim();
+  public String compileDrop() {
+    return String.format(
+      "drop table if exists %s",
+      this.table
+    ).trim().replaceAll(" {2,}", " ");
   }
 }
