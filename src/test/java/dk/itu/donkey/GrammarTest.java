@@ -354,6 +354,8 @@ public final class GrammarTest {
     values.add(2.123);
     values.add("value1");
     values.add(80);
+
+    assertEquals(values, this.g.compileUpdateValues());
   }
 
   /**
