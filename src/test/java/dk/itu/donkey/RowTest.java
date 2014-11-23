@@ -16,7 +16,7 @@ import org.junit.Test;
  *
  * @version 1.0.0
  */
-public class RowTest {
+public final class RowTest {
   /**
    * Test row initialization.
    */
