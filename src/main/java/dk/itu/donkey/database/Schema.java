@@ -67,29 +67,6 @@ public final class Schema {
   }
 
   /**
-   * Add a string column to the schema.
-   *
-   * @param column  The name of the column.
-   * @param length  The length of the column.
-   * @return        The current {@link Schema} object, for chaining.
-   */
-  public Schema string(final String column, final int length) {
-    this.grammar.addDataType(column, "varchar", length, true);
-
-    return this;
-  }
-
-  /**
-   * Add a string column to the schema.
-   *
-   * @param column  The name of the column.
-   * @return        The current {@link Schema} object, for chaining.
-   */
-  public Schema string(final String column) {
-    return this.string(column, 255);
-  }
-
-  /**
    * Add a text column to the schema.
    *
    * @param column  The name of the column.
@@ -114,15 +91,49 @@ public final class Schema {
   }
 
   /**
-   * Add an auto incrementing integer column to the schema.
+   * Add a double column to the schema.
    *
    * @param column  The name of the column.
    * @return        The current {@link Schema} object, for chaining.
    */
-  public Schema increments(final String column) {
-    this.grammar.addDataType(
-      column, "integer primary key auto_increment", true
-    );
+  public Schema doublePrecision(final String column) {
+    this.grammar.addDataType(column, "double", true);
+
+    return this;
+  }
+
+  /**
+   * Add a float column to the schema.
+   *
+   * @param column  The name of the column.
+   * @return        The current {@link Schema} object, for chaining.
+   */
+  public Schema floatingPoint(final String column) {
+    this.grammar.addDataType(column, "float", true);
+
+    return this;
+  }
+
+  /**
+   * Add a real column to the schema.
+   *
+   * @param column  The name of the column.
+   * @return        The current {@link Schema} object, for chaining.
+   */
+  public Schema real(final String column) {
+    this.grammar.addDataType(column, "real", true);
+
+    return this;
+  }
+
+  /**
+   * Add a numeric column to the schema.
+   *
+   * @param column  The name of the column.
+   * @return        The current {@link Schema} object, for chaining.
+   */
+  public Schema numeric(final String column) {
+    this.grammar.addDataType(column, "numeric", true);
 
     return this;
   }
@@ -134,7 +145,7 @@ public final class Schema {
    * @return        The current {@link Schema} object, for chaining.
    */
   public Schema bool(final String column) {
-    this.grammar.addDataType(column, "bool", true);
+    this.grammar.addDataType(column, "boolean", true);
 
     return this;
   }
@@ -152,18 +163,6 @@ public final class Schema {
   }
 
   /**
-   * Add a date-time column to the schema.
-   *
-   * @param column  The name of the column.
-   * @return        The current {@link Schema} object, for chaining.
-   */
-  public Schema dateTime(final String column) {
-    this.grammar.addDataType(column, "datetime", true);
-
-    return this;
-  }
-
-  /**
    * Add a time column to the schema.
    *
    * @param column  The name of the column.
@@ -171,6 +170,44 @@ public final class Schema {
    */
   public Schema time(final String column) {
     this.grammar.addDataType(column, "time", true);
+
+    return this;
+  }
+
+  /**
+   * Add a date/time column to the schema.
+   *
+   * @param column  The name of the column.
+   * @return        The current {@link Schema} object, for chaining.
+   */
+  public Schema datetime(final String column) {
+    this.grammar.addDataType(column, "datetime", true);
+
+    return this;
+  }
+
+  /**
+   * Add a blob column to the schema.
+   *
+   * @param column  The name of the column.
+   * @return        The current {@link Schema} object, for chaining.
+   */
+  public Schema blob(final String column) {
+    this.grammar.addDataType(column, "blob", true);
+
+    return this;
+  }
+
+  /**
+   * Add an auto incrementing integer column to the schema.
+   *
+   * @param column  The name of the column.
+   * @return        The current {@link Schema} object, for chaining.
+   */
+  public Schema increments(final String column) {
+    this.grammar.addDataType(
+      column, "integer primary key auto_increment", true
+    );
 
     return this;
   }

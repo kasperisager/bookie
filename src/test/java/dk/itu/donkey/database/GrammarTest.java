@@ -261,6 +261,14 @@ public final class GrammarTest {
     + " offset 102",
       this.g.compileSelect()
     );
+
+    List<Object> values = new ArrayList<>();
+    values.add(100);
+    values.add("value1");
+    values.add(2.123);
+    values.add("value2");
+
+    assertEquals(values, this.g.compileSelectValues());
   }
 
   /**
@@ -306,6 +314,13 @@ public final class GrammarTest {
       "insert into test (column1, column2, column3) values (?, ?, ?)",
       this.g.compileInsert()
     );
+
+    List<Object> values = new ArrayList<>();
+    values.add("value1");
+    values.add(100);
+    values.add(2.123);
+
+    assertEquals(values, this.g.compileInsertValues());
   }
 
   /**
@@ -315,21 +330,30 @@ public final class GrammarTest {
   public void testCompileUpdate() {
     this.g.addTable("test");
 
+    this.g.addWhere("column1", "=", "value1", "and");
+
     this.g.addColumn("column1");
     this.g.addValue("value1");
     this.g.addColumn("column2");
     this.g.addValue(100);
+
+    this.g.addWhere("column2", ">", 80, "or");
+
     this.g.addColumn("column3");
     this.g.addValue(2.123);
-
-    this.g.addWhere("column1", "=", "value1", "and");
-    this.g.addWhere("column2", ">", 80, "or");
 
     assertEquals(
       "update test set column1 = ?, column2 = ?, column3 = ?"
     + " where column1 = ? or column2 > ?",
       this.g.compileUpdate()
     );
+
+    List<Object> values = new ArrayList<>();
+    values.add("value1");
+    values.add(100);
+    values.add(2.123);
+    values.add("value1");
+    values.add(80);
   }
 
   /**
@@ -347,6 +371,13 @@ public final class GrammarTest {
       "delete from test where test1 = ? or test2 > ? and test3 < ?",
       this.g.compileDelete()
     );
+
+    List<Object> values = new ArrayList<>();
+    values.add("val");
+    values.add(100);
+    values.add(2.123);
+
+    assertEquals(values, this.g.compileDeleteValues());
   }
 
   /**
@@ -381,22 +412,5 @@ public final class GrammarTest {
     this.g.addTable("test");
 
     assertEquals("drop table if exists test", this.g.compileDrop());
-  }
-
-  /**
-   * Test getting raw values.
-   */
-  @Test
-  public void testGetValues() {
-    this.g.addValue("test");
-    this.g.addValue(100);
-    this.g.addValue(2.123);
-
-    List<Object> expected = new ArrayList<>();
-    expected.add("test");
-    expected.add(100);
-    expected.add(2.123);
-
-    assertEquals(expected, this.g.getValues());
   }
 }

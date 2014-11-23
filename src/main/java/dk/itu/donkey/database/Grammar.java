@@ -39,6 +39,11 @@ public final class Grammar {
   private List<String> wheres = new ArrayList<>();
 
   /**
+   * List of where values.
+   */
+  private List<Object> whereValues = new ArrayList<>();
+
+  /**
    * List of formatted orders.
    */
   private List<String> orders = new ArrayList<>();
@@ -59,7 +64,7 @@ public final class Grammar {
    * @param table The table to format.
    * @return      The formatted table.
    */
-  public static String buildTable(final String table) {
+  public String buildTable(final String table) {
     return table.trim();
   }
 
@@ -78,7 +83,7 @@ public final class Grammar {
    * @param column  The column to format.
    * @return        The formatted column.
    */
-  public static String buildColumn(final String column) {
+  public String buildColumn(final String column) {
     return column.trim();
   }
 
@@ -88,7 +93,7 @@ public final class Grammar {
    * @param columns The formatted columns.
    * @return        A comma-seprated list of columns.
    */
-  public static String buildColumns(final List<String> columns) {
+  public String buildColumns(final List<String> columns) {
     return String.join(", ", columns);
   }
 
@@ -110,7 +115,7 @@ public final class Grammar {
    * @param value The value to format.
    * @return      The formatted value.
    */
-  public static String buildValue(final Object value) {
+  public String buildValue(final Object value) {
     return "?";
   }
 
@@ -120,7 +125,7 @@ public final class Grammar {
    * @param values  The formatted values.
    * @return        A comma-separated list of values.
    */
-  public static String buildValues(final List<String> values) {
+  public String buildValues(final List<String> values) {
     return String.join(", ", values);
   }
 
@@ -130,17 +135,10 @@ public final class Grammar {
    * @param value The value to add.
    */
   public void addValue(final Object value) {
+    // Store the original value for later access.
     this.rawValues.add(value);
-    this.values.add(this.buildValue(value));
-  }
 
-  /**
-   * Get all values currently added to the grammar.
-   *
-   * @return A list of all values.
-   */
-  public List<Object> getValues() {
-    return this.rawValues;
+    this.values.add(this.buildValue(value));
   }
 
   /**
@@ -150,7 +148,7 @@ public final class Grammar {
    * @param value   The formatted value of the set clause.
    * @return        The formatted set clause.
    */
-  public static String buildSet(final String column, final String value) {
+  public String buildSet(final String column, final String value) {
     return String.format("%s = %s", column, value);
   }
 
@@ -161,7 +159,7 @@ public final class Grammar {
    * @param values  The values of the set clause.
    * @return        A list of comma-separated set clauses.
    */
-  public static String buildSets(
+  public String buildSets(
     final List<String> columns,
     final List<String> values
   ) {
@@ -169,7 +167,7 @@ public final class Grammar {
     int length = columns.size();
 
     for (int i = 0; i < length; i++) {
-      sets.add(Grammar.buildSet(columns.get(i), values.get(i)));
+      sets.add(this.buildSet(columns.get(i), values.get(i)));
     }
 
     return (!sets.isEmpty()) ? "set " + String.join(", ", sets) : "";
@@ -184,18 +182,21 @@ public final class Grammar {
    * @param comparator  The comparator to use.
    * @return            The formatted where clause.
    */
-  public static String buildWhere(
+  public String buildWhere(
     final String column,
     final String operator,
     final Object value,
     final String comparator
   ) {
+    // Store the original value for later access.
+    this.whereValues.add(value);
+
     return String.format(
       "%s %s %s %s",
       comparator.trim(),
-      Grammar.buildColumn(column),
+      this.buildColumn(column),
       operator.trim(),
-      Grammar.buildValue(value)
+      this.buildValue(value)
     );
   }
 
@@ -205,7 +206,7 @@ public final class Grammar {
    * @param wheres  The formatted where clauses.
    * @return        A comma-separated list of where clauses.
    */
-  public static String buildWheres(final List<String> wheres) {
+  public String buildWheres(final List<String> wheres) {
     if (!wheres.isEmpty()) {
       return "where " + String.join(" ", wheres).replaceAll("^and |^or ", "");
     }
@@ -238,10 +239,10 @@ public final class Grammar {
    * @param direction The direction of the ordering.
    * @return          The formatted order by clause.
    */
-  public static String buildOrder(final String column, final String direction) {
+  public String buildOrder(final String column, final String direction) {
     return String.format(
       "%s %s",
-      Grammar.buildColumn(column),
+      this.buildColumn(column),
       direction.trim()
     );
   }
@@ -252,7 +253,7 @@ public final class Grammar {
    * @param orders  The formatted order by clauses.
    * @return        A comma-separated list of order by clauses.
    */
-  public static String buildOrders(final List<String> orders) {
+  public String buildOrders(final List<String> orders) {
     if (!orders.isEmpty()) {
       return "order by " + String.join(", ", orders);
     }
@@ -277,7 +278,7 @@ public final class Grammar {
    * @param limit The limit.
    * @return      The formatted limit clause.
    */
-  public static String buildLimit(final int limit) {
+  public String buildLimit(final int limit) {
     return (limit > 0) ? "limit " + limit : "";
   }
 
@@ -296,7 +297,7 @@ public final class Grammar {
    * @param offset  The offset.
    * @return        The formatted offset.
    */
-  public static String buildOffset(final int offset) {
+  public String buildOffset(final int offset) {
     return (offset > 0) ? "offset " + offset : "";
   }
 
@@ -318,7 +319,7 @@ public final class Grammar {
    * @param required  Whether or not this column is required.
    * @return          The formatted column clause.
    */
-  public static String buildDataType(
+  public String buildDataType(
     final String column,
     final String type,
     final int length,
@@ -337,7 +338,7 @@ public final class Grammar {
    * @param required  Whether or not this column is required.
    * @return          The formatted column clause.
    */
-  public static String buildDataType(
+  public String buildDataType(
     final String column,
     final String type,
     final boolean required
@@ -387,7 +388,7 @@ public final class Grammar {
    * @param foreignColumn The foreign column.
    * @return              The formatted foreign key clause.
    */
-  public static String buildForeignKey(
+  public String buildForeignKey(
     final String column,
     final String foreignTable,
     final String foreignColumn
@@ -447,6 +448,15 @@ public final class Grammar {
   }
 
   /**
+   * Compile raw values for a select statement.
+   *
+   * @return List of values for the select statement.
+   */
+  public List<Object> compileSelectValues() {
+    return this.whereValues;
+  }
+
+  /**
    * Compile an insert statement based on the current state of the grammar.
    *
    * @return The full insert statement.
@@ -458,6 +468,15 @@ public final class Grammar {
       this.buildColumns(this.columns),
       this.buildValues(this.values)
     ).trim().replaceAll(" {2,}", " ");
+  }
+
+  /**
+   * Compile raw values for an insert statement.
+   *
+   * @return List of values for the insert statement.
+   */
+  public List<Object> compileInsertValues() {
+    return this.rawValues;
   }
 
   /**
@@ -475,6 +494,20 @@ public final class Grammar {
   }
 
   /**
+   * Compile raw values for an update statement.
+   *
+   * @return List of values for the update statement.
+   */
+  public List<Object> compileUpdateValues() {
+    List<Object> updateValues = new ArrayList<>();
+
+    updateValues.addAll(this.rawValues);
+    updateValues.addAll(this.whereValues);
+
+    return updateValues;
+  }
+
+  /**
    * Compile a delete statement based on the current state of the grammar.
    *
    * @return The full delete statement.
@@ -485,6 +518,15 @@ public final class Grammar {
       this.table,
       this.buildWheres(this.wheres)
     ).trim().replaceAll(" {2,}", " ");
+  }
+
+  /**
+   * Compile raw values for a delete statement.
+   *
+   * @return List of values for the delete statement.
+   */
+  public List<Object> compileDeleteValues() {
+    return this.whereValues;
   }
 
   /**

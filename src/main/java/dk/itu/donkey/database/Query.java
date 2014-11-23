@@ -56,10 +56,11 @@ public final class Query {
    * Insert a row into a table.
    *
    * @param row The row to insert into the table.
+   * @return    Generated keys, if any.
    *
    * @throws SQLException In case of a SQL error.
    */
-  public void insert(final Row row) throws SQLException {
+  public List<Row> insert(final Row row) throws SQLException {
     for (String column: row.getColumns()) {
       this.grammar.addColumn(column);
     }
@@ -68,7 +69,9 @@ public final class Query {
       this.grammar.addValue(value);
     }
 
-    this.db.execute(this.grammar.compileInsert(), this.grammar.getValues());
+    return this.db.execute(
+      this.grammar.compileInsert(), this.grammar.compileInsertValues()
+    );
   }
 
   /**
@@ -80,10 +83,11 @@ public final class Query {
    * If no `where` statement is supplied, all rows of the table will be updated.
    *
    * @param row Row of columns to update in the table.
+   * @return    Generated keys, if any.
    *
    * @throws SQLException In case of a SQL error.
    */
-  public void update(final Row row) throws SQLException {
+  public List<Row> update(final Row row) throws SQLException {
     for (String column: row.getColumns()) {
       this.grammar.addColumn(column);
     }
@@ -92,7 +96,9 @@ public final class Query {
       this.grammar.addValue(value);
     }
 
-    this.db.execute(this.grammar.compileUpdate(), this.grammar.getValues());
+    return this.db.execute(
+      this.grammar.compileUpdate(), this.grammar.compileUpdateValues()
+    );
   }
 
   /**
@@ -103,10 +109,14 @@ public final class Query {
    *
    * If no `where` statement is supplied, all rows of the table will be deleted.
    *
+   * @return Generated keys, if any.
+   *
    * @throws SQLException In case of a SQL error.
    */
-  public void delete() throws SQLException {
-    this.db.execute(this.grammar.compileDelete());
+  public List<Row> delete() throws SQLException {
+    return this.db.execute(
+      this.grammar.compileDelete(), this.grammar.compileDeleteValues()
+    );
   }
 
   /**
@@ -229,7 +239,7 @@ public final class Query {
    */
   public List<Row> get() throws SQLException {
     return this.db.execute(
-      this.grammar.compileSelect(), this.grammar.getValues()
+      this.grammar.compileSelect(), this.grammar.compileSelectValues()
     );
   }
 

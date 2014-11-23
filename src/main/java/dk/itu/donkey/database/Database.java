@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.Statement;
 import java.sql.SQLException;
 
 /**
@@ -68,12 +69,16 @@ public final class Database {
     final String sql,
     final List<Object> values
   ) throws SQLException {
-    try (Connection connection = this.getConnection()) {
+    try (
+      Connection connection = this.getConnection();
+
       // Precompile the SQL statement without any values. This effectively
       // negates SQL injection as any input values will be added later on and
       // properly escaped by Java.
-      PreparedStatement statement = connection.prepareStatement(sql);
-
+      PreparedStatement statement = connection.prepareStatement(
+        sql, Statement.RETURN_GENERATED_KEYS
+      );
+    ) {
       // If any values need to be added to the query, go through each of the
       // values and set them on the precompiled statement.
       if (!values.isEmpty()) {
@@ -87,46 +92,60 @@ public final class Database {
       // indicating whether or not the query generated a response.
       boolean response = statement.execute();
 
-      // If the query didn't generate a response, it means that the executed
-      // query was a DML (Data Manipulation Language) or DCL (Data Control
-      // Language). Simply return an empty response to the caller in this case.
-      if (!response) {
-        return null;
-      }
-
-      // If the query on the other hand did generate a response, this means
-      // that a DQL (Data Query Language) was performed. Read the resulting
-      // result set.
-      try (ResultSet rs = statement.getResultSet()) {
-        // Grab the result set meta data. This contains a lot of interesting
-        // information such as the number of rows in the set, the data types
-        // of each of the columns, and the total number of columns (which we
-        // will later need).
-        ResultSetMetaData rm = rs.getMetaData();
-
-        // Get the total number of columns in each row of the result set.
-        int columnCount = rm.getColumnCount();
-
-        List<Row> rows = new ArrayList<>();
-
-        // Run through each of the rows in the result set and add every column
-        // to a row object. This gives us a data structure that is a lot easier
-        // to work with than the result set itself.
-        while (rs.next()) {
-          Row row = new Row();
-
-          // Run through each of the columns in the row and add them as entries
-          // to the row object.
-          for (int i = 1; i <= columnCount; i++) {
-            row.put(rm.getColumnLabel(i), rs.getObject(i));
-          }
-
-          rows.add(row);
+      // If the query generated a response, this means that a DQL (Data Query
+      // Language) query was performed. Read the resulting result set.
+      if (response) {
+        try (ResultSet rs = statement.getResultSet()) {
+          return this.parseResultSet(rs);
         }
-
-        return rows;
+      }
+      // If the query didn't generate a response, it means that a DML (Data
+      // Manipulation Language) or DCL (Data Control Language) query was
+      // performed. Check for automatically generated keys.
+      else {
+        try (ResultSet rs = statement.getGeneratedKeys()) {
+          return this.parseResultSet(rs);
+        }
       }
     }
+  }
+
+  /**
+   * Parse a result set from a database query.
+   *
+   * @param rs  The resutl set to parse.
+   * @return    The parsed result as a list of rows.
+   *
+   * @throws SQLException In case of a SQL error.
+   */
+  private List<Row> parseResultSet(final ResultSet rs) throws SQLException {
+    // Grab the result set meta data. This contains a lot of interesting
+    // information such as the number of rows in the set, the data types
+    // of each of the columns, and the total number of columns (which we
+    // will later need).
+    ResultSetMetaData rm = rs.getMetaData();
+
+    // Get the total number of columns in each row of the result set.
+    int columnCount = rm.getColumnCount();
+
+    List<Row> rows = new ArrayList<>();
+
+    // Run through each of the rows in the result set and add every column
+    // to a row object. This gives us a data structure that is a lot
+    // easier to work with than the result set itself.
+    while (rs.next()) {
+      Row row = new Row();
+
+      // Run through each of the columns in the row and add them as
+      // entries to the row object.
+      for (int i = 1; i <= columnCount; i++) {
+        row.put(rm.getColumnLabel(i), rs.getObject(i));
+      }
+
+      rows.add(row);
+    }
+
+    return rows;
   }
 
   /**
