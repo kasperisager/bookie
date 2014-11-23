@@ -22,47 +22,84 @@ public enum Driver {
    *
    * http://mvnrepository.com/artifact/mysql/mysql-connector-java/5.1.6
    */
-  MYSQL,
+  MYSQL {
+    /**
+     * Initialize a connection to a MySQL database.
+     *
+     * Available connection properties:
+     *
+     * database - The name of the database to connect to. Required.
+     * user     - The user to connect as.
+     * password - The password of the user.
+     * url      - The URL to connect to. Default: localhost:3306
+     *
+     * @param p Database connection properties.
+     * @return  A connection to the database.
+     *
+     * @throws SQLException In case of a connection error.
+     */
+    @Override
+    public Connection connect(final Properties p) throws SQLException {
+      String connectionUrl;
+      String database = p.getProperty("database");
+
+      if (database == null) {
+        throw new IllegalArgumentException("A database is required");
+      }
+
+      String user = p.getProperty("user", "");
+      String password = p.getProperty("password", "");
+      String url = p.getProperty("url", "localhost:3306");
+
+      connectionUrl = String.format(
+        "mysql://%s/%s?user=%s&password=%s",
+        url, database, user, password
+      );
+
+      return DriverManager.getConnection("jdbc:" + connectionUrl);
+    }
+  },
 
   /**
    * SQLite driver.
    *
    * http://mvnrepository.com/artifact/org.xerial/sqlite-jdbc/3.8.7
    */
-  SQLITE;
+  SQLITE {
+    /**
+     * Initialize a connection to a SQLite database.
+     *
+     * Available connection properties:
+     *
+     * database - The name of the database to connect to. Required.
+     *
+     * @param p Database connection properties.
+     * @return  A connection to the database.
+     *
+     * @throws SQLException In case of a connection error.
+     */
+    @Override
+    public Connection connect(final Properties p) throws SQLException {
+      String connectionUrl;
+      String database = p.getProperty("database");
+
+      if (database == null) {
+        throw new IllegalArgumentException("A database is required");
+      }
+
+      connectionUrl = String.format("sqlite:%s.db", database);
+
+      return DriverManager.getConnection("jdbc:" + connectionUrl);
+    }
+  };
 
   /**
    * Initialize a connection to a database via a JDBC-compatible driver.
    *
-   * @param props Database connection properties.
-   * @return      A connection to the database.
+   * @param p Database connection properties.
+   * @return  A connection to the database.
    *
    * @throws SQLException In case of a connection error.
    */
-  public Connection getConnection(final Properties props) throws SQLException {
-    String connectionUrl;
-    String database = props.getProperty("database");
-
-    if (database == null) {
-      throw new IllegalArgumentException("A database is required");
-    }
-
-    switch (this) {
-      case MYSQL:
-        String user = props.getProperty("user", "");
-        String password = props.getProperty("password", "");
-        String url = props.getProperty("url", "localhost:3306");
-
-        connectionUrl = String.format(
-          "mysql://%s/%s?user=%s&password=%s",
-          url, database, user, password
-        );
-        break;
-      case SQLITE:
-      default:
-        connectionUrl = String.format("sqlite:%s.db", database);
-    }
-
-    return DriverManager.getConnection("jdbc:" + connectionUrl);
-  }
+  public abstract Connection connect(final Properties p) throws SQLException;
 }

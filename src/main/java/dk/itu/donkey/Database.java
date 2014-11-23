@@ -50,7 +50,7 @@ public final class Database {
    * @return                A connection to the database.
    */
   public Connection getConnection() throws SQLException {
-    return this.driver.getConnection(this.properties);
+    return this.driver.connect(this.properties);
   }
 
   /**
