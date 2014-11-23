@@ -1,7 +1,7 @@
 /**
  * Copyright (C) 2014 Kasper Kronborg Isager.
  */
-package dk.itu.donkey.database;
+package dk.itu.donkey;
 
 // General utilities
 import java.util.ArrayList;
