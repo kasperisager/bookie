@@ -5,7 +5,7 @@ package dk.itu.donkey;
 
 // General utilities
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +18,7 @@ public final class Row {
   /**
    * Internal map for storing column definitions.
    */
-  private Map<String, Object> columns = new HashMap<>();
+  private Map<String, Object> columns = new LinkedHashMap<>();
 
   /**
    * Get a column value from the row.
