@@ -46,8 +46,9 @@ public final class Database {
   /**
    * Initialize a connection to a database via a JDBC-compatible driver.
    *
-   * @throws  SQLException  In case of a connection error.
-   * @return                A connection to the database.
+   * @return A connection to the database.
+   *
+   * @throws SQLException In case of a connection error.
    */
   public Connection getConnection() throws SQLException {
     return this.driver.connect(this.properties);
@@ -59,11 +60,11 @@ public final class Database {
    * This method uses the try-with-resource statement which ensures that all
    * closeable connections are automatically terminated after the code has run.
    *
-   * @param   sql           The SQL to execute, without any values.
-   * @param   values        Any values to add to the precompiled SQL statement.
+   * @param sql     The SQL to execute, without any values.
+   * @param values  Any values to add to the precompiled SQL statement.
+   * @return        The query result as a list of rows.
+   *
    * @throws  SQLException  In case of a SQL error.
-   * @return                The query result as a list of rows, or null if the
-   *                        query was not a DQL.
    */
   public List<Row> execute(
     final String sql,
@@ -162,12 +163,12 @@ public final class Database {
   }
 
   /**
-   * Initialize a SQL grammar for the database.
+   * Get a SQL grammar for the database.
    *
-   * @return A new SQL grammar object.
+   * @return A {@link Grammar} object.
    */
   public Grammar grammar() {
-    return new Grammar();
+    return this.driver.grammar();
   }
 
   /**

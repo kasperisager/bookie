@@ -24,6 +24,16 @@ public enum Driver {
    */
   MYSQL {
     /**
+     * Initialize a SQL grammar for a MySQL database.
+     *
+     * @return A grammar object for the database.
+     */
+    @Override
+    public Grammar grammar() {
+      return new Grammar();
+    }
+
+    /**
      * Initialize a connection to a MySQL database.
      *
      * Available connection properties:
@@ -67,6 +77,16 @@ public enum Driver {
    */
   SQLITE {
     /**
+     * Initialize a SQL grammar for a SQLite database.
+     *
+     * @return A grammar object for the database.
+     */
+    @Override
+    public Grammar grammar() {
+      return new Grammar();
+    }
+
+    /**
      * Initialize a connection to a SQLite database.
      *
      * Available connection properties:
@@ -92,6 +112,13 @@ public enum Driver {
       return DriverManager.getConnection("jdbc:" + connectionUrl);
     }
   };
+
+  /**
+   * Initialize the SQL grammar for a database driver.
+   *
+   * @return A grammar object for the database.
+   */
+  public abstract Grammar grammar();
 
   /**
    * Initialize a connection to a database via a JDBC-compatible driver.
