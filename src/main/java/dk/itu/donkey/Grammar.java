@@ -394,7 +394,7 @@ public final class Grammar {
     final String foreignColumn
   ) {
     return String.format(
-      "foreign key(%s) references %s(%s)",
+      "foreign key(%s) references %s(%s) on update cascade on delete cascade",
       column,
       foreignTable,
       foreignColumn

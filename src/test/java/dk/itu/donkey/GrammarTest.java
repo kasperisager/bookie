@@ -225,7 +225,8 @@ public final class GrammarTest {
   @Test
   public void testBuildForeignKey() {
     assertEquals(
-      "foreign key(test1) references test2(test3)",
+      "foreign key(test1) references test2(test3)"
+    + " on update cascade on delete cascade",
       this.g.buildForeignKey("test1", "test2", "test3")
     );
   }
@@ -393,14 +394,18 @@ public final class GrammarTest {
     this.g.addDataType("test2", "integer", 321, true);
     this.g.addDataType("test3", "date", false);
 
-    this.g.addForeignKey("test2", "table", "column");
+    this.g.addForeignKey("test2", "table1", "column1");
+    this.g.addForeignKey("test3", "table2", "column2");
 
     assertEquals(
       "create table if not exists test ("
     + "test1 varchar(123) not null,"
     + " test2 integer(321) not null,"
     + " test3 date null,"
-    + " foreign key(test2) references table(column)"
+    + " foreign key(test2) references table1(column1)"
+    + " on update cascade on delete cascade,"
+    + " foreign key(test3) references table2(column2)"
+    + " on update cascade on delete cascade"
     + ")",
       this.g.compileCreate()
     );
