@@ -53,6 +53,14 @@ public final class DatabaseTest {
     // Initialize MySQL database.
     this.databases.add(new Database(Driver.MYSQL, mysqlConf));
 
+    // Configure PostgreSQL database.
+    Properties postgresqlConf = new Properties();
+    postgresqlConf.put("database", "test");
+    postgresqlConf.put("user", "postgres");
+
+    // Initialize PostgreSQL database.
+    this.databases.add(new Database(Driver.POSTGRESQL, postgresqlConf));
+
     // Configure SQLite database.
     Properties sqliteConf = new Properties();
     sqliteConf.put("database", "test");
@@ -62,16 +70,16 @@ public final class DatabaseTest {
   }
 
   /**
-   * Test initialization of SQLite database with empty properties.
+   * Test initialization of PostgreSQL database with empty properties.
    *
-   * This should throw an exception as a SQLite database cannot be intialized
-   * without a database name.
+   * This should throw an exception as a PostgreSQL database cannot be
+   * intialized without a database name.
    *
    * @throws SQLException In case of a SQL error.
    */
   @Test(expected = IllegalArgumentException.class)
-  public void testSqliteWithEmptyProperties() throws SQLException {
-    (new Database(Driver.SQLITE, new Properties())).getConnection();
+  public void testPostgresqlWithEmptyProperties() throws SQLException {
+    (new Database(Driver.POSTGRESQL, new Properties())).getConnection();
   }
 
   /**
@@ -85,6 +93,19 @@ public final class DatabaseTest {
   @Test(expected = IllegalArgumentException.class)
   public void testMysqlWithEmptyProperties() throws SQLException {
     (new Database(Driver.MYSQL, new Properties())).getConnection();
+  }
+
+  /**
+   * Test initialization of SQLite database with empty properties.
+   *
+   * This should throw an exception as a SQLite database cannot be intialized
+   * without a database name.
+   *
+   * @throws SQLException In case of a SQL error.
+   */
+  @Test(expected = IllegalArgumentException.class)
+  public void testSqliteWithEmptyProperties() throws SQLException {
+    (new Database(Driver.SQLITE, new Properties())).getConnection();
   }
 
   /**
