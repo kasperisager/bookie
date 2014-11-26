@@ -20,7 +20,7 @@ public final class Row extends LinkedHashMap<String, Object> {
    * @return A list of columns.
    */
   public List<String> getColumns() {
-    return new ArrayList(this.keySet());
+    return new ArrayList<String>(this.keySet());
   }
 
   /**
@@ -29,6 +29,6 @@ public final class Row extends LinkedHashMap<String, Object> {
    * @return A list of values.
    */
   public List<Object> getValues() {
-    return new ArrayList(this.values());
+    return new ArrayList<Object>(this.values());
   }
 }
