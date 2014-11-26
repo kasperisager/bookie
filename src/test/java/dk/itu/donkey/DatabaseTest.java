@@ -3,15 +3,19 @@
  */
 package dk.itu.donkey;
 
+// General utilities
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+// SQL utilities
 import java.sql.Connection;
 import java.sql.SQLException;
 
+// JUnit assertions
 import static org.junit.Assert.assertEquals;
 
+// JUnit annotations
 import org.junit.After;
 import org.junit.Test;
 

@@ -3,12 +3,14 @@
  */
 package dk.itu.donkey;
 
+// General utilities
 import java.util.ArrayList;
 import java.util.List;
 
+// JUnit assertions
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
+// JUnit annotations
 import org.junit.Test;
 
 /**

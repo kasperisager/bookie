@@ -19,7 +19,7 @@ import org.junit.Test;
  *
  * @version 1.0.0
  */
-public class GrammarTest {
+public final class GrammarTest {
   /**
    * Create an anonymous concrete subclass of Grammar to test against.
    *
@@ -30,7 +30,8 @@ public class GrammarTest {
     /**
      * Abstract method; return null.
      *
-     * @param column The name of the column.
+     * @param column  The name of the column.
+     * @return        Null. Always.
      */
     public String buildAutoIncrement(final String column) {
       return null;
@@ -48,7 +49,7 @@ public class GrammarTest {
   /**
    * Grammar object to test against.
    */
-  protected Grammar g;
+  private Grammar g;
 
   /**
    * Run before each test.
