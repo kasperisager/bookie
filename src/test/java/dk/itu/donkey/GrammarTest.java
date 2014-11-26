@@ -3,11 +3,14 @@
  */
 package dk.itu.donkey;
 
+// General utilities
 import java.util.ArrayList;
 import java.util.List;
 
+// JUnit assertaions
 import static org.junit.Assert.assertEquals;
 
+// JUnit annotations
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,11 +19,36 @@ import org.junit.Test;
  *
  * @version 1.0.0
  */
-public final class GrammarTest {
+public class GrammarTest {
+  /**
+   * Create an anonymous concrete subclass of Grammar to test against.
+   *
+   * <p>
+   * This class stubs all abstract methods as these are not tested.
+   */
+  private class ConcreteGrammar extends Grammar {
+    /**
+     * Abstract method; return null.
+     *
+     * @param column The name of the column.
+     */
+    public String buildAutoIncrement(final String column) {
+      return null;
+    }
+
+    /**
+     * Abstract method; do nothing.
+     *
+     * @param column The name of the column.
+     */
+    public void addAutoIncrement(final String column) {
+    }
+  }
+
   /**
    * Grammar object to test against.
    */
-  private Grammar g;
+  protected Grammar g;
 
   /**
    * Run before each test.
@@ -29,8 +57,8 @@ public final class GrammarTest {
    * can start off fresh.
    */
   @Before
-  public void before() {
-    this.g = new Grammar();
+  public void initializeGrammar() {
+    this.g = new ConcreteGrammar();
   }
 
   /**

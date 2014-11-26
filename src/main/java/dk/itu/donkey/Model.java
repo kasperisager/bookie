@@ -15,6 +15,9 @@ import java.sql.SQLException;
 /**
  * Model class.
  *
+ * @see <a href="https://en.wikipedia.org/wiki/Object-relational_mapping">
+ *      Wikipedia - Object-relational mapping</a>
+ *
  * @version 1.0.0
  */
 public abstract class Model {
@@ -44,20 +47,23 @@ public abstract class Model {
    * Initialize a model.
    *
    * @param table The name of the table to use for the model.
+   * @param db    The database to use for persisting the model.
    */
-  public Model(final String table) {
+  public Model(final String table, final Database db) {
     this.table = table.toLowerCase().trim().replaceAll(" +", "_");
+    this.db = db;
   }
 
   /**
-   * Set the database of a model for persistent storage.
+   * Initialize a model from a database row.
    *
-   * If this is not called by subclasses, the model will not persist.
-   *
-   * @param db The database to use for persisting the model.
+   * @param table The name of the table to use for the model.
+   * @param db    The database to use for persisting the model.
+   * @param row   The database row to use for intializing the model.
    */
-  protected final void setDatabase(final Database db) {
-    this.db = db;
+  public Model(final String table, final Database db, final Row row) {
+    this(table, db);
+    this.setRow(row);
   }
 
   /**
@@ -67,19 +73,12 @@ public abstract class Model {
    * @return      The field.
    */
   private Field getField(final String label) {
-    Field field = null;
-
     try {
-      field = this.getClass().getField(label);
+      return this.getClass().getField(label);
     }
     catch (Exception e) {
-      // This is not supposed to happen. Ever. Since only the Model class
-      // ever calls this method, it should be only ever be called on fields
-      // that actually exists.
-      System.err.print(e.getMessage());
+      return null;
     }
-
-    return field;
   }
 
   /**
@@ -178,6 +177,7 @@ public abstract class Model {
     for (Field column: this.getFields()) {
       String name = column.getName();
       Class<?> type = column.getType();
+      System.out.println(name);
 
       // String type
       if (type == String.class) {
@@ -271,12 +271,17 @@ public abstract class Model {
    * @param row The Row representaion to apply to the model.
    */
   private void setRow(final Row row) {
-    if (this.id != null) {
+    if (row == null || this.id != null) {
       return;
     }
 
-    for (String column: row.getColumns()) {
+    for (Field field: this.getFields()) {
+      String column = field.getName();
       Object value = row.get(column);
+
+      if (value == null) {
+        continue;
+      }
 
       if (column.equals("id")) {
         this.id((Integer) value);

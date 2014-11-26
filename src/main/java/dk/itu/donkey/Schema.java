@@ -9,6 +9,9 @@ import java.sql.SQLException;
 /**
  * Schema class.
  *
+ * @see <a href="https://en.wikipedia.org/wiki/Data_definition_language">
+ *      Wikipedia - Data definition language</a>
+ *
  * @version 1.0.0
  */
 public final class Schema {
@@ -205,9 +208,7 @@ public final class Schema {
    * @return        The current {@link Schema} object, for chaining.
    */
   public Schema increments(final String column) {
-    this.grammar.addDataType(
-      column, "integer primary key auto_increment", true
-    );
+    this.grammar.addAutoIncrement(column);
 
     return this;
   }

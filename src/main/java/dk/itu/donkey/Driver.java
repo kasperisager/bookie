@@ -20,7 +20,17 @@ public enum Driver {
   /**
    * MySQL driver.
    *
-   * http://mvnrepository.com/artifact/mysql/mysql-connector-java/5.1.6
+   * <p>
+   * Available connection properties:
+   *
+   * <pre>
+   * database - The name of the database to connect to. Required.
+   * user     - The user to connect as.
+   * password - The password of the user.
+   * url      - The URL to connect to. Default: localhost:3306
+   * </pre>
+   *
+   * @see <a href="http://bit.ly/11StjtX">Maven Repository - MySQL</a>
    */
   MYSQL {
     /**
@@ -30,18 +40,11 @@ public enum Driver {
      */
     @Override
     public Grammar grammar() {
-      return new Grammar();
+      return new MySqlGrammar();
     }
 
     /**
      * Initialize a connection to a MySQL database.
-     *
-     * Available connection properties:
-     *
-     * database - The name of the database to connect to. Required.
-     * user     - The user to connect as.
-     * password - The password of the user.
-     * url      - The URL to connect to. Default: localhost:3306
      *
      * @param p Database connection properties.
      * @return  A connection to the database.
@@ -72,7 +75,17 @@ public enum Driver {
   /**
    * PostgreSQL driver.
    *
-   * http://mvnrepository.com/artifact/postgresql/postgresql/9.1-901-1.jdbc4
+   * <p>
+   * Available connection properties:
+   *
+   * <pre>
+   * database - The name of the database to connect to. Required.
+   * user     - The user to connect as.
+   * password - The password of the user.
+   * url      - The URL to connect to. Default: localhost:5432
+   * </pre>
+   *
+   * @see <a href="http://bit.ly/11Un3Ro">Maven Repository - PostgreSQL</a>
    */
   POSTGRESQL {
     /**
@@ -82,18 +95,11 @@ public enum Driver {
      */
     @Override
     public Grammar grammar() {
-      return new Grammar();
+      return new PostgreSqlGrammar();
     }
 
     /**
      * Initialize a connection to a PostgreSQL database.
-     *
-     * Available connection properties:
-     *
-     * database - The name of the database to connect to. Required.
-     * user     - The user to connect as.
-     * password - The password of the user.
-     * url      - The URL to connect to. Default: localhost:5432
      *
      * @param p Database connection properties.
      * @return  A connection to the database.
@@ -124,7 +130,14 @@ public enum Driver {
   /**
    * SQLite driver.
    *
-   * http://mvnrepository.com/artifact/org.xerial/sqlite-jdbc/3.8.7
+   * <p>
+   * Available connection properties:
+   *
+   * <pre>
+   * database - The name of the database to connect to. Required.
+   * </pre>
+   *
+   * @see <a href="http://bit.ly/1xzBsvg">Maven Repository - SQLite</a>
    */
   SQLITE {
     /**
@@ -134,15 +147,11 @@ public enum Driver {
      */
     @Override
     public Grammar grammar() {
-      return new Grammar();
+      return new SqliteGrammar();
     }
 
     /**
      * Initialize a connection to a SQLite database.
-     *
-     * Available connection properties:
-     *
-     * database - The name of the database to connect to. Required.
      *
      * @param p Database connection properties.
      * @return  A connection to the database.

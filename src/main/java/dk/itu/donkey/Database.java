@@ -44,13 +44,32 @@ public final class Database {
   }
 
   /**
+   * Perform a query against a database table.
+   *
+   * @param name  Name of the table to perform the query against.
+   * @return      A {@link Query} object initialized to the current db.
+   */
+  public Query table(final String name) {
+    return new Query(this, this.driver.grammar(), name);
+  }
+
+  /**
+   * Run a schema against the database.
+   *
+   * @return A {@link Schema} oobject initialized to the current db.
+   */
+  public Schema schema() {
+    return new Schema(this, this.driver.grammar());
+  }
+
+  /**
    * Initialize a connection to a database via a JDBC-compatible driver.
    *
    * @return A connection to the database.
    *
    * @throws SQLException In case of a connection error.
    */
-  public Connection getConnection() throws SQLException {
+  public Connection connect() throws SQLException {
     return this.driver.connect(this.properties);
   }
 
@@ -62,7 +81,7 @@ public final class Database {
    *
    * @param sql     The SQL to execute, without any values.
    * @param values  Any values to add to the precompiled SQL statement.
-   * @return        The query result as a list of rows.
+   * @return        The query result as a list of rows, or null.
    *
    * @throws  SQLException  In case of a SQL error.
    */
@@ -79,7 +98,7 @@ public final class Database {
     }
 
     try (
-      Connection connection = this.getConnection();
+      Connection connection = this.connect();
 
       // Precompile the SQL statement without any values. This effectively
       // negates SQL injection as any input values will be added later on and
@@ -101,8 +120,7 @@ public final class Database {
       // indicating whether or not the query generated a response.
       boolean response = statement.execute();
 
-      // If the query generated a response, this means that a DQL (Data Query
-      // Language) statement was performed. Read the result set.
+      // If the query generated a response, read the result set.
       if (response) {
         try (ResultSet rs = statement.getResultSet()) {
           return this.parseResultSet(rs);
@@ -118,6 +136,18 @@ public final class Database {
 
       return null;
     }
+  }
+
+  /**
+   * Execute a SQL query without any values.
+   *
+   * @param sql The SQL to execute, without any values.
+   * @return    The query result as a list of rows, or null.
+   *
+   * @throws SQLException In case of a SQL error.
+   */
+  public List<Row> execute(final String sql) throws SQLException {
+    return this.execute(sql, new ArrayList<Object>());
   }
 
   /**
@@ -156,46 +186,5 @@ public final class Database {
     }
 
     return rows;
-  }
-
-  /**
-   * Execute a SQL query without any values.
-   *
-   * @param sql The SQL to execute, without any values.
-   * @return    The query result as a list of rows, or null if the query was
-   *            not a DQL.
-   *
-   * @throws SQLException In case of a SQL error.
-   */
-  public List<Row> execute(final String sql) throws SQLException {
-    return this.execute(sql, new ArrayList<Object>());
-  }
-
-  /**
-   * Get a SQL grammar for the database.
-   *
-   * @return A {@link Grammar} object.
-   */
-  public Grammar grammar() {
-    return this.driver.grammar();
-  }
-
-  /**
-   * Perform a query against a database table.
-   *
-   * @param name  Name of the table to perform the query against.
-   * @return      A {@link Query} object initialized to the current db.
-   */
-  public Query table(final String name) {
-    return new Query(this, this.grammar(), name);
-  }
-
-  /**
-   * Run a schema against the database.
-   *
-   * @return A {@link Schema} oobject initialized to the current db.
-   */
-  public Schema schema() {
-    return new Schema(this, this.grammar());
   }
 }

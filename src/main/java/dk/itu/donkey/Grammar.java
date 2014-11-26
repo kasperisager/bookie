@@ -8,23 +8,67 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Grammar class.
+ * The grammar class defines methods for building the individual clauses of and
+ * compiling complete standard SQL statements.
+ *
+ * <p>
+ * All methods implemented in this abstract class should be valid SQL in each of
+ * the available {@link Driver}-implementations. Deviations from ANSI (American
+ * National Standard Institute) SQL are allowed as long as these deviations are
+ * consistent across drivers.
+ *
+ * @see <a href="https://en.wikipedia.org/wiki/SQL">Wikipedia - Structured
+ *      Query Language</a>
+ * @see <a href="https://en.wikipedia.org/wiki/ANSI">Wikipedia - American
+ *      National Standards Institute</a>
+ * @see <a href="http://www.contrib.andrew.cmu.edu/~shadow/sql/sql1992.txt">
+ *      Information Technology - Database Language SQL</a>
  *
  * @version 1.0.0
  */
-public final class Grammar {
+public abstract class Grammar {
   /**
    * Database table.
+   *
+   * <p>
+   * This is used in the following clauses:
+   *
+   * <ul>
+   * <li>select [...] from [table] [...]</li>
+   * <li>insert into [table] [...]</li>
+   * <li>update [table]</li>
+   * <li>delete from [table] [...]</li>
+   * <li>create table [table] (</li>
+   * <li>drop [table]</li>
+   * </ul>
    */
   private String table;
 
   /**
    * List of formatted columns.
+   *
+   * <p>
+   * This is used in the following clauses:
+   *
+   * <ul>
+   * <li>select [column1, column2, ...] [...]</li>
+   * <li>insert into test ([column1, column2, ...]) [...]</li>
+   * <li>update test set [column1] = x, [column2] = y, [...]</li>
+   * <li>create table test ([column 1] integer, [column2] boolean, [...])</li>
+   * </ul>
    */
   private List<String> columns = new ArrayList<>();
 
   /**
    * List of formatted values.
+   *
+   * <p>
+   * This is used in the following clauses:
+   *
+   * <ul>
+   * <li>insert into test ([...]) values ([value1], [value2], [...])</li>
+   * <li>update test set x = [value1], y = [value2]</li>
+   * </ul>
    */
   private List<String> values = new ArrayList<>();
 
@@ -35,6 +79,15 @@ public final class Grammar {
 
   /**
    * List of formatted wheres.
+   *
+   * <p>
+   * This is used in the following clauses:
+   *
+   * <ul>
+   * <li>select [...] where [column1 = x] [or column2 = y], [...]</li>
+   * <li>update [...] where [column1 = x] [or column2 = y], [...]</li>
+   * <li>delete [...] where [column1 = x] [or column2 = y], [...]</li>
+   * </ul>
    */
   private List<String> wheres = new ArrayList<>();
 
@@ -45,26 +98,50 @@ public final class Grammar {
 
   /**
    * List of formatted orders.
+   *
+   * <p>
+   * This is used in the following clauses:
+   *
+   * <ul>
+   * <li>select [...] order by [column1 asc], [column2 desc], [...]</li>
+   * </ul>
    */
   private List<String> orders = new ArrayList<>();
 
   /**
    * Formatted result limit.
+   *
+   * <p>
+   * This is used in the following clauses:
+   *
+   * <ul>
+   * <li>select [...] [limit 100]</li>
+   * </ul>
    */
   private String limit = "";
 
   /**
    * Formatted result offset.
+   *
+   * <p>
+   * This is used in the following clauses:
+   *
+   * <ul>
+   * <li>select [...] [offset 100]</li>
+   * </ul>
    */
   private String offset = "";
 
   /**
    * Build a formatted table clause.
    *
+   * <p>
+   * <code>"  table "</code> becomes <code>"table"</code>
+   *
    * @param table The table to format.
    * @return      The formatted table.
    */
-  public String buildTable(final String table) {
+  public final String buildTable(final String table) {
     return table.trim();
   }
 
@@ -73,27 +150,33 @@ public final class Grammar {
    *
    * @param table The table to add.
    */
-  public void addTable(final String table) {
+  public final void addTable(final String table) {
     this.table = this.buildTable(table);
   }
 
   /**
    * Build a formatted column clause.
    *
+   * <p>
+   * <code>"  column  "</code> becomes <code>"column"</code>
+   *
    * @param column  The column to format.
    * @return        The formatted column.
    */
-  public String buildColumn(final String column) {
+  public final String buildColumn(final String column) {
     return column.trim();
   }
 
   /**
    * Build a list of formatted columns.
    *
+   * <p>
+   * <code>["col1", "col2"]</code> becomes <code>"col1, col2"</code>
+   *
    * @param columns The formatted columns.
    * @return        A comma-seprated list of columns.
    */
-  public String buildColumns(final List<String> columns) {
+  public final String buildColumns(final List<String> columns) {
     return String.join(", ", columns);
   }
 
@@ -102,30 +185,34 @@ public final class Grammar {
    *
    * @param column The column to add.
    */
-  public void addColumn(final String column) {
+  public final void addColumn(final String column) {
     this.columns.add(this.buildColumn(column));
   }
 
   /**
    * Build a formatted value clause.
    *
+   * <p>
    * This method simply returns a "?"-character as all values are removed from
    * statements prior to pre-compilation.
    *
    * @param value The value to format.
    * @return      The formatted value.
    */
-  public String buildValue(final Object value) {
+  public final String buildValue(final Object value) {
     return "?";
   }
 
   /**
    * Build a list of formatted values.
    *
+   * <p>
+   * <code>["?", "?"]</code> becomes <code>"?, ?"</code>
+   *
    * @param values  The formatted values.
    * @return        A comma-separated list of values.
    */
-  public String buildValues(final List<String> values) {
+  public final String buildValues(final List<String> values) {
     return String.join(", ", values);
   }
 
@@ -134,7 +221,7 @@ public final class Grammar {
    *
    * @param value The value to add.
    */
-  public void addValue(final Object value) {
+  public final void addValue(final Object value) {
     // Store the original value for later access.
     this.rawValues.add(value);
 
@@ -144,22 +231,29 @@ public final class Grammar {
   /**
    * Build a formatted set clause.
    *
+   * <p>
+   * <code>("col", "?")</code> becomes <code>"col = ?"</code>
+   *
    * @param column  The formatted column of the set clause.
    * @param value   The formatted value of the set clause.
    * @return        The formatted set clause.
    */
-  public String buildSet(final String column, final String value) {
+  public final String buildSet(final String column, final String value) {
     return String.format("%s = %s", column, value);
   }
 
   /**
    * Build a list of formatted set clauses.
    *
+   * <p>
+   * <code>["col1 = ?", "col2 = ?"]</code> becomes <code>"set col1 = ?, col2 =
+   * ?"</code>
+   *
    * @param columns The columns of the set clause.
    * @param values  The values of the set clause.
    * @return        A list of comma-separated set clauses.
    */
-  public String buildSets(
+  public final String buildSets(
     final List<String> columns,
     final List<String> values
   ) {
@@ -176,13 +270,16 @@ public final class Grammar {
   /**
    * Build a formatted where clause.
    *
+   * <p>
+   * <code>("col", "=", "val", "and")</code> becomes <code>"and col = ?"</code>
+   *
    * @param column      The column of the where clause.
    * @param operator    The operator of the where clause.
    * @param value       The value of the where clause.
    * @param comparator  The comparator to use.
    * @return            The formatted where clause.
    */
-  public String buildWhere(
+  public final String buildWhere(
     final String column,
     final String operator,
     final Object value,
@@ -203,10 +300,14 @@ public final class Grammar {
   /**
    * Build a list of formatted where clauses.
    *
+   * <p>
+   * <code>["and col1 = ?", "or col2 = ?"]</code> becomes <code>"where col1 =
+   * ? or col2 = ?"</code>
+   *
    * @param wheres  The formatted where clauses.
    * @return        A comma-separated list of where clauses.
    */
-  public String buildWheres(final List<String> wheres) {
+  public final String buildWheres(final List<String> wheres) {
     if (!wheres.isEmpty()) {
       return "where " + String.join(" ", wheres).replaceAll("^and |^or ", "");
     }
@@ -223,7 +324,7 @@ public final class Grammar {
    * @param value       The value of the where clause.
    * @param comparator  The comparator to use.
    */
-  public void addWhere(
+  public final void addWhere(
     final String column,
     final String operator,
     final Object value,
@@ -235,11 +336,14 @@ public final class Grammar {
   /**
    * Build a formatted order by clause.
    *
+   * <p>
+   * <code>("col", "asc")</code> becomes <code>"col asc"</code>
+   *
    * @param column    The column of the order by clause.
    * @param direction The direction of the ordering.
    * @return          The formatted order by clause.
    */
-  public String buildOrder(final String column, final String direction) {
+  public final String buildOrder(final String column, final String direction) {
     return String.format(
       "%s %s",
       this.buildColumn(column),
@@ -250,10 +354,14 @@ public final class Grammar {
   /**
    * Build a list of formatetd order by clauses.
    *
+   * <p>
+   * <code>["col1 asc", "col2 desc"]</code> becomes <code>"col1 asc, col2 desc"
+   * </code>
+   *
    * @param orders  The formatted order by clauses.
    * @return        A comma-separated list of order by clauses.
    */
-  public String buildOrders(final List<String> orders) {
+  public final String buildOrders(final List<String> orders) {
     if (!orders.isEmpty()) {
       return "order by " + String.join(", ", orders);
     }
@@ -268,17 +376,20 @@ public final class Grammar {
    * @param column    The column of the order by clause.
    * @param direction The direction fo the ordering.
    */
-  public void addOrder(final String column, final String direction) {
+  public final void addOrder(final String column, final String direction) {
     this.orders.add(this.buildOrder(column, direction));
   }
 
   /**
    * Build a formatted limit clause.
    *
+   * <p>
+   * <code>(100)</code> becomes <code>"limit 100"</code>
+   *
    * @param limit The limit.
    * @return      The formatted limit clause.
    */
-  public String buildLimit(final int limit) {
+  public final String buildLimit(final int limit) {
     return (limit > 0) ? "limit " + limit : "";
   }
 
@@ -287,17 +398,20 @@ public final class Grammar {
    *
    * @param limit The limit.
    */
-  public void addLimit(final int limit) {
+  public final void addLimit(final int limit) {
     this.limit = this.buildLimit(limit);
   }
 
   /**
    * Build a formatted offset clause.
    *
+   * <p>
+   * <code>(100)</code> becomes <code>"offset 100"</code>
+   *
    * @param offset  The offset.
    * @return        The formatted offset.
    */
-  public String buildOffset(final int offset) {
+  public final String buildOffset(final int offset) {
     return (offset > 0) ? "offset " + offset : "";
   }
 
@@ -306,12 +420,16 @@ public final class Grammar {
    *
    * @param offset The offset.
    */
-  public void addOffset(final int offset) {
+  public final void addOffset(final int offset) {
     this.offset = this.buildOffset(offset);
   }
 
   /**
    * Build a formatted column clause with a data type.
+   *
+   * <p>
+   * <code>("col", "integer", 11, true)</code> becomes <code>"col integer(11)
+   * not null"</code>
    *
    * @param column    The column.
    * @param type      The type of the column.
@@ -319,7 +437,7 @@ public final class Grammar {
    * @param required  Whether or not this column is required.
    * @return          The formatted column clause.
    */
-  public String buildDataType(
+  public final String buildDataType(
     final String column,
     final String type,
     final int length,
@@ -333,12 +451,15 @@ public final class Grammar {
   /**
    * Build a formatted column clause with a data type.
    *
+   * <p>
+   * <code>("col", "text", false)</code> becomes <code>"col text null"</code>
+   *
    * @param column    The column.
    * @param type      The type of the column.
    * @param required  Whether or not this column is required.
    * @return          The formatted column clause.
    */
-  public String buildDataType(
+  public final String buildDataType(
     final String column,
     final String type,
     final boolean required
@@ -356,7 +477,7 @@ public final class Grammar {
    * @param length    The length of the column.
    * @param required  Whether or not this column is required.
    */
-  public void addDataType(
+  public final void addDataType(
     final String column,
     final String type,
     final int length,
@@ -372,7 +493,7 @@ public final class Grammar {
    * @param type      The type of the column.
    * @param required  Whether or not this column is required.
    */
-  public void addDataType(
+  public final void addDataType(
     final String column,
     final String type,
     final boolean required
@@ -383,12 +504,16 @@ public final class Grammar {
   /**
    * Build a formatted foreign key clause.
    *
+   * <p>
+   * <code>("col1", "table", "col2")</code> becomes <code>"foreign key(col1)
+   * references table(col2) on update cascade on delete cascade"</code>
+   *
    * @param column        The column.
    * @param foreignTable  The foreign table.
    * @param foreignColumn The foreign column.
    * @return              The formatted foreign key clause.
    */
-  public String buildForeignKey(
+  public final String buildForeignKey(
     final String column,
     final String foreignTable,
     final String foreignColumn
@@ -408,22 +533,47 @@ public final class Grammar {
    * @param foreignTable  The foreign table.
    * @param foreignColumn The foreign column.
    */
-  public void addForeignKey(
+  public final void addForeignKey(
     final String column,
     final String foreignTable,
     final String foreignColumn
   ) {
-    this.columns.add(this.buildForeignKey(
+    this.addColumn(this.buildForeignKey(
       column, foreignTable, foreignColumn
     ));
   }
+
+  /**
+   * Build an auto incrementing column.
+   *
+   * <p>
+   * Auto incrementing keys are not part of the ANSI SQL standard and are not
+   * implemented consistently across the different {@link Driver}s. It's
+   * therefore left up to subclasses to implement it.
+   *
+   * @param column  The name of the column.
+   * @return        A formatted auto incrementing column.
+   */
+  public abstract String buildAutoIncrement(final String column);
+
+  /**
+   * Add an auto incrementing column to the grammar.
+   *
+   * <p>
+   * Auto incrementing keys are not part of the ANSI SQL standard and are not
+   * implemented consistently across the different {@link Driver}s. It's
+   * therefore left up to subclasses to implement it.
+   *
+   * @param column The name of the column.
+   */
+  public abstract void addAutoIncrement(final String column);
 
   /**
    * Compile a select statement based on the current state of the grammar.
    *
    * @return The full select statement.
    */
-  public String compileSelect() {
+  public final String compileSelect() {
     if (this.columns.isEmpty()) {
       this.addColumn("*");
     }
@@ -452,7 +602,7 @@ public final class Grammar {
    *
    * @return List of values for the select statement.
    */
-  public List<Object> compileSelectValues() {
+  public final List<Object> compileSelectValues() {
     return this.whereValues;
   }
 
@@ -461,7 +611,7 @@ public final class Grammar {
    *
    * @return The full insert statement.
    */
-  public String compileInsert() {
+  public final String compileInsert() {
     return String.format(
       "insert into %s (%s) values (%s)",
       this.table,
@@ -475,7 +625,7 @@ public final class Grammar {
    *
    * @return List of values for the insert statement.
    */
-  public List<Object> compileInsertValues() {
+  public final List<Object> compileInsertValues() {
     return this.rawValues;
   }
 
@@ -484,7 +634,7 @@ public final class Grammar {
    *
    * @return The full update statement.
    */
-  public String compileUpdate() {
+  public final String compileUpdate() {
     return String.format(
       "update %s %s %s",
       this.table,
@@ -498,7 +648,7 @@ public final class Grammar {
    *
    * @return List of values for the update statement.
    */
-  public List<Object> compileUpdateValues() {
+  public final List<Object> compileUpdateValues() {
     List<Object> updateValues = new ArrayList<>();
 
     updateValues.addAll(this.rawValues);
@@ -512,7 +662,7 @@ public final class Grammar {
    *
    * @return The full delete statement.
    */
-  public String compileDelete() {
+  public final String compileDelete() {
     return String.format(
       "delete from %s %s",
       this.table,
@@ -525,7 +675,7 @@ public final class Grammar {
    *
    * @return List of values for the delete statement.
    */
-  public List<Object> compileDeleteValues() {
+  public final List<Object> compileDeleteValues() {
     return this.whereValues;
   }
 
@@ -534,7 +684,7 @@ public final class Grammar {
    *
    * @return The full create statement.
    */
-  public String compileCreate() {
+  public final String compileCreate() {
     return String.format(
       "create table if not exists %s (%s)",
       this.table,
@@ -547,7 +697,7 @@ public final class Grammar {
    *
    * @return The full drop statement.
    */
-  public String compileDrop() {
+  public final String compileDrop() {
     return String.format(
       "drop table if exists %s",
       this.table

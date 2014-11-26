@@ -79,7 +79,7 @@ public final class DatabaseTest {
    */
   @Test(expected = IllegalArgumentException.class)
   public void testPostgresqlWithEmptyProperties() throws SQLException {
-    (new Database(Driver.POSTGRESQL, new Properties())).getConnection();
+    (new Database(Driver.POSTGRESQL, new Properties())).connect();
   }
 
   /**
@@ -92,7 +92,7 @@ public final class DatabaseTest {
    */
   @Test(expected = IllegalArgumentException.class)
   public void testMysqlWithEmptyProperties() throws SQLException {
-    (new Database(Driver.MYSQL, new Properties())).getConnection();
+    (new Database(Driver.MYSQL, new Properties())).connect();
   }
 
   /**
@@ -105,7 +105,7 @@ public final class DatabaseTest {
    */
   @Test(expected = IllegalArgumentException.class)
   public void testSqliteWithEmptyProperties() throws SQLException {
-    (new Database(Driver.SQLITE, new Properties())).getConnection();
+    (new Database(Driver.SQLITE, new Properties())).connect();
   }
 
   /**
@@ -116,7 +116,7 @@ public final class DatabaseTest {
   @Test
   public void testConnection() throws SQLException {
     for (Database db: this.databases) {
-      Connection connection = db.getConnection();
+      Connection connection = db.connect();
     }
   }
 

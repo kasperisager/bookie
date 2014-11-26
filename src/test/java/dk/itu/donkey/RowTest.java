@@ -18,15 +18,6 @@ import org.junit.Test;
  */
 public final class RowTest {
   /**
-   * Test row initialization.
-   */
-  @Test
-  public void testInitialization() {
-    Row row = new Row();
-    assertNotNull(row);
-  }
-
-  /**
    * Test row data storage.
    */
   @Test

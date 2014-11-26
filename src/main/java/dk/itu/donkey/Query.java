@@ -12,6 +12,9 @@ import java.sql.SQLException;
 /**
  * Query class.
  *
+ * @see <a href="https://en.wikipedia.org/wiki/Data_manipulation_language">
+ *      Wikipedia - Data manipulation language</a>
+ *
  * @version 1.0.0
  */
 public final class Query {
@@ -251,7 +254,9 @@ public final class Query {
    * @throws SQLException In case of a SQL error.
    */
   public Row first() throws SQLException {
-    return this.limit(1).get().get(0);
+    List<Row> rows = this.limit(1).get();
+
+    return (rows.size() > 0) ? rows.get(0) : null;
   }
 
   /**
