@@ -1,4 +1,8 @@
 .gradle/
+.idea/
 build/
 .yo-rc.json
 *.db
+*.iml
+gradlew
+gradlew.bat
