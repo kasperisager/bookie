@@ -69,7 +69,7 @@ public final class DatabaseTest {
    * Initialize databases before each test.
    */
   @Before
-  public void testInitialization() {
+  public void before() {
     this.databases = this.initializeDatabases();
   }
 

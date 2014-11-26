@@ -16,7 +16,7 @@ public final class PostgreSqlGrammar extends Grammar {
    * @return        The formatted auto incrementing column.
    */
   public String buildAutoIncrement(final String column) {
-    return String.format("%s integer primary key auto_increment", column);
+    return String.format("%s serial unique", column);
   }
 
   /**

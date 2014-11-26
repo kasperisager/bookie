@@ -28,12 +28,11 @@ public final class Schema {
   /**
    * Initialize a new schema.
    *
-   * @param db      The database to run the schema against.
-   * @param grammar The SQL grammar to use for the schema.
+   * @param db The database to run the schema against.
    */
-  public Schema(final Database db, final Grammar grammar) {
+  public Schema(final Database db) {
     this.db = db;
-    this.grammar = grammar;
+    this.grammar = db.grammar();
   }
 
   /**
@@ -100,19 +99,7 @@ public final class Schema {
    * @return        The current {@link Schema} object, for chaining.
    */
   public Schema doublePrecision(final String column) {
-    this.grammar.addDataType(column, "double", true);
-
-    return this;
-  }
-
-  /**
-   * Add a float column to the schema.
-   *
-   * @param column  The name of the column.
-   * @return        The current {@link Schema} object, for chaining.
-   */
-  public Schema floatingPoint(final String column) {
-    this.grammar.addDataType(column, "float", true);
+    this.grammar.addDataType(column, "double precision", true);
 
     return this;
   }
@@ -178,25 +165,13 @@ public final class Schema {
   }
 
   /**
-   * Add a date/time column to the schema.
+   * Add a timestamp column to the schema.
    *
    * @param column  The name of the column.
    * @return        The current {@link Schema} object, for chaining.
    */
-  public Schema datetime(final String column) {
-    this.grammar.addDataType(column, "datetime", true);
-
-    return this;
-  }
-
-  /**
-   * Add a blob column to the schema.
-   *
-   * @param column  The name of the column.
-   * @return        The current {@link Schema} object, for chaining.
-   */
-  public Schema blob(final String column) {
-    this.grammar.addDataType(column, "blob", true);
+  public Schema timestamp(final String column) {
+    this.grammar.addDataType(column, "timestamp", true);
 
     return this;
   }

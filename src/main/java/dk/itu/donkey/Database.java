@@ -44,13 +44,22 @@ public final class Database {
   }
 
   /**
+   * Return a {@link Grammar} object for the database.
+   *
+   * @return A {@link Grammar} object for use with the database.
+   */
+  public Grammar grammar() {
+    return this.driver.grammar();
+  }
+
+  /**
    * Perform a query against a database table.
    *
    * @param name  Name of the table to perform the query against.
    * @return      A {@link Query} object initialized to the current db.
    */
   public Query table(final String name) {
-    return new Query(this, this.driver.grammar(), name);
+    return new Query(this, name);
   }
 
   /**
@@ -59,7 +68,7 @@ public final class Database {
    * @return A {@link Schema} oobject initialized to the current db.
    */
   public Schema schema() {
-    return new Schema(this, this.driver.grammar());
+    return new Schema(this);
   }
 
   /**

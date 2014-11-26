@@ -193,7 +193,7 @@ public abstract class Model {
       }
       // Float type (wrapped + primitive)
       else if (type == Float.class || type == float.class) {
-        schema.floatingPoint(name);
+        schema.doublePrecision(name);
       }
       // Boolean type (wrapped + primitive)
       else if (type == Boolean.class || type == boolean.class) {
@@ -221,9 +221,10 @@ public abstract class Model {
         schema.integer(name);
         schema.foreignKey(name, model.table(), "id");
       }
-      // All other types
       else {
-        schema.blob(name);
+        throw new IllegalArgumentException(
+          "Unsupported data type for column: " + name
+        );
       }
     }
 

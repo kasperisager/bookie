@@ -31,13 +31,12 @@ public final class Query {
   /**
    * Build and perform a query against a database.
    *
-   * @param db      The database to perform the query against.
-   * @param grammar The SQL grammar to use for the query.
-   * @param table   The database table to operate on.
+   * @param db    The database to perform the query against.
+   * @param table The database table to operate on.
    */
-  public Query(final Database db, final Grammar grammar, final String table) {
+  public Query(final Database db, final String table) {
     this.db = db;
-    this.grammar = grammar;
+    this.grammar = db.grammar();
     this.grammar.addTable(table);
   }
 

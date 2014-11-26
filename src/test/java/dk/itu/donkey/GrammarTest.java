@@ -52,10 +52,8 @@ public final class GrammarTest {
   private Grammar g;
 
   /**
-   * Run before each test.
-   *
-   * This re-intializes the grammar object after each test so the next test
-   * can start off fresh.
+   * Re-intialize the grammar object after each test so the next test can start
+   * off fresh.
    */
   @Before
   public void initializeGrammar() {
