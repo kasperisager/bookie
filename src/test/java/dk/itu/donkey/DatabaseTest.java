@@ -17,6 +17,7 @@ import static org.junit.Assert.assertEquals;
 
 // JUnit annotations
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -28,10 +29,52 @@ public final class DatabaseTest {
   /**
    * List of databases to test aginst.
    */
-  private List<Database> databases = new ArrayList<>();
+  private List<Database> databases;
 
   /**
-   * Run after each test.
+   * Initialize a list of all available databases.
+   *
+   * @return A list of initialized databases.
+   */
+  public static List<Database> initializeDatabases() {
+    List<Database> databases = new ArrayList<>();
+
+    // Configure MySQL database.
+    Properties mysqlConf = new Properties();
+    mysqlConf.put("database", "test");
+    mysqlConf.put("user", "travis");
+
+    // Initialize MySQL database.
+    databases.add(new Database(Driver.MYSQL, mysqlConf));
+
+    // Configure PostgreSQL database.
+    Properties postgresqlConf = new Properties();
+    postgresqlConf.put("database", "test");
+    postgresqlConf.put("user", "postgres");
+
+    // Initialize PostgreSQL database.
+    databases.add(new Database(Driver.POSTGRESQL, postgresqlConf));
+
+    // Configure SQLite database.
+    Properties sqliteConf = new Properties();
+    sqliteConf.put("database", "test");
+
+    // Initialize SQLite database.
+    databases.add(new Database(Driver.SQLITE, sqliteConf));
+
+    return databases;
+  }
+
+  /**
+   * Initialize databases before each test.
+   */
+  @Before
+  public void testInitialization() {
+    this.databases = this.initializeDatabases();
+  }
+
+  /**
+   * Clean up databases after each test.
    *
    * @throws SQLException In case of a SQL error.
    */
@@ -40,37 +83,6 @@ public final class DatabaseTest {
     for (Database db: this.databases) {
       db.execute("drop table if exists test");
     }
-  }
-
-  /**
-   * Test initialization of databases.
-   *
-   * @throws SQLException In case of a SQL error.
-   */
-  @Test
-  public void testInitialization() throws SQLException {
-    // Configure MySQL database.
-    Properties mysqlConf = new Properties();
-    mysqlConf.put("database", "test");
-    mysqlConf.put("user", "travis");
-
-    // Initialize MySQL database.
-    this.databases.add(new Database(Driver.MYSQL, mysqlConf));
-
-    // Configure PostgreSQL database.
-    Properties postgresqlConf = new Properties();
-    postgresqlConf.put("database", "test");
-    postgresqlConf.put("user", "postgres");
-
-    // Initialize PostgreSQL database.
-    this.databases.add(new Database(Driver.POSTGRESQL, postgresqlConf));
-
-    // Configure SQLite database.
-    Properties sqliteConf = new Properties();
-    sqliteConf.put("database", "test");
-
-    // Initialize SQLite database.
-    this.databases.add(new Database(Driver.SQLITE, sqliteConf));
   }
 
   /**
@@ -149,8 +161,8 @@ public final class DatabaseTest {
       values2.add("test");
 
       // Test updating.
-      db.execute("update test set test = ? where test = ?");
-      List<Row> res2 = db.execute("select test from test", values2);
+      db.execute("update test set test = ? where test = ?", values2);
+      List<Row> res2 = db.execute("select test from test");
       assertEquals(1, res2.size());
       assertEquals("tset", res2.get(0).get("test"));
 
@@ -158,7 +170,7 @@ public final class DatabaseTest {
       values3.add("tset");
 
       // Test row deletion.
-      db.execute("delete from person where test = ?", values3);
+      db.execute("delete from test where test = ?", values3);
       List<Row> res3 = db.execute("select test from test");
       assertEquals(0, res3.size());
 
