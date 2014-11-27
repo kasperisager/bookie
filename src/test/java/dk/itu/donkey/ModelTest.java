@@ -13,6 +13,7 @@ import java.sql.SQLException;
 // JUnit assertions
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 // JUnit annotations
@@ -242,6 +243,15 @@ public final class ModelTest {
       assertTrue(2.123 == model2.doubleWrapped);
       assertTrue(3.123 == model2.doublePrimitive);
       assertEquals(model1, model2.model);
+
+      Row row3 = new Row();
+      row3.put("field", "test");
+      row3.put("nonexisting", "tset");
+
+      SimpleModel model3 = new SimpleModel(db, row3);
+
+      assertNull(model3.id());
+      assertEquals("test", model3.field);
     }
   }
 
