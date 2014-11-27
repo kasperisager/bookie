@@ -530,4 +530,33 @@ public final class QueryTest {
       assertEquals(0, rows.size());
     }
   }
+
+  /**
+   * Test select statement building with a delete with where clause.
+   *
+   * @throws SQLException In case of a SQL error.
+   */
+  @Test
+  public void testDeleteWithWhere() throws SQLException {
+    for (Database db : this.databases) {
+      List<Object> values1 = new ArrayList<>();
+      values1.add("Kasper");
+      List<Object> values2 = new ArrayList<>();
+      values2.add("Sigrid");
+      List<Object> values3 = new ArrayList<>();
+      values3.add("Sigrid");
+
+      db.execute("insert into test (text_col) values (?)", values1);
+      db.execute("insert into test (text_col) values (?)", values2);
+      db.execute("insert into test (text_col) values (?)", values3);
+
+      db.table("test").where("text_col", "Sigrid").delete();
+
+      List<Row> rows = db.execute("select * from test");
+
+      assertEquals(1, rows.size());
+      assertEquals("Kasper", rows.get(0).get("text_col"));
+    }
+  }
 }
+
