@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 // JUnit annotations
 import org.junit.After;
@@ -420,6 +421,65 @@ public final class QueryTest {
 
       Number avg = (Number) db.table("test").avg("integer_col");
       assertEquals(1, avg.intValue());
+    }
+  }
+
+  /**
+   * Test select statement building with a insert on the result.
+   *
+   * @throws SQLException In case of a SQL error.
+   */
+  @Test
+  public void testInsert() throws SQLException {
+    for (Database db : this.databases) {
+      Row row1 = new Row();
+      row1.put("text_col", "SigridErNice");
+      row1.put("integer_col", 4);
+      row1.put("double_col", 5.5);
+
+      db.table("test").insert(row1);
+      List<Row> rows = db.execute("select * from test");
+
+      Row row2 = rows.get(0);
+      assertEquals(1, rows.size());
+      assertEquals("SigridErNice", (String) row2.get("text_col"));
+      assertTrue(4 == (int) row2.get("integer_col"));
+      assertTrue(5.5 == (double) row2.get("double_col"));
+    }
+  }
+
+
+  /**
+   * Test select statement building with a update on the result.
+   *
+   * @throws SQLException In case of a SQL error.
+   */
+  @Test
+  public void testUpdate() throws SQLException {
+    for (Database db : this.databases) {
+      for (int i = 0; i < 3; i++) {
+        List<Object> values = new ArrayList<>();
+        values.add(i);
+
+        db.execute("insert into test (integer_col) values (?)", values);
+      }
+    }
+  }
+
+  /**
+   * Test select statement building with a delete on the result.
+   *
+   * @throws SQLException In case of a SQL error.
+   */
+  @Test
+  public void testDelete() throws SQLException {
+    for (Database db : this.databases) {
+      for (int i = 0; i < 3; i++) {
+        List<Object> values = new ArrayList<>();
+        values.add(i);
+
+        db.execute("insert into test (integer_col) values (?)", values);
+      }
     }
   }
 }
