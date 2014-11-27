@@ -32,11 +32,6 @@ public abstract class Model {
   private Database db;
 
   /**
-   * The model database schema.
-   */
-  private Schema schema;
-
-  /**
    * The ID of the model.
    *
    * The ID acts as the primary key for all models.
@@ -106,24 +101,6 @@ public abstract class Model {
   }
 
   /**
-   * Provide access to the database object of a model from subclasses.
-   *
-   * @return The database object of the model.
-   */
-  protected final Database db() {
-    return this.db;
-  }
-
-  /**
-   * Provide access to the schema object of a model from subclasses.
-   *
-   * @return The schema object of the model.
-   */
-  protected final Schema schema() {
-    return this.schema;
-  }
-
-  /**
    * Get the table name of a model.
    *
    * @return The table name of the model.
@@ -160,11 +137,6 @@ public abstract class Model {
    * @throws SQLException In case of a SQL error.
    */
   private void defineSchema() throws SQLException {
-    // Check if the schema has already been defined.
-    if (this.schema != null) {
-      return;
-    }
-
     Schema schema = this.db.schema();
     schema.create(this.table);
 
@@ -222,8 +194,7 @@ public abstract class Model {
       }
     }
 
-    this.schema = schema;
-    this.schema.run();
+    schema.run();
   }
 
   /**
