@@ -456,11 +456,25 @@ public final class QueryTest {
   @Test
   public void testUpdate() throws SQLException {
     for (Database db : this.databases) {
-      for (int i = 0; i < 3; i++) {
+      for (int i = 0; i < 4; i++) {
         List<Object> values = new ArrayList<>();
-        values.add(i);
+        values.add("Kasper");
+        values.add(2);
 
-        db.execute("insert into test (integer_col) values (?)", values);
+        db.execute(
+          "insert into test (text_col, integer_col) values (?, ?)", values
+        );
+      }
+
+      Row row1 = new Row();
+      row1.put("text_col", "Sigrid");
+
+      db.table("test").update(row1);
+
+      List<Row> rows = db.execute("select * from test");
+
+      for (Row row: rows) {
+        assertEquals("Sigrid", row.get("text_col"));
       }
     }
   }
