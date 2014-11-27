@@ -368,6 +368,7 @@ public final class QueryTest {
    *
    * @throws SQLException In case of a SQL error.
    */
+  @Test
   public void testMin() throws SQLException {
     for (Database db : this.databases) {
       for (int i = 0; i < 3; i++) {
