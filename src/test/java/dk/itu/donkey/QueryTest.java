@@ -485,6 +485,37 @@ public final class QueryTest {
    * @throws SQLException In case of a SQL error.
    */
   @Test
+  public void testUpdateWithWhere() throws SQLException {
+    for (Database db : this.databases) {
+      List<Object> values1 = new ArrayList<>();
+      values1.add("Kasper");
+      List<Object> values2 = new ArrayList<>();
+      values2.add("Sigrid");
+      List<Object> values3 = new ArrayList<>();
+      values3.add("Sigrid");
+
+      db.execute("insert into test (text_col) values (?)", values1);
+      db.execute("insert into test (text_col) values (?)", values2);
+      db.execute("insert into test (text_col) values (?)", values3);
+
+      Row row = new Row();
+      row.put("text_col", "Per");
+
+      db.table("test").where("text_col", "Sigrid").update(row);
+
+      List<Row> rows = db.execute("select * from test");
+      assertEquals("Kasper", rows.get(0).get("text_col"));
+      assertEquals("Per", rows.get(1).get("text_col"));
+      assertEquals("Per", rows.get(2).get("text_col"));
+    }
+  }
+
+  /**
+   * Test select statement building with a delete on the result.
+   *
+   * @throws SQLException In case of a SQL error.
+   */
+  @Test
   public void testDelete() throws SQLException {
     for (Database db : this.databases) {
       for (int i = 0; i < 3; i++) {
