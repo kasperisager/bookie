@@ -10,6 +10,15 @@ package dk.itu.donkey;
  */
 public final class PostgreSqlGrammar extends Grammar {
   /**
+   * Return the name of auto increment columns.
+   *
+   * @return The name of auto increment columns.
+   */
+  public String generatedAutoIncrementRow() {
+    return "id";
+  }
+
+  /**
    * Build an auto incrementing column.
    *
    * @param column  The name of the column.

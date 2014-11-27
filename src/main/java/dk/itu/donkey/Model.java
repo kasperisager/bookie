@@ -101,10 +101,7 @@ public abstract class Model {
       this.getField(label).set(this, value);
     }
     catch (Exception e) {
-      // This is not supposed to happen. Ever. Since only the Model class
-      // ever calls this method, it should be only ever be called on fields
-      // that actually exists.
-      System.err.print(e.getMessage());
+      return;
     }
   }
 
@@ -174,52 +171,49 @@ public abstract class Model {
     // All models must have an ID.
     schema.increments("id");
 
-    for (Field column: this.getFields()) {
-      String name = column.getName();
-      Class<?> type = column.getType();
-      System.out.println(name);
+    for (Field field: this.getFields()) {
+      String name = field.getName();
+      Class<?> type = field.getType();
+      String column = name.toLowerCase();
 
       // String type
       if (type == String.class) {
-        schema.text(name);
+        schema.text(column);
       }
       // Integer type (wrapped + primitive)
       else if (type == Integer.class || type == int.class) {
-        schema.integer(name);
+        schema.integer(column);
       }
       // Double type (wrapped + primitive)
       else if (type == Double.class || type == double.class) {
-        schema.doublePrecision(name);
+        schema.doublePrecision(column);
       }
       // Float type (wrapped + primitive)
       else if (type == Float.class || type == float.class) {
-        schema.doublePrecision(name);
+        schema.floatingPoint(column);
+      }
+      // Long type (wrapped + primitive)
+      else if (type == Long.class || type == long.class) {
+        schema.longInteger(column);
       }
       // Boolean type (wrapped + primitive)
       else if (type == Boolean.class || type == boolean.class) {
-        schema.bool(name);
+        schema.bool(column);
       }
       // Model subclass
       else if (Model.class.isAssignableFrom(type)) {
-        Model model = null;
-
         try {
-          model = (Model) type.newInstance();
-        }
-        catch (InstantiationException e) {
-          // The given model didn't exist, which is impossible. Java would have
-          // caught the missing class as a type error. Simply print out an
-          // error message to the console.
-          System.err.println(e.getMessage());
-        }
-        catch (IllegalAccessException e) {
-          // The model constructor was not accessible, which likewise should
-          // never happen.
-          System.err.println(e.getMessage());
-        }
+          // Grab the current instance of the subclass.
+          Model model = (Model) this.getField(name).get(this);
 
-        schema.integer(name);
-        schema.foreignKey(name, model.table(), "id");
+          if (model != null) {
+            schema.integer(column);
+            schema.foreignKey(column, model.table(), "id");
+          }
+        }
+        catch (Exception e) {
+          continue;
+        }
       }
       else {
         throw new IllegalArgumentException(
@@ -241,25 +235,22 @@ public abstract class Model {
     Row row = new Row();
 
     for (Field column: this.getFields()) {
+      String name = column.getName();
       Object value = null;
 
       try {
         value = column.get(this);
       }
-      catch (IllegalAccessException e) {
-        // Field wasn't set or didn't exist. This should never happen.
-        System.err.println(e.getMessage());
+      catch (Exception e) {
+        continue;
       }
 
-      if (column.equals("id")) {
-        value = null;
-      }
-      else if (value instanceof Model) {
+      if (value instanceof Model) {
         value = ((Model) value).id();
       }
 
       if (value != null) {
-        row.put(column.getName(), value);
+        row.put(name.toLowerCase(), value);
       }
     }
 
@@ -276,19 +267,22 @@ public abstract class Model {
       return;
     }
 
+    Integer id = (Integer) row.get("id");
+
+    if (id != null && id > 0) {
+      this.id(id);
+    }
+
     for (Field field: this.getFields()) {
       String column = field.getName();
-      Object value = row.get(column);
+      Object value = row.get(column.toLowerCase());
 
       if (value == null) {
         continue;
       }
 
-      if (column.equals("id")) {
-        this.id((Integer) value);
-      }
-      else if (value instanceof Model) {
-        this.setField(column, ((Model) value).id());
+      if (value instanceof Model) {
+        this.setField(column, (Model) value);
       }
       else {
         this.setField(column, value);
@@ -319,14 +313,14 @@ public abstract class Model {
 
     this.defineSchema();
 
-    List<Row> res = this.query().insert(this.getRow());
+    List<Row> rows = this.query().insert(this.getRow());
 
-    if (!res.isEmpty()) {
-      Long id = (Long) res.get(0).get("GENERATED_KEY");
+    if (!rows.isEmpty()) {
+      Number id = (Number) rows.get(0).get(
+        this.db.grammar().generatedAutoIncrementRow()
+      );
 
-      if (id != null) {
-        this.id(id.intValue());
-      }
+      this.id(id.intValue());
     }
 
     return true;
@@ -378,6 +372,7 @@ public abstract class Model {
     }
 
     this.query().where("id", this.id).delete();
+    this.id(null);
 
     return true;
   }

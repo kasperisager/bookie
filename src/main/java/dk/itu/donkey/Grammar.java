@@ -544,6 +544,13 @@ public abstract class Grammar {
   }
 
   /**
+   * Return the name of auto generated columns.
+   *
+   * @return The name of auto generated columns.
+   */
+  public abstract String generatedAutoIncrementRow();
+
+  /**
    * Build an auto incrementing column.
    *
    * <p>

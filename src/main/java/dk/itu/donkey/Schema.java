@@ -105,6 +105,30 @@ public final class Schema {
   }
 
   /**
+   * Add a float column to the schema.
+   *
+   * @param column  The name of the column.
+   * @return        The current {@link Schema} object, for chaining.
+   */
+  public Schema floatingPoint(final String column) {
+    this.grammar.addDataType(column, "float(24)", true);
+
+    return this;
+  }
+
+  /**
+   * Add a long column to the schema.
+   *
+   * @param column  The name of the column.
+   * @return        The current {@link Schema} object, for chaining.
+   */
+  public Schema longInteger(final String column) {
+    this.grammar.addDataType(column, "bigint", true);
+
+    return this;
+  }
+
+  /**
    * Add a real column to the schema.
    *
    * @param column  The name of the column.

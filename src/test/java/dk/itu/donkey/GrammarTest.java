@@ -30,6 +30,15 @@ public final class GrammarTest {
     /**
      * Abstract method; return null.
      *
+     * @return Null. Always.
+     */
+    public String generatedAutoIncrementRow() {
+      return null;
+    }
+
+    /**
+     * Abstract method; return null.
+     *
      * @param column  The name of the column.
      * @return        Null. Always.
      */

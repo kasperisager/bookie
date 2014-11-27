@@ -15,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.sql.SQLException;
+import java.sql.Types;
 
 /**
  * Database class.
@@ -188,7 +189,32 @@ public final class Database {
       // Run through each of the columns in the row and add them as
       // entries to the row object.
       for (int i = 1; i <= columnCount; i++) {
-        row.put(rm.getColumnLabel(i), rs.getObject(i));
+        Object value;
+
+        switch (rm.getColumnType(i)) {
+          case Types.VARCHAR:
+            value = rs.getString(i);
+            break;
+          case Types.INTEGER:
+            value = rs.getInt(i);
+            break;
+          case Types.DOUBLE:
+            value = rs.getDouble(i);
+            break;
+          case Types.FLOAT:
+            value = rs.getFloat(i);
+            break;
+          case Types.BIGINT:
+            value = rs.getLong(i);
+            break;
+          case Types.BOOLEAN:
+            value = rs.getBoolean(i);
+            break;
+          default:
+            value = rs.getObject(i);
+        }
+
+        row.put(rm.getColumnLabel(i), value);
       }
 
       rows.add(row);

@@ -79,6 +79,8 @@ public final class SchemaTest {
         .text("textCol")
         .integer("integerCol")
         .doublePrecision("doubleCol")
+        .floatingPoint("floatCol")
+        .longInteger("longCol")
         .real("realCol")
         .numeric("numericCol")
         .bool("boolCol")
@@ -92,8 +94,9 @@ public final class SchemaTest {
 
       // Verify that the table and all columns were created.
       db.execute(
-        "select textCol, integerCol, doubleCol, realCol, numericCol, boolCol,"
-      + " dateCol, timeCol, timestampCol, incrementsCol from test"
+        "select textCol, integerCol, doubleCol, floatCol, longCol, realCol,"
+      + " numericCol, boolCol, dateCol, timeCol, timestampCol, incrementsCol"
+      + " from test"
       );
     }
   }
