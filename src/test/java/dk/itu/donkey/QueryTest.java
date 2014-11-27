@@ -251,6 +251,35 @@ public final class QueryTest {
   }
 
   /**
+   * Test select statement building returning a result ordered by one or more
+   * columns.
+   */
+  @Test
+  public void testSelectWithOrderBy() throws SQLException {
+    for (Database db: this.databases) {
+      int n = 4;
+
+      for (int i = 0; i < n; i++) {
+        List<Object> values = new ArrayList<>();
+        values.add(i);
+
+        db.execute("insert into test (integer_col) values (?)", values);
+      }
+
+      List<Row> desc = db.table("test").orderBy("integer_col").get();
+      assertEquals(n, desc.size());
+
+      List<Row> asc = db.table("test").orderBy("integer_col", "asc").get();
+      assertEquals(n, asc.size());
+
+      for (int i = 0; i < n; i++) {
+        assertEquals(n - i - 1, desc.get(i).get("integer_col"));
+        assertEquals(i, asc.get(i).get("integer_col"));
+      }
+    }
+  }
+
+  /**
    * Test select statement building with a limit on the result size.
    *
    * @throws SQLException In case of a SQL error.
