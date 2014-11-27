@@ -382,4 +382,24 @@ public final class QueryTest {
       assertEquals(0, min);
     }
   }
+
+  /**
+   * Test select statement building with a min on the result.
+   *
+   * @throws SQLException In case of a SQL error.
+   */
+  @Test
+  public void testSum() throws SQLException {
+    for (Database db : this.databases) {
+      for (int i = 0; i < 3; i++) {
+        List<Object> values = new ArrayList<>();
+        values.add(i);
+
+        db.execute("insert into test (integer_col) values (?)", values);
+      }
+
+      Number sum = (Number) db.table("test").sum("integer_col");
+      assertEquals(3, sum.intValue());
+    }
+  }
 }
