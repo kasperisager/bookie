@@ -448,7 +448,6 @@ public final class QueryTest {
     }
   }
 
-
   /**
    * Test select statement building with a update on the result.
    *
