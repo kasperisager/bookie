@@ -273,7 +273,15 @@ public final class Query {
   ) throws SQLException {
     String aggregate = String.format("%s(%s)", function, column);
 
-    return this.select(aggregate).first().get(aggregate);
+    Row row = this.select(aggregate).first();
+
+    Number count = (Number) row.get(aggregate);
+
+    if (count == null) {
+      count = (Number) row.get(function);
+    }
+
+    return count;
   }
 
   /**
