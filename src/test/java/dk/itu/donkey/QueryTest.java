@@ -524,6 +524,10 @@ public final class QueryTest {
 
         db.execute("insert into test (integer_col) values (?)", values);
       }
+
+      db.table("test").delete();
+      List<Row> rows = db.execute("select * from test");
+      assertEquals(0, rows.size());
     }
   }
 }
