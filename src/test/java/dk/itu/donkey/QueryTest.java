@@ -342,4 +342,24 @@ public final class QueryTest {
       assertEquals(3, count.intValue());
     }
   }
+
+  /**
+   * Test select statement building with a max on the result.
+   *
+   * @throws SQLException In case of a SQL error.
+   */
+  @Test
+  public void testMax() throws SQLException {
+    for (Database db: this.databases) {
+      for (int i = 0; i < 3; i++) {
+        List<Object> values = new ArrayList<>();
+        values.add(i);
+
+        db.execute("insert into test (integer_col) values (?)", values);
+      }
+
+      int max = (int) db.table("test").max("integer_col");
+      assertEquals(2, max);
+    }
+  }
 }
