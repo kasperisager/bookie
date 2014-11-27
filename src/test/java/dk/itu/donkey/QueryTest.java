@@ -253,6 +253,8 @@ public final class QueryTest {
   /**
    * Test select statement building returning a result ordered by one or more
    * columns.
+   *
+   * @throws SQLException In case of a SQL error.
    */
   @Test
   public void testSelectWithOrderBy() throws SQLException {
