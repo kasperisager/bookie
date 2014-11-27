@@ -9,7 +9,7 @@ It features a homebrewed data-persistence library named _Donkey_ which sits on t
 
 ## Donkey
 
-JDBC is not the worst but gets really tiresome to work with. Registering drivers, getting connections, preparing statements, writing SQL, etc. are all things we're way too lazy to do. It's 2014: Who writes SQL by hand anymore? Donkey does away with all that, allowing us to focus on what matters: Data modelling. Isn't that really the reason anyone would write an ORM?
+JDBC is not the worst but gets really tiresome to work with. Registering drivers, getting connections, preparing statements, writing SQL, etc. are all things we're way too lazy to do. It's 2014: Who writes SQL by hand anymore? Donkey does away with all that, allowing us to focus on what matters: Data modelling. Isn't that really the reason why anyone would write an ORM?
 
 The following is an example of a simple Donkey model:
 
