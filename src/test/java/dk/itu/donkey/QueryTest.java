@@ -362,4 +362,23 @@ public final class QueryTest {
       assertEquals(2, max);
     }
   }
+
+  /**
+   * Test select statement building with a min on the result.
+   *
+   * @throws SQLException In case of a SQL error.
+   */
+  public void testMin() throws SQLException {
+    for (Database db : this.databases) {
+      for (int i = 0; i < 3; i++) {
+        List<Object> values = new ArrayList<>();
+        values.add(i);
+
+        db.execute("insert into test (integer_col) values (?)", values);
+      }
+
+      int min = (int) db.table("test").min("integer_col");
+      assertEquals(0, min);
+    }
+  }
 }
