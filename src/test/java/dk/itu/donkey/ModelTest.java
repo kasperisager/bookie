@@ -243,15 +243,52 @@ public final class ModelTest {
       assertTrue(2.123 == model2.doubleWrapped);
       assertTrue(3.123 == model2.doublePrimitive);
       assertEquals(model1, model2.model);
+    }
+  }
 
-      Row row3 = new Row();
-      row3.put("field", "test");
-      row3.put("nonexisting", "tset");
+  /**
+   * Test model initialization from a database row with a non-existing field.
+   */
+  @Test
+  public void testInitializationFromRowWithNonExistingField() {
+   for (Database db: this.databases) {
+      Row row = new Row();
+      row.put("field", "test");
+      row.put("nonexisting", "tset");
 
-      SimpleModel model3 = new SimpleModel(db, row3);
+      SimpleModel model = new SimpleModel(db, row);
 
-      assertNull(model3.id());
-      assertEquals("test", model3.field);
+      assertNull(model.id());
+      assertEquals("test", model.field);
+    }
+  }
+
+  /**
+   * Test model initialization from a null database row.
+   */
+  @Test
+  public void testInitializationFromNullRow() {
+    for (Database db: this.databases) {
+      Row row = null;
+
+      SimpleModel model = new SimpleModel(db, row);
+
+      assertNull(model.field);
+    }
+  }
+
+  /**
+   * Test model initialization from a database row with a null field.
+   */
+  @Test
+  public void testInitializationFromRowWithNullField() {
+    for (Database db: this.databases) {
+      Row row = new Row();
+      row.put("field", null);
+
+      SimpleModel model = new SimpleModel(db, row);
+
+      assertNull(model.field);
     }
   }
 
