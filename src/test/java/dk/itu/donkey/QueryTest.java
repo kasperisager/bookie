@@ -322,4 +322,24 @@ public final class QueryTest {
       assertEquals(3, rows.get(1).get("integer_col"));
     }
   }
+
+  /**
+   * Test select statement building with a count on the result.
+   *
+   * @throws SQLException In case of a SQL error.
+   */
+  @Test
+  public void testCount() throws SQLException {
+    for (Database db: this.databases) {
+      for (int i = 0; i < 3; i++) {
+        List<Object> values = new ArrayList<>();
+        values.add("KasperGiverKage");
+
+        db.execute("insert into test (text_col) values (?)", values);
+      }
+
+      Number count = db.table("test").count();
+      assertEquals(3, count.intValue());
+    }
+  }
 }
