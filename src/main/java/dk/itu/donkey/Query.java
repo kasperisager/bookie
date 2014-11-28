@@ -122,6 +122,50 @@ public final class Query {
   }
 
   /**
+   * Add a `right join` clause to the query.
+   *
+   * @param foreignTable  The foreign table to join.
+   * @param localColumn   The column in the local table.
+   * @param operator      The logical operator to use in the join constraint.
+   * @param foreignColumn The column in the foreign table.
+   * @return              The current {@link Query} object, for chaining.
+   */
+  public Query join(
+    final String foreignTable,
+    final String localColumn,
+    final String operator,
+    final String foreignColumn
+  ) {
+    this.grammar.addJoin(
+      "inner", foreignTable, localColumn, operator, foreignColumn
+    );
+
+    return this;
+  }
+
+  /**
+   * Add a `left join` clause to the query.
+   *
+   * @param foreignTable  The foreign table to join.
+   * @param localColumn   The column in the local table.
+   * @param operator      The logical operator to use in the join constraint.
+   * @param foreignColumn The column in the foreign table.
+   * @return              The current {@link Query} object, for chaining.
+   */
+  public Query leftJoin(
+    final String foreignTable,
+    final String localColumn,
+    final String operator,
+    final String foreignColumn
+  ) {
+    this.grammar.addJoin(
+      "left", foreignTable, localColumn, operator, foreignColumn
+    );
+
+    return this;
+  }
+
+  /**
    * Add a `where` statement to the query.
    *
    * @param column    The column to compare.

@@ -78,6 +78,11 @@ public abstract class Grammar {
   private List<Object> rawValues = new ArrayList<>();
 
   /**
+   * List of formatted joins.
+   */
+  private List<String> joins = new ArrayList<>();
+
+  /**
    * List of formatted wheres.
    *
    * <p>
@@ -95,11 +100,6 @@ public abstract class Grammar {
    * List of where values.
    */
   private List<Object> whereValues = new ArrayList<>();
-
-  /**
-   * List of formatted joins.
-   */
-  private List<String> joins = new ArrayList<>();
 
   /**
    * List of formatted orders.
@@ -273,6 +273,63 @@ public abstract class Grammar {
   }
 
   /**
+   * Build a formatted join clause.
+   *
+   * @param type          The type of join to perform.
+   * @param foreignTable  The foreign table to join.
+   * @param localColumn   The column in the local table.
+   * @param operator      The logical operator to use in the join constraint.
+   * @param foreignColumn The column in the foreign table.
+   * @return              A formatted join clause.
+   */
+  public final String buildJoin(
+    final String type,
+    final String foreignTable,
+    final String localColumn,
+    final String operator,
+    final String foreignColumn
+  ) {
+    return String.format("%s join %s on %s %s %s",
+      type.trim(),
+      this.buildTable(foreignTable),
+      this.buildColumn(localColumn),
+      operator.trim(),
+      this.buildColumn(foreignColumn)
+    );
+  }
+
+  /**
+   * Build a list of formatted join clauses.
+   *
+   * @param joins The formatted join clauses.
+   * @return      A space-separated list of joins.
+   */
+  public final String buildJoins(final List<String> joins) {
+    return String.join(" ", joins);
+  }
+
+  /**
+   * Add a join clause to the grammar.
+   *
+   * @param type          The type of join to perform.
+   * @param foreignTable  The foreign table to join.
+   * @param localColumn   The column in the local table.
+   * @param operator      The logical operator to use in the join constraint.
+   * @param foreignColumn The column in the foreign table.
+   */
+  public final void addJoin(
+    final String type,
+    final String foreignTable,
+    final String localColumn,
+    final String operator,
+    final String foreignColumn
+  ) {
+    this.joins.add(
+      this.buildJoin(type, foreignTable, localColumn, operator, foreignColumn)
+    );
+  }
+
+  /**
    * Build a formatted where clause.
    *
    * <p>
@@ -336,63 +393,6 @@ public abstract class Grammar {
     final String comparator
   ) {
     this.wheres.add(this.buildWhere(column, operator, value, comparator));
-  }
-
-  /**
-   * Build a formatted join clause.
-   *
-   * @param type          The type of join to perform.
-   * @param foreignTable  The foreign table to join.
-   * @param localColumn   The column in the local table.
-   * @param operator      The logical operator to use in the join constraint.
-   * @param foreignColumn The column in the foreign table.
-   * @return              A formatted join clause.
-   */
-  public final String buildJoin(
-    final String type,
-    final String foreignTable,
-    final String localColumn,
-    final String operator,
-    final String foreignColumn
-  ) {
-    return String.format("%s join %s on %s %s %s",
-      type.trim(),
-      this.buildTable(foreignTable),
-      this.buildColumn(localColumn),
-      operator.trim(),
-      this.buildColumn(foreignColumn)
-    );
-  }
-
-  /**
-   * Build a list of formatted join clauses.
-   *
-   * @param joins The formatted join clauses.
-   * @return      A space-separated list of joins.
-   */
-  public final String buildJoins(final List<String> joins) {
-    return String.join(" ", joins);
-  }
-
-  /**
-   * Add a join clause to the grammar.
-   *
-   * @param type          The type of join to perform.
-   * @param foreignTable  The foreign table to join.
-   * @param localColumn   The column in the local table.
-   * @param operator      The logical operator to use in the join constraint.
-   * @param foreignColumn The column in the foreign table.
-   */
-  public final void addJoin(
-    final String type,
-    final String foreignTable,
-    final String localColumn,
-    final String operator,
-    final String foreignColumn
-  ) {
-    this.joins.add(
-      this.buildJoin(type, foreignTable, localColumn, operator, foreignColumn)
-    );
   }
 
   /**

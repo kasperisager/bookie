@@ -61,6 +61,8 @@ public final class QueryTest {
   public void after() throws SQLException {
     for (Database db: this.databases) {
       db.execute("drop table if exists test");
+      db.execute("drop table if exists test1");
+      db.execute("drop table if exists test2");
     }
   }
 
@@ -137,6 +139,44 @@ public final class QueryTest {
       List<Row> rows3 = db.table("test").select().get();
 
       assertEquals(2, rows3.size());
+    }
+  }
+
+  /**
+   * Test select statement with join clause.
+   *
+   * @throws SQLException In case of a SQL error.
+   */
+  @Test
+  public void testSelectWithJoin() throws SQLException {
+    for (Database db: this.databases) {
+      db.execute(
+        "create table if not exists test1 ("
+      + "column1 integer"
+      + ")"
+      );
+
+      db.execute(
+        "create table if not exists test2 ("
+      + "column2 integer"
+      + ")"
+      );
+
+      List<Object> values = new ArrayList<>();
+      values.add(1);
+
+      db.execute("insert into test1 (column1) values (?)", values);
+      db.execute("insert into test2 (column2) values (?)", values);
+
+      List<Row> rows = db.table("test1")
+                         .join("test2", "test1.column1", "=", "test2.column2")
+                         .get();
+
+      assertEquals(1, rows.size());
+
+      Row row = rows.get(0);
+      assertEquals(1, row.get("column1"));
+      assertEquals(1, row.get("column2"));
     }
   }
 
