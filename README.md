@@ -24,7 +24,17 @@ public class Person extends Model {
 }
 ```
 
-This will give you a basic model that you can then `insert()`, `update()`, or `delete()` from your database. Donkey takes care of defining a database schema for you as long as you keep your fields `public`. Donkey of course also provides a solid set of tools for working more hands-on with databases.
+This will give you a basic model that you can then `insert()`, `update()`, or `delete()` from your database. Donkey takes care of defining a database schema for you as long as you keep your fields `public`. To grab some models from the database use `find()` and `findAll()`:
+
+```java
+Person person = Model.find(Person.class)
+                     .where("name", "John")
+                     .get();
+
+List<Person> people = Model.findAll(Person.class);
+```
+
+Donkey of course also provides a solid set of tools for working more hands-on with databases.
 
 ---
 
