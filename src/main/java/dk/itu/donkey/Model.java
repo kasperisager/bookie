@@ -40,6 +40,13 @@ public abstract class Model {
 
   /**
    * Initialize a model.
+   */
+  public Model() {
+    super();
+  }
+
+  /**
+   * Initialize a model.
    *
    * @param table The name of the table to use for the model.
    * @param db    The database to use for persisting the model.
@@ -175,13 +182,10 @@ public abstract class Model {
       // Model subclass
       else if (Model.class.isAssignableFrom(type)) {
         try {
-          // Grab the current instance of the subclass.
-          Model model = (Model) this.getField(name).get(this);
+          Model model = (Model) type.newInstance();
 
-          if (model != null) {
-            schema.integer(column);
-            schema.foreignKey(column, model.table(), "id");
-          }
+          schema.integer(column);
+          schema.foreignKey(column, model.table(), "id");
         }
         catch (Exception e) {
           continue;

@@ -21,6 +21,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+// Model fixtures
+import dk.itu.donkey.fixture.ConcreteModel1;
+import dk.itu.donkey.fixture.ConcreteModel2;
+import dk.itu.donkey.fixture.ConcreteModel3;
+
 /**
  * Model class unit tests.
  *
@@ -28,146 +33,23 @@ import org.junit.Test;
  */
 public final class ModelTest {
   /**
-   * Concrete model class for testing.
+   * Current database being tested against.
    */
-  private class ConcreteModel1 extends Model {
-    /**
-     * Float field (wrapped).
-     */
-    public Float floatWrapped;
-
-    /**
-     * Float field (primitive).
-     */
-    public float floatPrimitive;
-
-    /**
-     * Long field (wrapped).
-     */
-    public Long longWrapped;
-
-    /**
-     * Long field (primitive).
-     */
-    public long longPrimitive;
-
-    /**
-     * Boolean field (wrapped).
-     */
-    public Boolean booleanWrapped;
-
-    /**
-     * Boolean field (primitive).
-     */
-    public boolean booleanPrimitive;
-
-    /**
-     * Initialize a model.
-     *
-     * @param db The database to use for persisting the model.
-     */
-    public ConcreteModel1(final Database db) {
-      super("test2", db);
-    }
-
-    /**
-     * Initialize a model from a database row.
-     *
-     * @param db  The database to use for persisting the model.
-     * @param row The database row to initialize the model from.
-     */
-    public ConcreteModel1(final Database db, final Row row) {
-      super("test2", db, row);
-    }
-  }
-
-  /**
-   * Concrete model class for testing.
-   */
-  private class ConcreteModel2 extends Model {
-    /**
-     * String field.
-     */
-    public String string;
-
-    /**
-     * Integer field (wrapped).
-     */
-    public Integer intWrapped;
-
-    /**
-     * Integer field (primitive).
-     */
-    public int intPrimitive;
-
-    /**
-     * Double field (wrapped).
-     */
-    public Double doubleWrapped;
-
-    /**
-     * Double field (primitive).
-     */
-    public double doublePrimitive;
-
-    /**
-     * Model subclass field.
-     */
-    public ConcreteModel1 model;
-
-    /**
-     * Initialize a model.
-     *
-     * @param db The database to use for persisting the model.
-     */
-    public ConcreteModel2(final Database db) {
-      super("test1", db);
-    }
-
-    /**
-     * Initialize a model from a database row.
-     *
-     * @param db  The database to use for persisting the model.
-     * @param row The database row to initialize the model from.
-     */
-    public ConcreteModel2(final Database db, final Row row) {
-      super("test1", db, row);
-    }
-  }
-
-  /**
-   * Concrete model class for testing.
-   */
-  private class SimpleModel extends Model {
-    /**
-     * String field.
-     */
-    public String field;
-
-    /**
-     * Initialize a model.
-     *
-     * @param db The database to use for persisting the model.
-     */
-    public SimpleModel(final Database db) {
-      super("test1", db);
-    }
-
-    /**
-     * Initialize a model from a database row.
-     *
-     * @param db  The database to use for persisting the model.
-     * @param row The database row to initialize the model from.
-     */
-    public SimpleModel(final Database db, final Row row) {
-      super("test1", db, row);
-    }
-  }
+  private static Database db;
 
   /**
    * List of database to test against.
    */
   private List<Database> databases;
+
+  /**
+   * Grab the current database being tested against.
+   *
+   * @return The current database being tested against.
+   */
+  public static Database db() {
+    return ModelTest.db;
+  }
 
   /**
    * Initialize databases before each test.
@@ -196,7 +78,10 @@ public final class ModelTest {
   @Test
   public void testInitialization() {
     for (Database db: this.databases) {
-      ConcreteModel1 model = new ConcreteModel1(db);
+      // Set the database being tested.
+      ModelTest.db = db;
+
+      ConcreteModel1 model = new ConcreteModel1();
     }
   }
 
@@ -206,6 +91,9 @@ public final class ModelTest {
   @Test
   public void testInitializationFromRow() {
     for (Database db: this.databases) {
+      // Set the database being tested.
+      ModelTest.db = db;
+
       Row row1 = new Row();
       row1.put("id", 1);
       row1.put("floatwrapped", 2123f);
@@ -215,8 +103,7 @@ public final class ModelTest {
       row1.put("booleanwrapped", false);
       row1.put("booleanprimitive", true);
 
-      ConcreteModel1 model1 = new ConcreteModel1(db, row1);
-
+      ConcreteModel1 model1 = new ConcreteModel1(row1);
       assertTrue(1 == model1.id());
       assertTrue(2123f == model1.floatWrapped);
       assertTrue(3123f == model1.floatPrimitive);
@@ -234,8 +121,7 @@ public final class ModelTest {
       row2.put("doubleprimitive", 3.123);
       row2.put("model", model1);
 
-      ConcreteModel2 model2 = new ConcreteModel2(db, row2);
-
+      ConcreteModel2 model2 = new ConcreteModel2(row2);
       assertTrue(2 == model2.id());
       assertEquals("test", model2.string);
       assertTrue(100 == model2.intWrapped);
@@ -252,12 +138,14 @@ public final class ModelTest {
   @Test
   public void testInitializationFromRowWithNonExistingField() {
    for (Database db: this.databases) {
+      // Set the database being tested.
+      ModelTest.db = db;
+
       Row row = new Row();
       row.put("field", "test");
       row.put("nonexisting", "tset");
 
-      SimpleModel model = new SimpleModel(db, row);
-
+      ConcreteModel3 model = new ConcreteModel3(row);
       assertNull(model.id());
       assertEquals("test", model.field);
     }
@@ -269,10 +157,12 @@ public final class ModelTest {
   @Test
   public void testInitializationFromNullRow() {
     for (Database db: this.databases) {
+      // Set the database being tested.
+      ModelTest.db = db;
+
       Row row = null;
 
-      SimpleModel model = new SimpleModel(db, row);
-
+      ConcreteModel3 model = new ConcreteModel3(row);
       assertNull(model.field);
     }
   }
@@ -283,11 +173,13 @@ public final class ModelTest {
   @Test
   public void testInitializationFromRowWithNullField() {
     for (Database db: this.databases) {
+      // Set the database being tested.
+      ModelTest.db = db;
+
       Row row = new Row();
       row.put("field", null);
 
-      SimpleModel model = new SimpleModel(db, row);
-
+      ConcreteModel3 model = new ConcreteModel3(row);
       assertNull(model.field);
     }
   }
@@ -300,7 +192,10 @@ public final class ModelTest {
   @Test
   public void testInsert() throws SQLException {
     for (Database db: this.databases) {
-      ConcreteModel1 model1 = new ConcreteModel1(db);
+      // Set the database being tested.
+      ModelTest.db = db;
+
+      ConcreteModel1 model1 = new ConcreteModel1();
 
       model1.floatWrapped = 2123f;
       model1.floatPrimitive = 3123f;
@@ -310,15 +205,12 @@ public final class ModelTest {
       model1.booleanPrimitive = true;
 
       assertTrue(model1.insert());
-
       assertFalse(model1.insert());
 
       List<Row> rows1 = db.table(model1.table()).get();
-
       assertEquals(1, rows1.size());
 
       Row row1 = rows1.get(0);
-
       assertTrue(2123f == (Float) row1.get("floatwrapped"));
       assertTrue(3123f == (float) row1.get("floatprimitive"));
       assertTrue(2123L == (Long) row1.get("longwrapped"));
@@ -326,7 +218,7 @@ public final class ModelTest {
       assertFalse((Boolean) row1.get("booleanwrapped"));
       assertTrue((boolean) row1.get("booleanprimitive"));
 
-      ConcreteModel2 model2 = new ConcreteModel2(db);
+      ConcreteModel2 model2 = new ConcreteModel2();
 
       model2.string = "string";
       model2.intWrapped = 100;
@@ -334,11 +226,9 @@ public final class ModelTest {
       model2.doubleWrapped = 2.123;
       model2.doublePrimitive = 3.123;
       model2.model = model1;
-
       model2.insert();
 
       Row row2 = db.table(model2.table()).first();
-
       assertEquals("string", row2.get("string"));
       assertTrue(100 == (Integer) row2.get("intwrapped"));
       assertTrue(200 == (int) row2.get("intprimitive"));
@@ -356,19 +246,18 @@ public final class ModelTest {
   @Test
   public void testUpdate() throws SQLException {
     for (Database db: this.databases) {
-      SimpleModel model = new SimpleModel(db);
+      // Set the database being tested.
+      ModelTest.db = db;
+
+      ConcreteModel3 model = new ConcreteModel3();
       model.field = "test";
-
       assertFalse(model.update());
-
       model.insert();
 
       model.field = "tset";
-
       assertTrue(model.update());
 
       Row row = db.table(model.table()).first();
-
       assertEquals("tset", row.get("field"));
     }
   }
@@ -381,7 +270,10 @@ public final class ModelTest {
   @Test
   public void testUpsert() throws SQLException {
     for (Database db: this.databases) {
-      SimpleModel model = new SimpleModel(db);
+      // Set the database being tested.
+      ModelTest.db = db;
+
+      ConcreteModel3 model = new ConcreteModel3();
       model.field = "test";
       model.upsert();
 
@@ -405,15 +297,15 @@ public final class ModelTest {
   @Test
   public void testDelete() throws SQLException {
     for (Database db: this.databases) {
-      SimpleModel model = new SimpleModel(db);
+      // Set the database being tested.
+      ModelTest.db = db;
+
+      ConcreteModel3 model = new ConcreteModel3();
       model.field = "test";
-
       assertFalse(model.delete());
-
       model.insert();
 
       assertTrue(model.delete());
-
       assertFalse(model.delete());
 
       Row row = db.table(model.table()).first();
