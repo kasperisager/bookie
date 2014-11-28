@@ -162,21 +162,47 @@ public final class QueryTest {
       + ")"
       );
 
-      List<Object> values = new ArrayList<>();
-      values.add(1);
+      List<Object> values1 = new ArrayList<>();
+      values1.add(null);
 
-      db.execute("insert into test1 (column1) values (?)", values);
-      db.execute("insert into test2 (column2) values (?)", values);
+      List<Object> values2 = new ArrayList<>();
+      values2.add(1);
 
-      List<Row> rows = db.table("test1")
-                         .join("test2", "test1.column1", "=", "test2.column2")
-                         .get();
+      for (int i = 0; i < 3; i++) {
+        db.execute("insert into test1 (column1) values (?)", values1);
+      }
 
-      assertEquals(1, rows.size());
+      for (int i = 0; i < 2; i++) {
+        db.execute("insert into test1 (column1) values (?)", values2);
+      }
 
-      Row row = rows.get(0);
-      assertEquals(1, row.get("column1"));
-      assertEquals(1, row.get("column2"));
+      for (int i = 0; i < 4; i++) {
+        db.execute("insert into test2 (column2) values (?)", values2);
+      }
+
+      List<Row> rows1 = db.table("test1")
+                          .join(
+                            "test2", "test1.column1", "=", "test2.column2"
+                          )
+                          .get();
+
+      assertEquals(8, rows1.size());
+
+      for (Row row: rows1) {
+        assertEquals(row.get("column1"), row.get("column1"));
+      }
+
+      List<Row> rows2 = db.table("test1")
+                          .leftJoin(
+                            "test2", "test1.column1", "=", "test2.column2"
+                          )
+                          .get();
+
+      assertEquals(11, rows2.size());
+
+      for (Row row: rows2) {
+        assertEquals(row.get("column1"), row.get("column1"));
+      }
     }
   }
 

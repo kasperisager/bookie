@@ -159,7 +159,7 @@ public final class Query {
     final String foreignColumn
   ) {
     this.grammar.addJoin(
-      "left", foreignTable, localColumn, operator, foreignColumn
+      "left outer", foreignTable, localColumn, operator, foreignColumn
     );
 
     return this;
