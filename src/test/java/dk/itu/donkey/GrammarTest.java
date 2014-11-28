@@ -279,6 +279,9 @@ public final class GrammarTest {
     this.g.addColumn("column3");
     this.g.addColumn("column4");
 
+    this.g.addJoin("right", "table2", "table1.column1", "=", "table2.column2");
+    this.g.addJoin("left", "table2", "table1.column1", "<", "table2.column2");
+
     this.g.addWhere("column1", ">", 100, "and");
     this.g.addWhere("column2", "=", "value1", "and");
     this.g.addWhere("column3", "<", 2.123, "or");
@@ -292,6 +295,8 @@ public final class GrammarTest {
 
     assertEquals(
       "select column1, column2, column3, column4 from test"
+    + " right join table2 on table1.column1 = table2.column2"
+    + " left join table2 on table1.column1 < table2.column2"
     + " where column1 > ? and column2 = ? or column3 < ? or column4 = ?"
     + " order by column2 asc, column4 desc"
     + " limit 101"
