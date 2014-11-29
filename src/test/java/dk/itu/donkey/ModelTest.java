@@ -6,7 +6,6 @@ package dk.itu.donkey;
 // General utilities
 import java.util.List;
 
-
 // SQL utilities
 import java.sql.SQLException;
 
@@ -103,7 +102,8 @@ public final class ModelTest {
       row1.put("booleanwrapped", false);
       row1.put("booleanprimitive", true);
 
-      ConcreteModel1 model1 = new ConcreteModel1(row1);
+      ConcreteModel1 model1 = new ConcreteModel1();
+      model1.setRow(row1);
       assertTrue(1 == model1.id());
       assertTrue(2123f == model1.floatWrapped);
       assertTrue(3123f == model1.floatPrimitive);
@@ -121,7 +121,8 @@ public final class ModelTest {
       row2.put("doubleprimitive", 3.123);
       row2.put("model", model1);
 
-      ConcreteModel2 model2 = new ConcreteModel2(row2);
+      ConcreteModel2 model2 = new ConcreteModel2();
+      model2.setRow(row2);
       assertTrue(2 == model2.id());
       assertEquals("test", model2.string);
       assertTrue(100 == model2.intWrapped);
@@ -145,7 +146,8 @@ public final class ModelTest {
       row.put("field", "test");
       row.put("nonexisting", "tset");
 
-      ConcreteModel3 model = new ConcreteModel3(row);
+      ConcreteModel3 model = new ConcreteModel3();
+      model.setRow(row);
       assertNull(model.id());
       assertEquals("test", model.field);
     }
@@ -162,7 +164,8 @@ public final class ModelTest {
 
       Row row = null;
 
-      ConcreteModel3 model = new ConcreteModel3(row);
+      ConcreteModel3 model = new ConcreteModel3();
+      model.setRow(row);
       assertNull(model.field);
     }
   }
@@ -179,7 +182,8 @@ public final class ModelTest {
       Row row = new Row();
       row.put("field", null);
 
-      ConcreteModel3 model = new ConcreteModel3(row);
+      ConcreteModel3 model = new ConcreteModel3();
+      model.setRow(row);
       assertNull(model.field);
     }
   }

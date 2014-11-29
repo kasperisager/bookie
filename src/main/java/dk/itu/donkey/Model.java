@@ -4,6 +4,7 @@
 package dk.itu.donkey;
 
 // General utilities
+import java.util.ArrayList;
 import java.util.List;
 
 // Reflection utilities
@@ -38,6 +39,8 @@ public abstract class Model {
    */
   private Integer id;
 
+  protected Query query;
+
   /**
    * Initialize a model.
    */
@@ -52,20 +55,9 @@ public abstract class Model {
    * @param db    The database to use for persisting the model.
    */
   public Model(final String table, final Database db) {
+    this();
     this.table = table.toLowerCase().trim().replaceAll(" +", "_");
     this.db = db;
-  }
-
-  /**
-   * Initialize a model from a database row.
-   *
-   * @param table The name of the table to use for the model.
-   * @param db    The database to use for persisting the model.
-   * @param row   The database row to use for intializing the model.
-   */
-  public Model(final String table, final Database db, final Row row) {
-    this(table, db);
-    this.setRow(row);
   }
 
   /**
@@ -206,7 +198,7 @@ public abstract class Model {
    *
    * @return The row representation of the model.
    */
-  private Row getRow() {
+  public final Row getRow() {
     Row row = new Row();
 
     for (Field column: this.getFields()) {
@@ -224,9 +216,7 @@ public abstract class Model {
         value = ((Model) value).id();
       }
 
-      if (value != null) {
-        row.put(name.toLowerCase(), value);
-      }
+      row.put(name.toLowerCase(), value);
     }
 
     return row;
@@ -237,7 +227,7 @@ public abstract class Model {
    *
    * @param row The Row representaion to apply to the model.
    */
-  private void setRow(final Row row) {
+  public final void setRow(final Row row) {
     if (row == null || this.id != null) {
       return;
     }
@@ -252,16 +242,7 @@ public abstract class Model {
       String column = field.getName();
       Object value = row.get(column.toLowerCase());
 
-      if (value == null) {
-        continue;
-      }
-
-      if (value instanceof Model) {
-        this.setField(column, (Model) value);
-      }
-      else {
-        this.setField(column, value);
-      }
+      this.setField(column, value);
     }
   }
 
@@ -272,6 +253,26 @@ public abstract class Model {
    */
   public final Query query() {
     return this.db.table(this.table);
+  }
+
+  public static final <T extends Model> ModelQuery<T> find(final Class<T> type) {
+    return new ModelQuery<T>(type);
+  }
+
+  public static final <T extends Model> Model find(
+    final Class<T> type,
+    final int id
+  ) throws SQLException {
+    return Model.find(type).where("id", id).first();
+  }
+
+  /**
+   * Find all models of a given type.
+   */
+  public static final <T extends Model> List<Model> findAll(
+    final Class<T> type
+  ) throws SQLException {
+    return Model.find(type).get();
   }
 
   /**
@@ -290,7 +291,7 @@ public abstract class Model {
 
     List<Row> rows = this.query().insert(this.getRow());
 
-    if (!rows.isEmpty()) {
+    if (rows != null && !rows.isEmpty()) {
       Number id = (Number) rows.get(0).get(
         this.db.grammar().generatedAutoIncrementRow()
       );

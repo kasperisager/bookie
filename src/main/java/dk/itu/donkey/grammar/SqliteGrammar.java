@@ -1,21 +1,24 @@
 /**
  * Copyright (C) 2014 Kasper Kronborg Isager.
  */
-package dk.itu.donkey;
+package dk.itu.donkey.grammar;
+
+// Base grammar
+import dk.itu.donkey.Grammar;
 
 /**
- * PostgreSQL grammar class.
+ * SQLite grammar class.
  *
  * @version 1.0.0
  */
-public final class PostgreSqlGrammar extends Grammar {
+public final class SqliteGrammar extends Grammar {
   /**
    * Return the name of auto increment columns.
    *
    * @return The name of auto increment columns.
    */
   public String generatedAutoIncrementRow() {
-    return "id";
+    return "last_insert_rowid()";
   }
 
   /**
@@ -25,7 +28,7 @@ public final class PostgreSqlGrammar extends Grammar {
    * @return        The formatted auto incrementing column.
    */
   public String buildAutoIncrement(final String column) {
-    return String.format("%s serial unique", column);
+    return String.format("%s integer primary key autoincrement", column);
   }
 
   /**

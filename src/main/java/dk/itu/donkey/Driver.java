@@ -11,6 +11,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+// SQL grammars
+import dk.itu.donkey.grammar.MySqlGrammar;
+import dk.itu.donkey.grammar.PostgreSqlGrammar;
+import dk.itu.donkey.grammar.SqliteGrammar;
+
 /**
  * Driver enum.
  *

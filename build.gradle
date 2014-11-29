@@ -30,7 +30,7 @@ dependencies {
   testCompile group: "org.mockito", name: "mockito-core", version: "1.+"
 }
 
-mainClassName = "Main"
+mainClassName = "dk.itu.bookie.Bookie"
 
 test {
   testLogging {

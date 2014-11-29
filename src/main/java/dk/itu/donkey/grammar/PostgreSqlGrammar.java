@@ -1,21 +1,24 @@
 /**
  * Copyright (C) 2014 Kasper Kronborg Isager.
  */
-package dk.itu.donkey;
+package dk.itu.donkey.grammar;
+
+// Base grammar
+import dk.itu.donkey.Grammar;
 
 /**
- * MySQL grammar class.
+ * PostgreSQL grammar class.
  *
  * @version 1.0.0
  */
-public final class MySqlGrammar extends Grammar {
+public final class PostgreSqlGrammar extends Grammar {
   /**
    * Return the name of auto increment columns.
    *
    * @return The name of auto increment columns.
    */
   public String generatedAutoIncrementRow() {
-    return "GENERATED_KEY";
+    return "id";
   }
 
   /**
@@ -25,7 +28,7 @@ public final class MySqlGrammar extends Grammar {
    * @return        The formatted auto incrementing column.
    */
   public String buildAutoIncrement(final String column) {
-    return String.format("%s integer primary key auto_increment", column);
+    return String.format("%s serial unique", column);
   }
 
   /**

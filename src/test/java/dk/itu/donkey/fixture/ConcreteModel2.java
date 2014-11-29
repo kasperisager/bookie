@@ -2,7 +2,6 @@ package dk.itu.donkey.fixture;
 
 import dk.itu.donkey.Model;
 import dk.itu.donkey.ModelTest;
-import dk.itu.donkey.Row;
 
 /**
  * Concrete model class for testing.
@@ -43,15 +42,6 @@ public class ConcreteModel2 extends Model {
    */
   public ConcreteModel2() {
     super("test1", ModelTest.db());
-  }
-
-  /**
-   * Initialize a model from a database row.
-   *
-   * @param row The database row to initialize the model from.
-   */
-  public ConcreteModel2(final Row row) {
-    super("test1", ModelTest.db(), row);
   }
 }
 

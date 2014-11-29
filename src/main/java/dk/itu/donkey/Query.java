@@ -249,7 +249,7 @@ public final class Query {
    * @return        The current {@link Query} object, for chaining.
    */
   public Query orderBy(final String column) {
-    return this.orderBy(column, "desc");
+    return this.orderBy(column, "asc");
   }
 
   /**
