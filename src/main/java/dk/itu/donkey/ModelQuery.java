@@ -14,6 +14,8 @@ import java.sql.SQLException;
  * Model query class.
  *
  * @param <T> The type of model to query.
+ *
+ * @since 1.0.0 Initial release.
  */
 public final class ModelQuery<T extends Model> {
   /**

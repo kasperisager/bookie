@@ -17,9 +17,13 @@ import dk.itu.donkey.grammar.PostgreSqlGrammar;
 import dk.itu.donkey.grammar.SqliteGrammar;
 
 /**
- * Driver enum.
+ * The Driver enumerator describes the different JDBC drivers supported by
+ * Donkey.
  *
- * @version 1.0.0
+ * @see <a href="https://en.wikipedia.org/wiki/JDBC_driver">Wikipedia - JDBC
+ *      driver</a>
+ *
+ * @since 1.0.0 Initial release.
  */
 public enum Driver {
   /**
@@ -35,6 +39,7 @@ public enum Driver {
    * url      - The URL to connect to. Default: localhost:3306
    * </pre>
    *
+   * @see dk.itu.donkey.grammar.MySqlGrammar
    * @see <a href="http://bit.ly/11StjtX">Maven Repository - MySQL</a>
    */
   MYSQL {
@@ -90,6 +95,7 @@ public enum Driver {
    * url      - The URL to connect to. Default: localhost:5432
    * </pre>
    *
+   * @see dk.itu.donkey.grammar.PostgreSqlGrammar
    * @see <a href="http://bit.ly/11Un3Ro">Maven Repository - PostgreSQL</a>
    */
   POSTGRESQL {
@@ -142,6 +148,7 @@ public enum Driver {
    * database - The name of the database to connect to. Required.
    * </pre>
    *
+   * @see dk.itu.donkey.grammar.SqliteGrammar
    * @see <a href="http://bit.ly/1xzBsvg">Maven Repository - SQLite</a>
    */
   SQLITE {

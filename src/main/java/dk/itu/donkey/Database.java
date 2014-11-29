@@ -20,7 +20,7 @@ import java.sql.Types;
 /**
  * Database class.
  *
- * @version 1.0.0
+ * @since 1.0.0 Initial release.
  */
 public final class Database {
   /**

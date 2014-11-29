@@ -13,12 +13,19 @@ import java.lang.reflect.Field;
 import java.sql.SQLException;
 
 /**
- * Model class.
+ * The model class is an object-relational mapper that enables seamles and easy
+ * persistance of data-models to any of the supported database systems.
+ *
+ * <p>
+ * It enables automatic database schema definition in subclasses by convention
+ * of public fields. A CRUD interface is provided out-of-the-box so simple
+ * data-models needn't define anything but their own fields in order to benefit
+ * from persistance to a database.
  *
  * @see <a href="https://en.wikipedia.org/wiki/Object-relational_mapping">
  *      Wikipedia - Object-relational mapping</a>
  *
- * @version 1.0.0
+ * @since 1.0.0 Initial release.
  */
 public abstract class Model {
   /**

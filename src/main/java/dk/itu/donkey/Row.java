@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Row class.
  *
- * @version 1.0.0
+ * @since 1.0.0 Initial release.
  */
 public final class Row extends LinkedHashMap<String, Object> {
   /**

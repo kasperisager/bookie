@@ -24,7 +24,7 @@ import java.util.List;
  * @see <a href="http://www.contrib.andrew.cmu.edu/~shadow/sql/sql1992.txt">
  *      Information Technology - Database Language SQL</a>
  *
- * @version 1.0.0
+ * @since 1.0.0 Initial release.
  */
 public abstract class Grammar {
   /**
