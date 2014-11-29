@@ -12,7 +12,7 @@ import java.sql.SQLException;
  * @see <a href="https://en.wikipedia.org/wiki/Data_definition_language">
  *      Wikipedia - Data definition language</a>
  *
- * @version 1.0.0
+ * @since 1.0.0 Initial release.
  */
 public final class Schema {
   /**

@@ -9,7 +9,7 @@ import dk.itu.donkey.Grammar;
 /**
  * SQLite grammar class.
  *
- * @version 1.0.0
+ * @since 1.0.0 Initial release.
  */
 public final class SqliteGrammar extends Grammar {
   /**
