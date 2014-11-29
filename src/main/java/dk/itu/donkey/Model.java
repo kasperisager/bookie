@@ -39,8 +39,6 @@ public abstract class Model {
    */
   private Integer id;
 
-  protected Query query;
-
   /**
    * Initialize a model.
    */
@@ -255,10 +253,23 @@ public abstract class Model {
     return this.db.table(this.table);
   }
 
+  /**
+   * Initialize a new model query.
+   *
+   * @param type  The type of model to find.
+   * @return      A model query initialized to the type.
+   */
   public static final <T extends Model> ModelQuery<T> find(final Class<T> type) {
     return new ModelQuery<T>(type);
   }
 
+  /**
+   * Find a single model by its ID.
+   *
+   * @param type  The type of model to find.
+   * @param id    The ID of the model.
+   * @return      The model if found, otherwise null.
+   */
   public static final <T extends Model> Model find(
     final Class<T> type,
     final int id
@@ -268,6 +279,9 @@ public abstract class Model {
 
   /**
    * Find all models of a given type.
+   *
+   * @param type  The type of models to type.
+   * @return      A list of models.
    */
   public static final <T extends Model> List<Model> findAll(
     final Class<T> type
