@@ -13,7 +13,7 @@ import java.sql.SQLException;
 /**
  * Model query class.
  *
- * @version 1.0.0
+ * @param <T> The type of model to query.
  */
 public final class ModelQuery<T extends Model> {
   /**
@@ -162,6 +162,8 @@ public final class ModelQuery<T extends Model> {
    * Count the number of models.
    *
    * @return The number of models.
+   *
+   * @throws SQLException In case of a SQL error.
    */
   public Number count() throws SQLException {
     return this.query.count();
@@ -172,6 +174,8 @@ public final class ModelQuery<T extends Model> {
    *
    * @param field The field to find the largest value of.
    * @return      The largest value of the specified field.
+   *
+   * @throws SQLException In case of a SQL error.
    */
   public Object max(final String field) throws SQLException {
     return this.query.max(field);
@@ -182,6 +186,8 @@ public final class ModelQuery<T extends Model> {
    *
    * @param field The field to find the smallet value of.
    * @return      The smallest value of the specified field.
+   *
+   * @throws SQLException In case of a SQL error.
    */
   public Object min(final String field) throws SQLException {
     return this.query.min(field);
@@ -192,6 +198,8 @@ public final class ModelQuery<T extends Model> {
    *
    * @param field The field to find the average value of.
    * @return      The average value of the specified field.
+   *
+   * @throws SQLException In case of a SQL error.
    */
   public Number avg(final String field) throws SQLException {
     return this.query.avg(field);
@@ -202,6 +210,8 @@ public final class ModelQuery<T extends Model> {
    *
    * @param field The field to find the sum of.
    * @return      The sum of the specified field.
+   *
+   * @throws SQLException In case of a SQL error.
    */
   public Number sum(final String field) throws SQLException {
     return this.query.sum(field);
@@ -220,12 +230,12 @@ public final class ModelQuery<T extends Model> {
 
     for (Row row: rows) {
       try {
-	Model model = this.type.newInstance();
-	model.setRow(row);
-	models.add(model);
+        Model model = this.type.newInstance();
+        model.setRow(row);
+        models.add(model);
       }
       catch (Exception e) {
-	continue;
+        continue;
       }
     }
 

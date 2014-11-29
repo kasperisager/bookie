@@ -4,7 +4,6 @@
 package dk.itu.donkey;
 
 // General utilities
-import java.util.ArrayList;
 import java.util.List;
 
 // Reflection utilities
@@ -257,9 +256,12 @@ public abstract class Model {
    * Initialize a new model query.
    *
    * @param type  The type of model to find.
+   * @param <T>   The type of model to find.
    * @return      A model query initialized to the type.
    */
-  public static final <T extends Model> ModelQuery<T> find(final Class<T> type) {
+  public static final <T extends Model> ModelQuery<T> find(
+    final Class<T> type
+  ) {
     return new ModelQuery<T>(type);
   }
 
@@ -267,8 +269,11 @@ public abstract class Model {
    * Find a single model by its ID.
    *
    * @param type  The type of model to find.
+   * @param <T>   The type of model to find.
    * @param id    The ID of the model.
    * @return      The model if found, otherwise null.
+   *
+   * @throws SQLException In case of a SQL error.
    */
   public static final <T extends Model> Model find(
     final Class<T> type,
@@ -280,8 +285,11 @@ public abstract class Model {
   /**
    * Find all models of a given type.
    *
-   * @param type  The type of models to type.
+   * @param type  The type of models to find.
+   * @param <T>   The type of models to find.
    * @return      A list of models.
+   *
+   * @throws SQLException In case of a SQL error.
    */
   public static final <T extends Model> List<Model> findAll(
     final Class<T> type

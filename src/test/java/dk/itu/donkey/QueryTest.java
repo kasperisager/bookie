@@ -335,15 +335,15 @@ public final class QueryTest {
         db.execute("insert into test (integer_col) values (?)", values);
       }
 
-      List<Row> desc = db.table("test").orderBy("integer_col").get();
-      assertEquals(n, desc.size());
-
-      List<Row> asc = db.table("test").orderBy("integer_col", "asc").get();
+      List<Row> asc = db.table("test").orderBy("integer_col").get();
       assertEquals(n, asc.size());
 
+      List<Row> desc = db.table("test").orderBy("integer_col", "desc").get();
+      assertEquals(n, desc.size());
+
       for (int i = 0; i < n; i++) {
-        assertEquals(n - i - 1, desc.get(i).get("integer_col"));
         assertEquals(i, asc.get(i).get("integer_col"));
+        assertEquals(n - i - 1, desc.get(i).get("integer_col"));
       }
     }
   }
