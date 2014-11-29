@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox
+  fx:controller="dk.itu.bookie.controller.ApplicationController"
+  xmlns:fx="http://javafx.com/fxml"
+>
+  <children>
+    <fx:include fx:id="menu" source="Menu.fxml" />
+
+    <TabPane tabClosingPolicy="UNAVAILABLE">
+      <tabs>
+        <fx:include fx:id="showtimes" source="Showtimes.fxml" />
+        <fx:include fx:id="reservations" source="Reservations.fxml" />
+      </tabs>
+    </TabPane>
+  </children>
+</VBox>

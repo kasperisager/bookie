@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<Tab text="Reservationer">
+  <BorderPane xmlns:fx="http://javafx.com/fxml">
+    <bottom>
+      <Pagination fx:id="pager" currentPageIndex="0" pageCount="40" />
+    </bottom>
+  </BorderPane>
+</Tab>

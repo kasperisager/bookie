@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<Tab
+  fx:controller="dk.itu.bookie.controller.ShowtimeController"
+  text="Forestillinger"
+  xmlns:fx="http://javafx.com/fxml"
+>
+  <BorderPane xmlns:fx="http://javafx.com/fxml">
+    <top>
+      <ListView fx:id="movies" />
+    </top>
+  </BorderPane>
+</Tab>
