@@ -34,6 +34,11 @@ public final class ModelQuery<T extends Model> {
   private Class<T> type;
 
   /**
+   * The table to query.
+   */
+  private String table;
+
+  /**
    * The query to build and perform.
    */
   private Query query;
@@ -46,8 +51,19 @@ public final class ModelQuery<T extends Model> {
    * @param type The model subclass to query.
    */
   public ModelQuery(final Class<T> type) {
+    Model model = Model.instantiate(type);
     this.type = type;
-    this.query = Model.instantiate(type).query();
+    this.query = model.query();
+    this.table = model.table();
+  }
+
+  private String wrapColumn(final String column) {
+    if (!column.matches(".*\\..*")) {
+      return String.format("%s.%s", this.table, column);
+    }
+    else {
+      return column;
+    }
   }
 
   /**
@@ -63,7 +79,7 @@ public final class ModelQuery<T extends Model> {
     final String operator,
     final Object value
   ) {
-    this.query.where(column, operator, value);
+    this.query.where(this.wrapColumn(column), operator, value);
 
     return this;
   }
@@ -76,7 +92,7 @@ public final class ModelQuery<T extends Model> {
    * @return        The current {@link ModelQuery} object, for chaining.
    */
   public ModelQuery where(final String column, final Object value) {
-    this.query.where(column, value);
+    this.query.where(this.wrapColumn(column), value);
 
     return this;
   }
@@ -94,7 +110,7 @@ public final class ModelQuery<T extends Model> {
     final String operator,
     final Object value
   ) {
-    this.query.orWhere(column, operator, value);
+    this.query.orWhere(this.wrapColumn(column), operator, value);
 
     return this;
   }
@@ -107,7 +123,7 @@ public final class ModelQuery<T extends Model> {
    * @return        The current {@link ModelQuery} object, for chaining.
    */
   public ModelQuery orWhere(final String column, final Object value) {
-    this.query.orWhere(column, value);
+    this.query.orWhere(this.wrapColumn(column), value);
 
     return this;
   }
@@ -120,7 +136,7 @@ public final class ModelQuery<T extends Model> {
    * @return          The current {@link ModelQuery} object, for chaining.
    */
   public ModelQuery orderBy(final String column, final String direction) {
-    this.query.orderBy(column, direction);
+    this.query.orderBy(this.wrapColumn(column), direction);
 
     return this;
   }
@@ -132,7 +148,7 @@ public final class ModelQuery<T extends Model> {
    * @return        The current {@link ModelQuery} object, for chaining.
    */
   public ModelQuery orderBy(final String column) {
-    this.query.orderBy(column);
+    this.query.orderBy(this.wrapColumn(column));
 
     return this;
   }
@@ -181,7 +197,7 @@ public final class ModelQuery<T extends Model> {
    * @throws SQLException In case of a SQL error.
    */
   public Object max(final String field) throws SQLException {
-    return this.query.max(field);
+    return this.query.max(this.wrapColumn(field));
   }
 
   /**
@@ -193,7 +209,7 @@ public final class ModelQuery<T extends Model> {
    * @throws SQLException In case of a SQL error.
    */
   public Object min(final String field) throws SQLException {
-    return this.query.min(field);
+    return this.query.min(this.wrapColumn(field));
   }
 
   /**
@@ -205,7 +221,7 @@ public final class ModelQuery<T extends Model> {
    * @throws SQLException In case of a SQL error.
    */
   public Number avg(final String field) throws SQLException {
-    return this.query.avg(field);
+    return this.query.avg(this.wrapColumn(field));
   }
 
   /**
@@ -217,7 +233,7 @@ public final class ModelQuery<T extends Model> {
    * @throws SQLException In case of a SQL error.
    */
   public Number sum(final String field) throws SQLException {
-    return this.query.sum(field);
+    return this.query.sum(this.wrapColumn(field));
   }
 
   private Class getGenericType(final Field field) {
@@ -281,36 +297,34 @@ public final class ModelQuery<T extends Model> {
     }
   }
 
-  private List<Model> setRelations(
-    final Class modelType,
-    final List<Row> rows
-  ) {
+  private List<Model> setRelations(final Class type, final List<Row> rows) {
     // Create a map for tracking model instances by their ID. When joining data,
     // the same instance of a model might appear several times in the query
     // response (e.g. the same post for several comments). The map will ensure
     // that only the first occurence of each unique model is instantiated.
     Map<Integer, Model> models = new LinkedHashMap<>();
 
-    Model outer = Model.instantiate(modelType);
-
     for (Row row: rows) {
+      Model model = Model.instantiate(type);
+
       // Grab the ID of the current model table from the row.
-      int id = (int) row.get(String.format("%s_%s", outer.table(), "id"));
+      int id = (int) row.get(String.format("%s_%s", model.table(), "id"));
 
       if (models.containsKey(id)) {
         continue;
       }
 
-      Model inner = Model.instantiate(modelType);
+      // Store the model in the map.
+      models.put(id, model);
 
       // Set the current row on the model. Since each column in the response is
       // prefixed with the table name of the model, only columns specific to the
       // model will be set on it.
-      inner.setRow(row);
+      model.setRow(row);
 
       // Run through each of the fields of the model and look for further
       // relations.
-      for (Field field: inner.getFields()) {
+      for (Field field: model.getFields()) {
         Class fieldType = field.getType();
 
         boolean isList = false;
@@ -336,16 +350,13 @@ public final class ModelQuery<T extends Model> {
           List<Model> value = this.setRelations(fieldType, rows);
 
           if (isList) {
-            inner.setField(field.getName(), value);
+            model.setField(field.getName(), value);
           }
           else {
-            inner.setField(field.getName(), value.get(0));
+            model.setField(field.getName(), value.get(0));
           }
         }
       }
-
-      // Store the model in the map.
-      models.put(id, inner);
     }
 
     return new ArrayList<Model>(models.values());
@@ -362,25 +373,5 @@ public final class ModelQuery<T extends Model> {
     this.getRelations(this.type);
 
     return this.setRelations(this.type, this.query.get());
-  }
-
-  /**
-   * Perform the query and get the first matching result.
-   *
-   * @return The first model that matches the query.
-   *
-   * @throws SQLException In case of a SQL error.
-   */
-  public Model first() throws SQLException {
-    Row row = this.query.first();
-
-    if (row == null) {
-      return null;
-    }
-
-    Model model = Model.instantiate(this.type);
-    model.setRow(row);
-
-    return model;
   }
 }

@@ -307,7 +307,14 @@ public abstract class Model {
     final Class<T> type,
     final int id
   ) throws SQLException {
-    return Model.find(type).where("id", id).first();
+    List<Model> models = Model.find(type).where("id", id).get();
+
+    if (!models.isEmpty()) {
+      return models.get(0);
+    }
+    else {
+      return null;
+    }
   }
 
   /**
