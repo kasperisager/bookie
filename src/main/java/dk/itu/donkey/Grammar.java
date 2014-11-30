@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The grammar class defines methods for building the individual clauses of and
+ * The Grammar class defines methods for building the individual clauses of and
  * compiling complete standard SQL statements.
  *
  * <p>

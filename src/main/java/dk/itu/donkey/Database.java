@@ -18,7 +18,8 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 /**
- * Database class.
+ * The Database class is the main entry point to the different database systems
+ * and handles executing SQL against them.
  *
  * @since 1.0.0 Initial release.
  */
@@ -54,7 +55,7 @@ public final class Database {
   }
 
   /**
-   * Perform a query against a database table.
+   * Perform a {@link Query} against a database table.
    *
    * @param name  Name of the table to perform the query against.
    * @return      A {@link Query} object initialized to the current db.
@@ -64,7 +65,7 @@ public final class Database {
   }
 
   /**
-   * Run a schema against the database.
+   * Run a {@link Schema} against the database.
    *
    * @return A {@link Schema} oobject initialized to the current db.
    */
@@ -86,6 +87,7 @@ public final class Database {
   /**
    * Execute some SQL against the database.
    *
+   * <p>
    * This method uses the try-with-resource statement which ensures that all
    * closeable connections are automatically terminated after the code has run.
    *

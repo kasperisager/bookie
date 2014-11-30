@@ -9,7 +9,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
- * Row class.
+ * The Row class is an extension of a linked hash map and is used for
+ * representing database rows.
  *
  * @since 1.0.0 Initial release.
  */
