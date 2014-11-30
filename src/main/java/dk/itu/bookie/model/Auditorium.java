@@ -16,6 +16,11 @@ import dk.itu.bookie.Bookie;
  */
 public class Auditorium extends Model {
   /**
+   * Number of rows in the auditorium.
+   */
+  public int rows;
+
+  /**
    * Initialize an auditorium.
    */
   public Auditorium() {
