@@ -4,7 +4,9 @@
 package dk.itu.donkey;
 
 // General utilities
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 // Reflection utilities
 import java.lang.reflect.Field;
@@ -70,7 +72,7 @@ public abstract class Model {
    * @param label The name of the field.
    * @return      The field.
    */
-  private Field getField(final String label) {
+  public final Field getField(final String label) {
     try {
       return this.getClass().getField(label);
     }
@@ -84,7 +86,7 @@ public abstract class Model {
    *
    * @return An array of public fields declared in the model.
    */
-  private Field[] getFields() {
+  public final Field[] getFields() {
     return this.getClass().getFields();
   }
 
@@ -94,7 +96,7 @@ public abstract class Model {
    * @param label The name of the field.
    * @param value The value of the field.
    */
-  private void setField(final String label, final Object value) {
+  public final void setField(final String label, final Object value) {
     try {
       this.getField(label).set(this, value);
     }
@@ -205,12 +207,12 @@ public abstract class Model {
   public final Row getRow() {
     Row row = new Row();
 
-    for (Field column: this.getFields()) {
-      String name = column.getName();
+    for (Field field: this.getFields()) {
+      String name = field.getName();
       Object value = null;
 
       try {
-        value = column.get(this);
+        value = field.get(this);
       }
       catch (Exception e) {
         continue;
@@ -218,6 +220,10 @@ public abstract class Model {
 
       if (value instanceof Model) {
         value = ((Model) value).id();
+      }
+
+      if (value instanceof List) {
+        continue;
       }
 
       row.put(name.toLowerCase(), value);
@@ -245,6 +251,12 @@ public abstract class Model {
     for (Field field: this.getFields()) {
       String column = field.getName();
       Object value = row.get(column.toLowerCase());
+
+      if (value == null) {
+        value = row.get(String.format(
+          "%s_%s", this.table(), column.toLowerCase()
+        ));
+      }
 
       this.setField(column, value);
     }
@@ -356,12 +368,7 @@ public abstract class Model {
    * @throws SQLException In case of a SQL error.
    */
   public final boolean upsert() throws SQLException {
-    if (this.id == null) {
-      return this.insert();
-    }
-    else {
-      return this.update();
-    }
+    return (this.id == null) ? this.insert() : this.update();
   }
 
   /**

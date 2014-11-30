@@ -5,7 +5,13 @@ package dk.itu.donkey;
 
 // General utilities
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+
+// Reflection utilities
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 
 // SQL utilities
 import java.sql.SQLException;
@@ -221,6 +227,107 @@ public final class ModelQuery<T extends Model> {
     return this.query.sum(field);
   }
 
+  private Class getGenericType(final Field field) {
+    ParameterizedType type = (ParameterizedType) field.getGenericType();
+
+    return (Class) type.getActualTypeArguments()[0];
+  }
+
+  private void getRelations(final Class modelType) {
+    Model outer = null;
+
+    try {
+      outer = (Model) modelType.newInstance();
+    }
+    catch (Exception e) {
+      return;
+    }
+
+    // Select the ID column of the model in the format "table_id".
+    this.query.select(String.format("%s.id as %1$s_id", outer.table()));
+
+    for (Field field: outer.getFields()) {
+      String fieldName = field.getName();
+      Class fieldType = field.getType();
+
+      this.query.select(String.format(
+        "%s.%s as %1$s_%2$s", outer.table(), field.getName().toLowerCase()
+      ));
+
+      if (Model.class.isAssignableFrom(fieldType)) {
+        Model inner = null;
+
+        try {
+          inner = (Model) fieldType.newInstance();
+        }
+        catch (Exception e) {
+          continue;
+        }
+
+        this.query.join(
+          inner.table(),
+          String.format("%s.%s", outer.table(), fieldName),
+          String.format("%s.%s", inner.table(), "id")
+        );
+
+        this.getRelations(fieldType);
+      }
+    }
+  }
+
+  private List<Model> setRelations(final Class modelType, final List<Row> rows) {
+    Map<Integer, Model> models = new LinkedHashMap<>();
+
+    Model outer = null;
+
+    try {
+      outer = (Model) modelType.newInstance();
+    }
+    catch (Exception e) {
+      return null;
+    }
+
+    for (Row row: rows) {
+      int id = (int) row.get(String.format("%s_%s", outer.table(), "id"));
+
+      if (!models.containsKey(id)) {
+        Model inner = null;
+
+        try {
+          inner = (Model) modelType.newInstance();
+        }
+        catch (Exception e) {
+          continue;
+        }
+
+        inner.setRow(row);
+
+        for (Field field: inner.getFields()) {
+          String fieldName = field.getName();
+          Class fieldType = field.getType();
+
+          Object value = null;
+
+          if (Model.class.isAssignableFrom(fieldType)) {
+            List<Model> subModels = this.setRelations(fieldType, rows);
+
+            if (!subModels.isEmpty()) {
+              value = subModels.get(0);
+            }
+          }
+
+          if (value != null) {
+            inner.setField(fieldName, value);
+          }
+        }
+
+        models.put(id, inner);
+      }
+    }
+
+    return new ArrayList<Model>(models.values());
+  }
+
   /**
    * Perform the query and return a list of matching models.
    *
@@ -229,21 +336,9 @@ public final class ModelQuery<T extends Model> {
    * @throws SQLException In case of a SQL error.
    */
   public List<Model> get() throws SQLException {
-    List<Model> models = new ArrayList<>();
-    List<Row> rows = this.query.get();
+    this.getRelations(this.type);
 
-    for (Row row: rows) {
-      try {
-        Model model = this.type.newInstance();
-        model.setRow(row);
-        models.add(model);
-      }
-      catch (Exception e) {
-        continue;
-      }
-    }
-
-    return models;
+    return this.setRelations(this.type, this.query.get());
   }
 
   /**
