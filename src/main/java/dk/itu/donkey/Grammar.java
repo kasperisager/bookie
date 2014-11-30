@@ -599,7 +599,7 @@ public abstract class Grammar {
    * @param foreignKeys The formatted foreign keys.
    * @return            A comma-separated list of foreign keys.
    */
-  public final String buildForeignKeys(List<String> foreignKeys) {
+  public final String buildForeignKeys(final List<String> foreignKeys) {
     if (!foreignKeys.isEmpty()) {
       return ", " + String.join(", ", foreignKeys);
     }
