@@ -150,6 +150,26 @@ public final class Query {
   }
 
   /**
+   * Add a `join` clause to the query.
+   *
+   * @param foreignTable  The foreign table to join.
+   * @param localColumn   The column in the local table.
+   * @param foreignColumn The column in the foreign table.
+   * @return              The current {@link Query} object, for chaining.
+   */
+  public Query join(
+    final String foreignTable,
+    final String localColumn,
+    final String foreignColumn
+  ) {
+    this.grammar.addJoin(
+      "inner", foreignTable, localColumn, "=", foreignColumn
+    );
+
+    return this;
+  }
+
+  /**
    * Add a `left join` clause to the query.
    *
    * @param foreignTable  The foreign table to join.
@@ -166,6 +186,26 @@ public final class Query {
   ) {
     this.grammar.addJoin(
       "left outer", foreignTable, localColumn, operator, foreignColumn
+    );
+
+    return this;
+  }
+
+  /**
+   * Add a `left join` clause to the query.
+   *
+   * @param foreignTable  The foreign table to join.
+   * @param localColumn   The column in the local table.
+   * @param foreignColumn The column in the foreign table.
+   * @return              The current {@link Query} object, for chaining.
+   */
+  public Query leftJoin(
+    final String foreignTable,
+    final String localColumn,
+    final String foreignColumn
+  ) {
+    this.grammar.addJoin(
+      "left outer", foreignTable, localColumn, "=", foreignColumn
     );
 
     return this;
