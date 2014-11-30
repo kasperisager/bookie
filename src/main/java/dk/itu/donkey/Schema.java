@@ -7,7 +7,8 @@ package dk.itu.donkey;
 import java.sql.SQLException;
 
 /**
- * Schema class.
+ * The Schema class is used for executing Data Definition Language (DDL)
+ * statements against a database thus handling schema definition.
  *
  * @see <a href="https://en.wikipedia.org/wiki/Data_definition_language">
  *      Wikipedia - Data definition language</a>

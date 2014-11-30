@@ -13,7 +13,7 @@ import java.lang.reflect.Field;
 import java.sql.SQLException;
 
 /**
- * The model class is an object-relational mapper that enables seamles and easy
+ * The Model class is an object-relational mapper that enables seamles and easy
  * persistance of data-models to any of the supported database systems.
  *
  * <p>

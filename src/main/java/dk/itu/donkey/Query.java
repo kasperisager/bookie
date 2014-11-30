@@ -10,7 +10,9 @@ import java.util.List;
 import java.sql.SQLException;
 
 /**
- * Query class.
+ * The Query class is used for executing Data Manipulation Language (DML)
+ * statements against a databse and returns {@link Row}-representations of the
+ * database response.
  *
  * @see <a href="https://en.wikipedia.org/wiki/Data_manipulation_language">
  *      Wikipedia - Data manipulation language</a>
@@ -79,9 +81,11 @@ public final class Query {
   /**
    * Update one or more rows in a table.
    *
+   * <p>
    * This can be combined with a `where` statement to selectively update a set
    * of table rows.
    *
+   * <p>
    * If no `where` statement is supplied, all rows of the table will be updated.
    *
    * @param row Row of columns to update in the table.
@@ -106,9 +110,11 @@ public final class Query {
   /**
    * Delete rows from a table.
    *
+   * <p>
    * This can be combine with a `where` statement to selectively delete a set
    * of table rows.
    *
+   * <p>
    * If no `where` statement is supplied, all rows of the table will be deleted.
    *
    * @return Generated keys, if any.
@@ -186,6 +192,7 @@ public final class Query {
   /**
    * Add a `where` statement to the query.
    *
+   * <p>
    * This method is a shorthand for the equality operator.
    *
    * @param column  The column to compare.
@@ -217,6 +224,7 @@ public final class Query {
   /**
    * Add a `where` statement to the query, with a logical operator of `or`.
    *
+   * <p>
    * This method is a shorthand for the equality operator.
    *
    * @param column  The column to compare.
@@ -243,6 +251,7 @@ public final class Query {
   /**
    * Add an `order by` statement to the query.
    *
+   * <p>
    * This is a shorthand for ascending ordering.
    *
    * @param column  The column to order by.

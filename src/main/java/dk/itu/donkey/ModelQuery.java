@@ -11,7 +11,9 @@ import java.util.List;
 import java.sql.SQLException;
 
 /**
- * Model query class.
+ * The Model Query class is used for querying database rows related to models
+ * and, in contrast to a raw {@link Query}, returns {@link Model}s rather than
+ * {@link Row}s.
  *
  * @param <T> The type of model to query.
  *
