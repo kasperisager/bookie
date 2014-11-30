@@ -47,18 +47,7 @@ public final class ModelQuery<T extends Model> {
    */
   public ModelQuery(final Class<T> type) {
     this.type = type;
-
-    try {
-      this.query = ((T) type.newInstance()).query();
-    }
-    catch (ClassCastException e) {
-      // Catch casting exceptions since this indicates that a wrong type was
-      // passed to the method. Throw an illegal argument exception instead.
-      throw new IllegalArgumentException("Type must be subclass of Model");
-    }
-    catch (Exception e) {
-      return;
-    }
+    this.query = Model.instantiate(type).query();
   }
 
   /**
@@ -238,14 +227,7 @@ public final class ModelQuery<T extends Model> {
   }
 
   private void getRelations(final Class modelType) {
-    Model outer = null;
-
-    try {
-      outer = (Model) modelType.newInstance();
-    }
-    catch (Exception e) {
-      return;
-    }
+    Model outer = Model.instantiate(modelType);
 
     this.tables.add(outer.table());
 
@@ -257,14 +239,7 @@ public final class ModelQuery<T extends Model> {
       Class fieldType = field.getType();
 
       if (Model.class.isAssignableFrom(fieldType)) {
-        Model inner = null;
-
-        try {
-          inner = (Model) fieldType.newInstance();
-        }
-        catch (Exception e) {
-          continue;
-        }
+        Model inner = Model.instantiate(fieldType);
 
         if (!this.tables.contains(inner.table())) {
           this.query.join(
@@ -294,15 +269,6 @@ public final class ModelQuery<T extends Model> {
         }
 
         if (Model.class.isAssignableFrom(fieldType)) {
-          Model inner = null;
-
-          try {
-            inner = (Model) fieldType.newInstance();
-          }
-          catch (Exception e) {
-            continue;
-          }
-
           this.getRelations(fieldType);
 
           continue;
@@ -315,64 +281,71 @@ public final class ModelQuery<T extends Model> {
     }
   }
 
-  private List<Model> setRelations(final Class modelType, final List<Row> rows) {
+  private List<Model> setRelations(
+    final Class modelType,
+    final List<Row> rows
+  ) {
+    // Create a map for tracking model instances by their ID. When joining data,
+    // the same instance of a model might appear several times in the query
+    // response (e.g. the same post for several comments). The map will ensure
+    // that only the first occurence of each unique model is instantiated.
     Map<Integer, Model> models = new LinkedHashMap<>();
 
-    Model outer = null;
-
-    try {
-      outer = (Model) modelType.newInstance();
-    }
-    catch (Exception e) {
-      return null;
-    }
+    Model outer = Model.instantiate(modelType);
 
     for (Row row: rows) {
+      // Grab the ID of the current model table from the row.
       int id = (int) row.get(String.format("%s_%s", outer.table(), "id"));
 
-      if (!models.containsKey(id)) {
-        Model inner = null;
+      if (models.containsKey(id)) {
+        continue;
+      }
 
-        try {
-          inner = (Model) modelType.newInstance();
+      Model inner = Model.instantiate(modelType);
+
+      // Set the current row on the model. Since each column in the response is
+      // prefixed with the table name of the model, only columns specific to the
+      // model will be set on it.
+      inner.setRow(row);
+
+      // Run through each of the fields of the model and look for further
+      // relations.
+      for (Field field: inner.getFields()) {
+        Class fieldType = field.getType();
+
+        boolean isList = false;
+
+        // If the field being looked at is a list, get the generic type of the
+        // list.
+        if (List.class.isAssignableFrom(fieldType)) {
+          fieldType = this.getGenericType(field);
+
+          // Remember that the field type was a list.
+          isList = true;
         }
-        catch (Exception e) {
+
+        // If the field being looked at is the same type as the model being
+        // queried, bail out. This is to avoid an infinite loop where two models
+        // both have fields of oneanother's type, e.g. a post with a list of
+        // comments and a comment that belongs to a post.
+        if (fieldType == this.type) {
           continue;
         }
 
-        inner.setRow(row);
+        if (Model.class.isAssignableFrom(fieldType)) {
+          List<Model> value = this.setRelations(fieldType, rows);
 
-        for (Field field: inner.getFields()) {
-          String fieldName = field.getName();
-          Class fieldType = field.getType();
-
-          Object value = null;
-
-          if (fieldType == this.type) {
-            continue;
+          if (isList) {
+            inner.setField(field.getName(), value);
           }
-
-          if (Model.class.isAssignableFrom(fieldType)) {
-            value = this.setRelations(fieldType, rows).get(0);
-          }
-
-          if (List.class.isAssignableFrom(fieldType)) {
-            fieldType = this.getGenericType(field);
-
-            if (fieldType == this.type) {
-              continue;
-            }
-
-            value = this.setRelations(fieldType, rows);
-          }
-
-          if (value != null) {
-            inner.setField(fieldName, value);
+          else {
+            inner.setField(field.getName(), value.get(0));
           }
         }
-
-        models.put(id, inner);
       }
+
+      // Store the model in the map.
+      models.put(id, inner);
     }
 
     return new ArrayList<Model>(models.values());
@@ -405,14 +378,9 @@ public final class ModelQuery<T extends Model> {
       return null;
     }
 
-    try {
-      Model model = this.type.newInstance();
-      model.setRow(row);
+    Model model = Model.instantiate(this.type);
+    model.setRow(row);
 
-      return model;
-    }
-    catch (Exception e) {
-      return null;
-    }
+    return model;
   }
 }

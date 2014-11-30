@@ -179,15 +179,10 @@ public abstract class Model {
       }
       // Model subclass
       else if (Model.class.isAssignableFrom(type)) {
-        try {
-          Model model = (Model) type.newInstance();
+        Model model = this.instantiate(type);
 
-          schema.integer(column);
-          schema.foreignKey(column, model.table(), "id");
-        }
-        catch (Exception e) {
-          continue;
-        }
+        schema.integer(column);
+        schema.foreignKey(column, model.table(), "id");
       }
       // else {
       //   throw new IllegalArgumentException(
@@ -197,6 +192,20 @@ public abstract class Model {
     }
 
     schema.run();
+  }
+
+  public static final Model instantiate(final Class type) {
+    try {
+      return (Model) type.newInstance();
+    }
+    catch (ClassCastException e) {
+      // Catch casting exceptions since this indicates that a wrong type was
+      // passed to the method. Throw an illegal argument exception instead.
+      throw new IllegalArgumentException("Type must be subclass of Model");
+    }
+    catch (Exception e) {
+      return null;
+    }
   }
 
   /**
