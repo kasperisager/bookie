@@ -114,6 +114,11 @@ public abstract class Grammar {
   private List<String> orders = new ArrayList<>();
 
   /**
+   * List of formatted foreign keys.
+   */
+  private List<String> foreignKeys = new ArrayList<>();
+
+  /**
    * Formatted result limit.
    *
    * <p>
@@ -589,6 +594,21 @@ public abstract class Grammar {
   }
 
   /**
+   * Build a list of formatted foreign keys.
+   *
+   * @param foreignKeys The formatted foreign keys.
+   * @return            A comma-separated list of foreign keys.
+   */
+  public final String buildForeignKeys(List<String> foreignKeys) {
+    if (!foreignKeys.isEmpty()) {
+      return ", " + String.join(", ", foreignKeys);
+    }
+    else {
+      return "";
+    }
+  }
+
+  /**
    * Add a foreign key to the grammar.
    *
    * @param column        The column.
@@ -600,7 +620,7 @@ public abstract class Grammar {
     final String foreignTable,
     final String foreignColumn
   ) {
-    this.addColumn(this.buildForeignKey(
+    this.foreignKeys.add(this.buildForeignKey(
       column, foreignTable, foreignColumn
     ));
   }
@@ -756,9 +776,10 @@ public abstract class Grammar {
    */
   public final String compileCreate() {
     return String.format(
-      "create table if not exists %s (%s)",
+      "create table if not exists %s (%s %s)",
       this.table,
-      this.buildColumns(this.columns)
+      this.buildColumns(this.columns),
+      this.buildForeignKeys(this.foreignKeys)
     ).trim().replaceAll(" {2,}", " ");
   }
 

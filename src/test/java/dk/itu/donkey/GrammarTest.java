@@ -431,18 +431,19 @@ public final class GrammarTest {
   public void testCompileCreate() {
     this.g.addTable("test");
 
+    this.g.addForeignKey("test2", "table1", "column1");
+
     this.g.addDataType("test1", "varchar", 123, true);
     this.g.addDataType("test2", "integer", 321, true);
     this.g.addDataType("test3", "date", false);
 
-    this.g.addForeignKey("test2", "table1", "column1");
     this.g.addForeignKey("test3", "table2", "column2");
 
     assertEquals(
       "create table if not exists test ("
     + "test1 varchar(123) not null,"
     + " test2 integer(321) not null,"
-    + " test3 date null,"
+    + " test3 date null ,"
     + " foreign key(test2) references table1(column1)"
     + " on update cascade on delete cascade,"
     + " foreign key(test3) references table2(column2)"
