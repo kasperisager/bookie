@@ -189,11 +189,11 @@ public abstract class Model {
           continue;
         }
       }
-      else {
-        throw new IllegalArgumentException(
-          "Unsupported data type for column: " + name
-        );
-      }
+      // else {
+      //   throw new IllegalArgumentException(
+      //     "Unsupported data type for column: " + name
+      //   );
+      // }
     }
 
     schema.run();

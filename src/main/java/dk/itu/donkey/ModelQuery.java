@@ -5,9 +5,11 @@ package dk.itu.donkey;
 
 // General utilities
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 // Reflection utilities
 import java.lang.reflect.Field;
@@ -35,6 +37,8 @@ public final class ModelQuery<T extends Model> {
    * The query to build and perform.
    */
   private Query query;
+
+  private Set<String> tables = new HashSet<>();
 
   /**
    * Initialize a model query.
@@ -243,16 +247,14 @@ public final class ModelQuery<T extends Model> {
       return;
     }
 
+    this.tables.add(outer.table());
+
     // Select the ID column of the model in the format "table_id".
     this.query.select(String.format("%s.id as %1$s_id", outer.table()));
 
     for (Field field: outer.getFields()) {
       String fieldName = field.getName();
       Class fieldType = field.getType();
-
-      this.query.select(String.format(
-        "%s.%s as %1$s_%2$s", outer.table(), field.getName().toLowerCase()
-      ));
 
       if (Model.class.isAssignableFrom(fieldType)) {
         Model inner = null;
@@ -264,14 +266,52 @@ public final class ModelQuery<T extends Model> {
           continue;
         }
 
-        this.query.join(
-          inner.table(),
-          String.format("%s.%s", outer.table(), fieldName),
-          String.format("%s.%s", inner.table(), "id")
-        );
+        if (!this.tables.contains(inner.table())) {
+          this.query.join(
+            inner.table(),
+            String.format("%s.%s", outer.table(), fieldName),
+            String.format("%s.%s", inner.table(), "id")
+          );
 
-        this.getRelations(fieldType);
+          this.tables.add(inner.table());
+
+          this.getRelations(fieldType);
+        }
+        else {
+          this.query.join(
+            outer.table(),
+            String.format("%s.%s", inner.table(), "id"),
+            String.format("%s.%s", outer.table(), fieldName)
+          );
+        }
       }
+
+      if (List.class.isAssignableFrom(fieldType)) {
+        fieldType = this.getGenericType(field);
+
+        if (fieldType == this.type) {
+          continue;
+        }
+
+        if (Model.class.isAssignableFrom(fieldType)) {
+          Model inner = null;
+
+          try {
+            inner = (Model) fieldType.newInstance();
+          }
+          catch (Exception e) {
+            continue;
+          }
+
+          this.getRelations(fieldType);
+
+          continue;
+        }
+      }
+
+      this.query.select(String.format(
+        "%s.%s as %1$s_%2$s", outer.table(), fieldName.toLowerCase()
+      ));
     }
   }
 
@@ -308,12 +348,22 @@ public final class ModelQuery<T extends Model> {
 
           Object value = null;
 
-          if (Model.class.isAssignableFrom(fieldType)) {
-            List<Model> subModels = this.setRelations(fieldType, rows);
+          if (fieldType == this.type) {
+            continue;
+          }
 
-            if (!subModels.isEmpty()) {
-              value = subModels.get(0);
+          if (Model.class.isAssignableFrom(fieldType)) {
+            value = this.setRelations(fieldType, rows).get(0);
+          }
+
+          if (List.class.isAssignableFrom(fieldType)) {
+            fieldType = this.getGenericType(field);
+
+            if (fieldType == this.type) {
+              continue;
             }
+
+            value = this.setRelations(fieldType, rows);
           }
 
           if (value != null) {
