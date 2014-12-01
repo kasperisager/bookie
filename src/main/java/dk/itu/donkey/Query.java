@@ -368,13 +368,13 @@ public final class Query {
 
     Row row = this.select(aggregate).first();
 
-    Number count = (Number) row.get(aggregate);
+    Object value = row.get(aggregate);
 
-    if (count == null) {
-      count = (Number) row.get(function);
+    if (value == null) {
+      value = row.get(function);
     }
 
-    return count;
+    return value;
   }
 
   /**
