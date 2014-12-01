@@ -44,6 +44,7 @@ public final class ModelQuery<T extends Model> {
   private Query query;
 
   private Set<String> tables = new HashSet<>();
+  private Set<Class> types = new HashSet<>();
 
   /**
    * Initialize a model query.
@@ -57,7 +58,7 @@ public final class ModelQuery<T extends Model> {
     this.table = model.table();
   }
 
-  private String wrapColumn(final String column) {
+  private String prefixColumn(final String column) {
     if (!column.matches(".*\\..*")) {
       return String.format("%s.%s", this.table, column);
     }
@@ -79,7 +80,7 @@ public final class ModelQuery<T extends Model> {
     final String operator,
     final Object value
   ) {
-    this.query.where(this.wrapColumn(column), operator, value);
+    this.query.where(this.prefixColumn(column), operator, value);
 
     return this;
   }
@@ -92,7 +93,7 @@ public final class ModelQuery<T extends Model> {
    * @return        The current {@link ModelQuery} object, for chaining.
    */
   public ModelQuery where(final String column, final Object value) {
-    this.query.where(this.wrapColumn(column), value);
+    this.query.where(this.prefixColumn(column), value);
 
     return this;
   }
@@ -110,7 +111,7 @@ public final class ModelQuery<T extends Model> {
     final String operator,
     final Object value
   ) {
-    this.query.orWhere(this.wrapColumn(column), operator, value);
+    this.query.orWhere(this.prefixColumn(column), operator, value);
 
     return this;
   }
@@ -123,7 +124,7 @@ public final class ModelQuery<T extends Model> {
    * @return        The current {@link ModelQuery} object, for chaining.
    */
   public ModelQuery orWhere(final String column, final Object value) {
-    this.query.orWhere(this.wrapColumn(column), value);
+    this.query.orWhere(this.prefixColumn(column), value);
 
     return this;
   }
@@ -136,7 +137,7 @@ public final class ModelQuery<T extends Model> {
    * @return          The current {@link ModelQuery} object, for chaining.
    */
   public ModelQuery orderBy(final String column, final String direction) {
-    this.query.orderBy(this.wrapColumn(column), direction);
+    this.query.orderBy(this.prefixColumn(column), direction);
 
     return this;
   }
@@ -148,7 +149,7 @@ public final class ModelQuery<T extends Model> {
    * @return        The current {@link ModelQuery} object, for chaining.
    */
   public ModelQuery orderBy(final String column) {
-    this.query.orderBy(this.wrapColumn(column));
+    this.query.orderBy(this.prefixColumn(column));
 
     return this;
   }
@@ -197,7 +198,7 @@ public final class ModelQuery<T extends Model> {
    * @throws SQLException In case of a SQL error.
    */
   public Object max(final String field) throws SQLException {
-    return this.query.max(this.wrapColumn(field));
+    return this.query.max(this.prefixColumn(field));
   }
 
   /**
@@ -209,7 +210,7 @@ public final class ModelQuery<T extends Model> {
    * @throws SQLException In case of a SQL error.
    */
   public Object min(final String field) throws SQLException {
-    return this.query.min(this.wrapColumn(field));
+    return this.query.min(this.prefixColumn(field));
   }
 
   /**
@@ -221,7 +222,7 @@ public final class ModelQuery<T extends Model> {
    * @throws SQLException In case of a SQL error.
    */
   public Number avg(final String field) throws SQLException {
-    return this.query.avg(this.wrapColumn(field));
+    return this.query.avg(this.prefixColumn(field));
   }
 
   /**
@@ -233,7 +234,7 @@ public final class ModelQuery<T extends Model> {
    * @throws SQLException In case of a SQL error.
    */
   public Number sum(final String field) throws SQLException {
-    return this.query.sum(this.wrapColumn(field));
+    return this.query.sum(this.prefixColumn(field));
   }
 
   private Class getGenericType(final Field field) {
@@ -245,6 +246,7 @@ public final class ModelQuery<T extends Model> {
   private void getRelations(final Class modelType) {
     Model outer = Model.instantiate(modelType);
 
+    // Remember that this model has already been added as a relation.
     this.tables.add(outer.table());
 
     // Select the ID column of the model in the format "table_id".
@@ -254,21 +256,44 @@ public final class ModelQuery<T extends Model> {
       String fieldName = field.getName();
       Class fieldType = field.getType();
 
+      boolean isList = false;
+
+      // If the field being looked at is a list, get the generic type of the
+      // list.
+      if (List.class.isAssignableFrom(fieldType)) {
+        fieldType = this.getGenericType(field);
+
+        // Remember that the field type was a list.
+        isList = true;
+      }
+
       if (Model.class.isAssignableFrom(fieldType)) {
         Model inner = Model.instantiate(fieldType);
 
+        // If the model hasn't already been added as a relation, join it into
+        // the query if it represents a single field, e.g. a comment belonging
+        // to a post, and look for further relations...
         if (!this.tables.contains(inner.table())) {
-          this.query.join(
-            inner.table(),
-            String.format("%s.%s", outer.table(), fieldName),
-            String.format("%s.%s", inner.table(), "id")
-          );
+          if (!isList) {
+            this.query.join(
+              inner.table(),
+              String.format("%s.%s", outer.table(), fieldName),
+              String.format("%s.%s", inner.table(), "id")
+            );
 
-          this.tables.add(inner.table());
+            // Remember that this table has already been added as a relation.
+            this.tables.add(inner.table());
+          }
 
+          // Look for further relations.
           this.getRelations(fieldType);
         }
-        else {
+        // ...otherwise, assume that the model is a relation of an already
+        // joined model. This will be the case in a two-way relation (either
+        // One-to-One or One-to-Many) and so a reverse join is performed if the
+        // field isn't a list, e.g. joining a single post with a list of
+        // comments.
+        else if (!isList) {
           this.query.join(
             outer.table(),
             String.format("%s.%s", inner.table(), "id"),
@@ -276,24 +301,14 @@ public final class ModelQuery<T extends Model> {
           );
         }
       }
-
-      if (List.class.isAssignableFrom(fieldType)) {
-        fieldType = this.getGenericType(field);
-
-        if (fieldType == this.type) {
-          continue;
-        }
-
-        if (Model.class.isAssignableFrom(fieldType)) {
-          this.getRelations(fieldType);
-
-          continue;
-        }
+      else {
+        // Prefix all the columns of the model with its table name to ensure that
+        // non-unique columns can be differentiated if other data is joined in.
+        // I.e. people.name becomes people_name.
+        this.query.select(String.format(
+          "%s.%s as %1$s_%2$s", outer.table(), fieldName.toLowerCase()
+        ));
       }
-
-      this.query.select(String.format(
-        "%s.%s as %1$s_%2$s", outer.table(), fieldName.toLowerCase()
-      ));
     }
   }
 
@@ -338,15 +353,19 @@ public final class ModelQuery<T extends Model> {
           isList = true;
         }
 
-        // If the field being looked at is the same type as the model being
-        // queried, bail out. This is to avoid an infinite loop where two models
-        // both have fields of oneanother's type, e.g. a post with a list of
-        // comments and a comment that belongs to a post.
-        if (fieldType == this.type) {
-          continue;
-        }
-
         if (Model.class.isAssignableFrom(fieldType)) {
+          // If the field being looked at is the same type as the model being
+          // queried or if the type has already been added as a relation, bail
+          // out. This is to avoid an infinite loop where two models both have
+          // fields of oneanother's type, e.g. a post with a list of comments and
+          // a comment that belongs to a post.
+          if (fieldType == this.type || this.types.contains(fieldType)) {
+            continue;
+          }
+
+          // Remember that this type has already been added as a relation.
+          this.types.add(fieldType);
+
           List<Model> value = this.setRelations(fieldType, rows);
 
           if (isList) {
