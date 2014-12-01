@@ -8,6 +8,7 @@ import java.util.List;
 
 // Reflection utilities
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 
 // SQL utilities
 import java.sql.SQLException;
@@ -62,6 +63,18 @@ public abstract class Model {
     this();
     this.table = table.toLowerCase().trim().replaceAll(" +", "_");
     this.db = db;
+  }
+
+  /**
+   * Get the generic type of a field.
+   *
+   * @param field The field to inspect.
+   * @return      The generic type of the field.
+   */
+  public static final Class getGenericType(final Field field) {
+    ParameterizedType type = (ParameterizedType) field.getGenericType();
+
+    return (Class) type.getActualTypeArguments()[0];
   }
 
   /**
@@ -148,7 +161,7 @@ public abstract class Model {
 
     for (Field field: this.getFields()) {
       String name = field.getName();
-      Class<?> type = field.getType();
+      Class type = field.getType();
       String column = name.toLowerCase();
 
       // String type
@@ -182,11 +195,23 @@ public abstract class Model {
         schema.integer(column);
         schema.foreignKey(column, model.table(), "id");
       }
-      // else {
-      //   throw new IllegalArgumentException(
-      //     "Unsupported data type for column: " + name
-      //   );
-      // }
+      // List subclass
+      else if (List.class.isAssignableFrom(type)) {
+        Class genericType = this.getGenericType(field);
+
+        if (Model.class.isAssignableFrom(genericType)) {
+          continue;
+        }
+
+        throw new IllegalArgumentException(
+          "Lists can only hold other Models"
+        );
+      }
+      else {
+        throw new IllegalArgumentException(
+          "Unsupported data type for column: " + name
+        );
+      }
     }
 
     schema.run();

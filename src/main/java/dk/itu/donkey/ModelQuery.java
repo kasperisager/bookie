@@ -13,7 +13,6 @@ import java.util.Set;
 
 // Reflection utilities
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
 
 // SQL utilities
 import java.sql.SQLException;
@@ -256,18 +255,6 @@ public final class ModelQuery<T extends Model> {
   }
 
   /**
-   * Get the generic type of a field.
-   *
-   * @param field The field to inspect.
-   * @return      The generic type of the field.
-   */
-  private Class getGenericType(final Field field) {
-    ParameterizedType type = (ParameterizedType) field.getGenericType();
-
-    return (Class) type.getActualTypeArguments()[0];
-  }
-
-  /**
    * Recursively traverse a model and join in its relations on the current
    * query object.
    *
@@ -291,7 +278,7 @@ public final class ModelQuery<T extends Model> {
       // If the field being looked at is a list, get the generic type of the
       // list.
       if (List.class.isAssignableFrom(fieldType)) {
-        fieldType = this.getGenericType(field);
+        fieldType = Model.getGenericType(field);
 
         // Remember that the field type was a list.
         isList = true;
@@ -378,6 +365,7 @@ public final class ModelQuery<T extends Model> {
       // Run through each of the fields of the model and look for further
       // relations.
       for (Field field: model.getFields()) {
+        String fieldName = field.getName();
         Class fieldType = field.getType();
 
         boolean isList = false;
@@ -385,7 +373,7 @@ public final class ModelQuery<T extends Model> {
         // If the field being looked at is a list, get the generic type of the
         // list.
         if (List.class.isAssignableFrom(fieldType)) {
-          fieldType = this.getGenericType(field);
+          fieldType = Model.getGenericType(field);
 
           // Remember that the field type was a list.
           isList = true;
@@ -407,10 +395,10 @@ public final class ModelQuery<T extends Model> {
           List<Model> value = this.setRelations(fieldType, rows);
 
           if (isList) {
-            model.setField(field.getName(), value);
+            model.setField(fieldName, value);
           }
           else {
-            model.setField(field.getName(), value.get(0));
+            model.setField(fieldName, value.get(0));
           }
         }
       }
