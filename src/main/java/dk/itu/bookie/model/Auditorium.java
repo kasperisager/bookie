@@ -3,6 +3,8 @@
  */
 package dk.itu.bookie.model;
 
+import java.util.List;
+
 // Base model
 import dk.itu.donkey.Model;
 
@@ -19,6 +21,8 @@ public class Auditorium extends Model {
    * Number of rows in the auditorium.
    */
   public int rows;
+
+  public List<Showtime> showtimes;
 
   /**
    * Initialize an auditorium.
