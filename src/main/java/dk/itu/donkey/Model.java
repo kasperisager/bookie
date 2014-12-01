@@ -4,9 +4,7 @@
 package dk.itu.donkey;
 
 // General utilities
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 // Reflection utilities
 import java.lang.reflect.Field;
@@ -194,6 +192,12 @@ public abstract class Model {
     schema.run();
   }
 
+  /**
+   * Given a type, attempt instantiating a new model.
+   *
+   * @param type  The type of model to instantiate.
+   * @return      The instantiated model.
+   */
   public static final Model instantiate(final Class type) {
     try {
       return (Model) type.newInstance();

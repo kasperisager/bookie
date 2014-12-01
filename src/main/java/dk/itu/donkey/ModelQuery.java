@@ -43,7 +43,14 @@ public final class ModelQuery<T extends Model> {
    */
   private Query query;
 
+  /**
+   * Keep track of tables that have been joined into the query.
+   */
   private Set<String> tables = new HashSet<>();
+
+  /**
+   * Keep track of the types of models whose relations have been initialized.
+   */
   private Set<Class> types = new HashSet<>();
 
   /**
@@ -53,11 +60,22 @@ public final class ModelQuery<T extends Model> {
    */
   public ModelQuery(final Class<T> type) {
     Model model = Model.instantiate(type);
+
     this.type = type;
     this.query = model.query();
     this.table = model.table();
   }
 
+  /**
+   * Prefix a column with the table name of the model being queried if needed.
+   *
+   * <p>
+   * If the column has already been prefixed with another table name, the
+   * column will simply pass through without being touched.
+   *
+   * @param column  The column to prefix.
+   * @return        The prefixed column.
+   */
   private String prefixColumn(final String column) {
     if (!column.matches(".*\\..*")) {
       return String.format("%s.%s", this.table, column);
@@ -237,14 +255,26 @@ public final class ModelQuery<T extends Model> {
     return this.query.sum(this.prefixColumn(field));
   }
 
+  /**
+   * Get the generic type of a field.
+   *
+   * @param field The field to inspect.
+   * @return      The generic type of the field.
+   */
   private Class getGenericType(final Field field) {
     ParameterizedType type = (ParameterizedType) field.getGenericType();
 
     return (Class) type.getActualTypeArguments()[0];
   }
 
-  private void getRelations(final Class modelType) {
-    Model outer = Model.instantiate(modelType);
+  /**
+   * Recursively traverse a model and join in its relations on the current
+   * query object.
+   *
+   * @param type The model type to traverse.
+   */
+  private void getRelations(final Class type) {
+    Model outer = Model.instantiate(type);
 
     // Remember that this model has already been added as a relation.
     this.tables.add(outer.table());
@@ -302,9 +332,9 @@ public final class ModelQuery<T extends Model> {
         }
       }
       else {
-        // Prefix all the columns of the model with its table name to ensure that
-        // non-unique columns can be differentiated if other data is joined in.
-        // I.e. people.name becomes people_name.
+        // Prefix all the columns of the model with its table name to ensure
+        // that non-unique columns can be differentiated if other data is
+        // joined in. I.e. people.name becomes people_name.
         this.query.select(String.format(
           "%s.%s as %1$s_%2$s", outer.table(), fieldName.toLowerCase()
         ));
@@ -312,6 +342,14 @@ public final class ModelQuery<T extends Model> {
     }
   }
 
+  /**
+   * Recursively traverse a model and initialize its relations based on a
+   * database response.
+   *
+   * @param type  The type of model to traverse.
+   * @param rows  The database rows to use for initializing the models.
+   * @return      A list of models initialized with their relations.
+   */
   private List<Model> setRelations(final Class type, final List<Row> rows) {
     // Create a map for tracking model instances by their ID. When joining data,
     // the same instance of a model might appear several times in the query
@@ -357,8 +395,8 @@ public final class ModelQuery<T extends Model> {
           // If the field being looked at is the same type as the model being
           // queried or if the type has already been added as a relation, bail
           // out. This is to avoid an infinite loop where two models both have
-          // fields of oneanother's type, e.g. a post with a list of comments and
-          // a comment that belongs to a post.
+          // fields of oneanother's type, e.g. a post with a list of comments
+          // and a comment that belongs to a post.
           if (fieldType == this.type || this.types.contains(fieldType)) {
             continue;
           }
