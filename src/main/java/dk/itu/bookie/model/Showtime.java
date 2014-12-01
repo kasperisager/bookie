@@ -3,6 +3,8 @@
  */
 package dk.itu.bookie.model;
 
+import java.util.List;
+
 // Base model
 import dk.itu.donkey.Model;
 
@@ -15,6 +17,11 @@ import dk.itu.bookie.Bookie;
  * @version 1.0.0
  */
 public class Showtime extends Model {
+  /**
+   * List of tickets.
+   */
+  public List<Ticket> tickets;
+
   /**
    * The movie to show.
    */
