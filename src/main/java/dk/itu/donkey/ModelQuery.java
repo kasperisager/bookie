@@ -5,7 +5,14 @@ package dk.itu.donkey;
 
 // General utilities
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+// Reflection utilities
+import java.lang.reflect.Field;
 
 // SQL utilities
 import java.sql.SQLException;
@@ -26,9 +33,24 @@ public final class ModelQuery<T extends Model> {
   private Class<T> type;
 
   /**
+   * The table to query.
+   */
+  private String table;
+
+  /**
    * The query to build and perform.
    */
   private Query query;
+
+  /**
+   * Keep track of tables that have been joined into the query.
+   */
+  private Set<String> tables = new HashSet<>();
+
+  /**
+   * Keep track of the types of models whose relations have been initialized.
+   */
+  private Set<Class> types = new HashSet<>();
 
   /**
    * Initialize a model query.
@@ -36,18 +58,29 @@ public final class ModelQuery<T extends Model> {
    * @param type The model subclass to query.
    */
   public ModelQuery(final Class<T> type) {
-    this.type = type;
+    Model model = Model.instantiate(type);
 
-    try {
-      this.query = ((T) type.newInstance()).query();
+    this.type = type;
+    this.query = model.query();
+    this.table = model.table();
+  }
+
+  /**
+   * Prefix a column with the table name of the model being queried if needed.
+   *
+   * <p>
+   * If the column has already been prefixed with another table name, the
+   * column will simply pass through without being touched.
+   *
+   * @param column  The column to prefix.
+   * @return        The prefixed column.
+   */
+  private String prefixColumn(final String column) {
+    if (!column.matches(".*\\..*")) {
+      return String.format("%s.%s", this.table, column);
     }
-    catch (ClassCastException e) {
-      // Catch casting exceptions since this indicates that a wrong type was
-      // passed to the method. Throw an illegal argument exception instead.
-      throw new IllegalArgumentException("Type must be subclass of Model");
-    }
-    catch (Exception e) {
-      return;
+    else {
+      return column;
     }
   }
 
@@ -64,7 +97,7 @@ public final class ModelQuery<T extends Model> {
     final String operator,
     final Object value
   ) {
-    this.query.where(column, operator, value);
+    this.query.where(this.prefixColumn(column), operator, value);
 
     return this;
   }
@@ -77,7 +110,7 @@ public final class ModelQuery<T extends Model> {
    * @return        The current {@link ModelQuery} object, for chaining.
    */
   public ModelQuery where(final String column, final Object value) {
-    this.query.where(column, value);
+    this.query.where(this.prefixColumn(column), value);
 
     return this;
   }
@@ -95,7 +128,7 @@ public final class ModelQuery<T extends Model> {
     final String operator,
     final Object value
   ) {
-    this.query.orWhere(column, operator, value);
+    this.query.orWhere(this.prefixColumn(column), operator, value);
 
     return this;
   }
@@ -108,7 +141,7 @@ public final class ModelQuery<T extends Model> {
    * @return        The current {@link ModelQuery} object, for chaining.
    */
   public ModelQuery orWhere(final String column, final Object value) {
-    this.query.orWhere(column, value);
+    this.query.orWhere(this.prefixColumn(column), value);
 
     return this;
   }
@@ -121,7 +154,7 @@ public final class ModelQuery<T extends Model> {
    * @return          The current {@link ModelQuery} object, for chaining.
    */
   public ModelQuery orderBy(final String column, final String direction) {
-    this.query.orderBy(column, direction);
+    this.query.orderBy(this.prefixColumn(column), direction);
 
     return this;
   }
@@ -133,7 +166,7 @@ public final class ModelQuery<T extends Model> {
    * @return        The current {@link ModelQuery} object, for chaining.
    */
   public ModelQuery orderBy(final String column) {
-    this.query.orderBy(column);
+    this.query.orderBy(this.prefixColumn(column));
 
     return this;
   }
@@ -182,7 +215,7 @@ public final class ModelQuery<T extends Model> {
    * @throws SQLException In case of a SQL error.
    */
   public Object max(final String field) throws SQLException {
-    return this.query.max(field);
+    return this.query.max(this.prefixColumn(field));
   }
 
   /**
@@ -194,7 +227,7 @@ public final class ModelQuery<T extends Model> {
    * @throws SQLException In case of a SQL error.
    */
   public Object min(final String field) throws SQLException {
-    return this.query.min(field);
+    return this.query.min(this.prefixColumn(field));
   }
 
   /**
@@ -206,7 +239,7 @@ public final class ModelQuery<T extends Model> {
    * @throws SQLException In case of a SQL error.
    */
   public Number avg(final String field) throws SQLException {
-    return this.query.avg(field);
+    return this.query.avg(this.prefixColumn(field));
   }
 
   /**
@@ -218,7 +251,160 @@ public final class ModelQuery<T extends Model> {
    * @throws SQLException In case of a SQL error.
    */
   public Number sum(final String field) throws SQLException {
-    return this.query.sum(field);
+    return this.query.sum(this.prefixColumn(field));
+  }
+
+  /**
+   * Recursively traverse a model and join in its relations on the current
+   * query object.
+   *
+   * @param type The model type to traverse.
+   */
+  private void getRelations(final Class type) {
+    Model outer = Model.instantiate(type);
+
+    // Remember that this model has already been added as a relation.
+    this.tables.add(outer.table());
+
+    // Select the ID column of the model in the format "table_id".
+    this.query.select(String.format("%s.id as %1$s_id", outer.table()));
+
+    for (Field field: outer.getFields()) {
+      String fieldName = field.getName();
+      Class fieldType = field.getType();
+
+      boolean isList = false;
+
+      // If the field being looked at is a list, get the generic type of the
+      // list.
+      if (List.class.isAssignableFrom(fieldType)) {
+        fieldType = Model.getGenericType(field);
+
+        // Remember that the field type was a list.
+        isList = true;
+      }
+
+      if (Model.class.isAssignableFrom(fieldType)) {
+        Model inner = Model.instantiate(fieldType);
+
+        // If the model hasn't already been added as a relation, join it into
+        // the query if it represents a single field, e.g. a comment belonging
+        // to a post, and look for further relations...
+        if (!this.tables.contains(inner.table())) {
+          if (!isList) {
+            this.query.join(
+              inner.table(),
+              String.format("%s.%s", outer.table(), fieldName),
+              String.format("%s.%s", inner.table(), "id")
+            );
+
+            // Remember that this table has already been added as a relation.
+            this.tables.add(inner.table());
+          }
+
+          // Look for further relations.
+          this.getRelations(fieldType);
+        }
+        // ...otherwise, assume that the model is a relation of an already
+        // joined model. This will be the case in a two-way relation (either
+        // One-to-One or One-to-Many) and so a reverse join is performed if the
+        // field isn't a list, e.g. joining a single post with a list of
+        // comments.
+        else if (!isList) {
+          this.query.join(
+            outer.table(),
+            String.format("%s.%s", inner.table(), "id"),
+            String.format("%s.%s", outer.table(), fieldName)
+          );
+        }
+      }
+      else {
+        // Prefix all the columns of the model with its table name to ensure
+        // that non-unique columns can be differentiated if other data is
+        // joined in. I.e. people.name becomes people_name.
+        this.query.select(String.format(
+          "%s.%s as %1$s_%2$s", outer.table(), fieldName.toLowerCase()
+        ));
+      }
+    }
+  }
+
+  /**
+   * Recursively traverse a model and initialize its relations based on a
+   * database response.
+   *
+   * @param type  The type of model to traverse.
+   * @param rows  The database rows to use for initializing the models.
+   * @return      A list of models initialized with their relations.
+   */
+  private List<Model> setRelations(final Class type, final List<Row> rows) {
+    // Create a map for tracking model instances by their ID. When joining data,
+    // the same instance of a model might appear several times in the query
+    // response (e.g. the same post for several comments). The map will ensure
+    // that only the first occurence of each unique model is instantiated.
+    Map<Integer, Model> models = new LinkedHashMap<>();
+
+    for (Row row: rows) {
+      Model model = Model.instantiate(type);
+
+      // Grab the ID of the current model table from the row.
+      int id = (int) row.get(String.format("%s_%s", model.table(), "id"));
+
+      if (models.containsKey(id)) {
+        continue;
+      }
+
+      // Store the model in the map.
+      models.put(id, model);
+
+      // Set the current row on the model. Since each column in the response is
+      // prefixed with the table name of the model, only columns specific to the
+      // model will be set on it.
+      model.setRow(row);
+
+      // Run through each of the fields of the model and look for further
+      // relations.
+      for (Field field: model.getFields()) {
+        String fieldName = field.getName();
+        Class fieldType = field.getType();
+
+        boolean isList = false;
+
+        // If the field being looked at is a list, get the generic type of the
+        // list.
+        if (List.class.isAssignableFrom(fieldType)) {
+          fieldType = Model.getGenericType(field);
+
+          // Remember that the field type was a list.
+          isList = true;
+        }
+
+        if (Model.class.isAssignableFrom(fieldType)) {
+          // If the field being looked at is the same type as the model being
+          // queried or if the type has already been added as a relation, bail
+          // out. This is to avoid an infinite loop where two models both have
+          // fields of oneanother's type, e.g. a post with a list of comments
+          // and a comment that belongs to a post.
+          if (fieldType == this.type || this.types.contains(fieldType)) {
+            continue;
+          }
+
+          // Remember that this type has already been added as a relation.
+          this.types.add(fieldType);
+
+          List<Model> value = this.setRelations(fieldType, rows);
+
+          if (isList) {
+            model.setField(fieldName, value);
+          }
+          else {
+            model.setField(fieldName, value.get(0));
+          }
+        }
+      }
+    }
+
+    return new ArrayList<Model>(models.values());
   }
 
   /**
@@ -229,45 +415,8 @@ public final class ModelQuery<T extends Model> {
    * @throws SQLException In case of a SQL error.
    */
   public List<Model> get() throws SQLException {
-    List<Model> models = new ArrayList<>();
-    List<Row> rows = this.query.get();
+    this.getRelations(this.type);
 
-    for (Row row: rows) {
-      try {
-        Model model = this.type.newInstance();
-        model.setRow(row);
-        models.add(model);
-      }
-      catch (Exception e) {
-        continue;
-      }
-    }
-
-    return models;
-  }
-
-  /**
-   * Perform the query and get the first matching result.
-   *
-   * @return The first model that matches the query.
-   *
-   * @throws SQLException In case of a SQL error.
-   */
-  public Model first() throws SQLException {
-    Row row = this.query.first();
-
-    if (row == null) {
-      return null;
-    }
-
-    try {
-      Model model = this.type.newInstance();
-      model.setRow(row);
-
-      return model;
-    }
-    catch (Exception e) {
-      return null;
-    }
+    return this.setRelations(this.type, this.query.get());
   }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 
 // Reflection utilities
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 
 // SQL utilities
 import java.sql.SQLException;
@@ -65,12 +66,24 @@ public abstract class Model {
   }
 
   /**
+   * Get the generic type of a field.
+   *
+   * @param field The field to inspect.
+   * @return      The generic type of the field.
+   */
+  public static final Class getGenericType(final Field field) {
+    ParameterizedType type = (ParameterizedType) field.getGenericType();
+
+    return (Class) type.getActualTypeArguments()[0];
+  }
+
+  /**
    * Get a public field from the model.
    *
    * @param label The name of the field.
    * @return      The field.
    */
-  private Field getField(final String label) {
+  public final Field getField(final String label) {
     try {
       return this.getClass().getField(label);
     }
@@ -84,7 +97,7 @@ public abstract class Model {
    *
    * @return An array of public fields declared in the model.
    */
-  private Field[] getFields() {
+  public final Field[] getFields() {
     return this.getClass().getFields();
   }
 
@@ -94,7 +107,7 @@ public abstract class Model {
    * @param label The name of the field.
    * @param value The value of the field.
    */
-  private void setField(final String label, final Object value) {
+  public final void setField(final String label, final Object value) {
     try {
       this.getField(label).set(this, value);
     }
@@ -148,7 +161,7 @@ public abstract class Model {
 
     for (Field field: this.getFields()) {
       String name = field.getName();
-      Class<?> type = field.getType();
+      Class type = field.getType();
       String column = name.toLowerCase();
 
       // String type
@@ -177,15 +190,22 @@ public abstract class Model {
       }
       // Model subclass
       else if (Model.class.isAssignableFrom(type)) {
-        try {
-          Model model = (Model) type.newInstance();
+        Model model = this.instantiate(type);
 
-          schema.integer(column);
-          schema.foreignKey(column, model.table(), "id");
-        }
-        catch (Exception e) {
+        schema.integer(column);
+        schema.foreignKey(column, model.table(), "id");
+      }
+      // List subclass
+      else if (List.class.isAssignableFrom(type)) {
+        Class genericType = this.getGenericType(field);
+
+        if (Model.class.isAssignableFrom(genericType)) {
           continue;
         }
+
+        throw new IllegalArgumentException(
+          "Lists can only hold other Models"
+        );
       }
       else {
         throw new IllegalArgumentException(
@@ -198,6 +218,26 @@ public abstract class Model {
   }
 
   /**
+   * Given a type, attempt instantiating a new model.
+   *
+   * @param type  The type of model to instantiate.
+   * @return      The instantiated model.
+   */
+  public static final Model instantiate(final Class type) {
+    try {
+      return (Model) type.newInstance();
+    }
+    catch (ClassCastException e) {
+      // Catch casting exceptions since this indicates that a wrong type was
+      // passed to the method. Throw an illegal argument exception instead.
+      throw new IllegalArgumentException("Type must be subclass of Model");
+    }
+    catch (Exception e) {
+      return null;
+    }
+  }
+
+  /**
    * Get the Row representation of the model.
    *
    * @return The row representation of the model.
@@ -205,12 +245,12 @@ public abstract class Model {
   public final Row getRow() {
     Row row = new Row();
 
-    for (Field column: this.getFields()) {
-      String name = column.getName();
+    for (Field field: this.getFields()) {
+      String name = field.getName();
       Object value = null;
 
       try {
-        value = column.get(this);
+        value = field.get(this);
       }
       catch (Exception e) {
         continue;
@@ -218,6 +258,10 @@ public abstract class Model {
 
       if (value instanceof Model) {
         value = ((Model) value).id();
+      }
+
+      if (value instanceof List) {
+        continue;
       }
 
       row.put(name.toLowerCase(), value);
@@ -245,6 +289,12 @@ public abstract class Model {
     for (Field field: this.getFields()) {
       String column = field.getName();
       Object value = row.get(column.toLowerCase());
+
+      if (value == null) {
+        value = row.get(String.format(
+          "%s_%s", this.table(), column.toLowerCase()
+        ));
+      }
 
       this.setField(column, value);
     }
@@ -286,7 +336,14 @@ public abstract class Model {
     final Class<T> type,
     final int id
   ) throws SQLException {
-    return Model.find(type).where("id", id).first();
+    List<Model> models = Model.find(type).where("id", id).get();
+
+    if (!models.isEmpty()) {
+      return models.get(0);
+    }
+    else {
+      return null;
+    }
   }
 
   /**
@@ -356,12 +413,7 @@ public abstract class Model {
    * @throws SQLException In case of a SQL error.
    */
   public final boolean upsert() throws SQLException {
-    if (this.id == null) {
-      return this.insert();
-    }
-    else {
-      return this.update();
-    }
+    return (this.id == null) ? this.insert() : this.update();
   }
 
   /**
