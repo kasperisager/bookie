@@ -79,6 +79,13 @@ public abstract class Grammar {
 
   /**
    * List of formatted joins.
+   *
+   * <p>
+   * This is used in the following clauses:
+   *
+   * <ul>
+   * <li>select [...] [join x on x.col = z.col]</li>
+   * </ul>
    */
   private List<String> joins = new ArrayList<>();
 
