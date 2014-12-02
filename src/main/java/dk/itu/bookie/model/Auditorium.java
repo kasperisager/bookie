@@ -22,7 +22,10 @@ public class Auditorium extends Model {
    */
   public int rows;
 
-  public List<Showtime> showtimes;
+  /**
+   * Number of seats per row in the auditorium.
+   */
+  public int seats;
 
   /**
    * Initialize an auditorium.

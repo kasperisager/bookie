@@ -9,9 +9,33 @@
   text="Forestillinger"
   xmlns:fx="http://javafx.com/fxml"
 >
-  <BorderPane xmlns:fx="http://javafx.com/fxml">
-    <top>
-      <ListView fx:id="movies" />
-    </top>
-  </BorderPane>
+  <HBox spacing="6" styleClass="borderPane">
+    <children>
+
+      <TableView fx:id="showtimes" minWidth="500">
+        <placeholder>
+          <Label text="Ingen forestillinger fundet." />
+        </placeholder>
+
+        <columns>
+          <TableColumn text="Film" prefWidth="200" resizable="false" />
+          <TableColumn text="Sal" prefWidth="100" resizable="false" />
+          <TableColumn text="Dato" prefWidth="100" resizable="false" />
+          <TableColumn text="Tid" prefWidth="100" resizable="false" />
+        </columns>
+      </TableView>
+
+      <TitledPane text="Reservation" collapsible="false">
+        <GridPane
+          fx:id="auditorium"
+          alignment="CENTER"
+          prefHeight="9999"
+          prefWidth="9999"
+          hgap="10"
+          vgap="10"
+        />
+      </TitledPane>
+
+    </children>
+  </HBox>
 </Tab>

@@ -63,7 +63,7 @@ public final class Bookie extends Application {
    *
    * @param primaryStage The primary stage of the application.
    *
-   * @throws IOException If the main FXML-view cannot load.
+   * @throws IOException If the main FXML-view or CSS stylesheet cannot load.
    */
   @Override
   public void start(final Stage primaryStage) throws IOException {
@@ -73,8 +73,13 @@ public final class Bookie extends Application {
 
     Scene scene = new Scene(root);
 
+    scene.getStylesheets().add(
+      this.getClass().getResource("stylesheets/Main.css").toExternalForm()
+    );
+
     primaryStage.setTitle("Bookie");
     primaryStage.setScene(scene);
+    primaryStage.setResizable(false);
     primaryStage.show();
   }
 }

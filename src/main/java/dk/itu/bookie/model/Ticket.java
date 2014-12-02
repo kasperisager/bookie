@@ -16,9 +16,14 @@ import dk.itu.bookie.Bookie;
  */
 public class Ticket extends Model {
   /**
-   * The showtime that the is for.
+   * The showtime that the ticket is for.
    */
   public Showtime showtime;
+
+  /**
+   * The reservation that this ticket is part of.
+   */
+  public Reservation reservation;
 
   /**
    * Initialize a ticket.

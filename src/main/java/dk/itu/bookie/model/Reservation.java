@@ -3,6 +3,9 @@
  */
 package dk.itu.bookie.model;
 
+// General utilities
+import java.util.List;
+
 // Base model
 import dk.itu.donkey.Model;
 
@@ -21,9 +24,9 @@ public class Reservation extends Model {
   public int phoneNumber;
 
   /**
-   * The reserved ticket.
+   * The reserved tickets.
    */
-  public Ticket ticket;
+  public List<Ticket> tickets;
 
   /**
    * Initialize a reservation.

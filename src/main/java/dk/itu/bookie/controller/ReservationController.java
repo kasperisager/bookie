@@ -17,7 +17,7 @@ import javafx.fxml.Initializable;
  *
  * @version 1.0.0
  */
-public class ReservationController {
+public class ReservationController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
   }
 }

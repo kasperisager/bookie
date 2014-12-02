@@ -4,29 +4,27 @@
 package dk.itu.bookie.controller;
 
 // General utilities
-import java.util.List;
 import java.util.ResourceBundle;
 
 // Net utilities
 import java.net.URL;
 
-// SQL utilities
-import java.sql.SQLException;
+// JavaFX layouts
+import javafx.scene.layout.GridPane;
 
 // JavaFX controls
-import javafx.scene.control.ListView;
-import javafx.scene.control.Pagination;
-
-// JavaFX collections
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TableColumn;
 
 // FXML utilities
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 
+// Components
+import dk.itu.bookie.component.Seat;
+
 // Models
-import dk.itu.bookie.model.Movie;
+import dk.itu.bookie.model.Showtime;
 
 /**
  * Showtime controller class.
@@ -35,25 +33,19 @@ import dk.itu.bookie.model.Movie;
  */
 public class ShowtimeController implements Initializable {
   @FXML
-  private ListView movies;
+  private TableView<Showtime> showtimes;
 
-  public void initialize(
-    final URL url,
-    final ResourceBundle resourceBundle
-  ) {
-    try {
-      List<Movie> movies = Movie.find(Movie.class).orderBy("name") .get();
+  @FXML
+  private GridPane auditorium;
 
-      ObservableList<String> listMovies = FXCollections.observableArrayList();
+  public void initialize(final URL url, final ResourceBundle resourceBundle) {
+    int rows = 10;
+    int seats = 15;
 
-      for (Movie movie: movies) {
-        listMovies.add(movie.name);
+    for (int row = 1; row <= rows; row++) {
+      for (int seat = 1; seat <= seats; seat++) {
+        this.auditorium.add(new Seat(row, seat), seat, row);
       }
-
-      this.movies.setItems(listMovies);
-    }
-    catch (SQLException e) {
-      System.err.println(e.getMessage());
     }
   }
 }
