@@ -345,18 +345,25 @@ public final class ModelQuery<T extends Model> {
 
     Map<Integer, List<Row>> modelRows = new LinkedHashMap<>();
 
+    // Partition the rows.
     for (Row row: rows) {
       Model model = Model.instantiate(type);
+      List<Row> subRows;
 
       // Grab the ID of the current model table from the row.
       Integer id = (Integer) row.get(
         String.format("%s_%s", model.table(), "id")
       );
 
+      if (id == null) {
+        continue;
+      }
+
       if (!models.containsKey(id)) {
-        List<Row> subRows = new ArrayList<>();
+        subRows = new ArrayList<>();
         subRows.add(row);
         modelRows.put(id, subRows);
+
         models.put(id, model);
 
         // Set the current row on the model. Since each column in the response
@@ -365,12 +372,15 @@ public final class ModelQuery<T extends Model> {
         model.setRow(row);
       }
       else {
-        List<Row> subRows = modelRows.get(id);
+        subRows = modelRows.get(id);
         subRows.add(row);
         modelRows.put(id, subRows);
+
         model = models.get(id);
       }
+    }
 
+    for (Model model: models.values()) {
       // Run through each of the fields of the model and look for further
       // relations.
       for (Field field: model.getFields()) {
@@ -397,7 +407,9 @@ public final class ModelQuery<T extends Model> {
             continue;
           }
 
-          List<Model> value = this.setRelations(type, fieldType, modelRows.get(id));
+          List<Model> value = this.setRelations(
+            type, fieldType, modelRows.get(model.id())
+          );
 
           if (isList) {
             model.setField(fieldName, value);
