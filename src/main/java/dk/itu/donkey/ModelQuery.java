@@ -167,89 +167,6 @@ public final class ModelQuery<T extends Model> {
   }
 
   /**
-   * Add a limit clause to the query.
-   *
-   * @param limit The limit to add.
-   * @return      The current {@link ModelQuery} object, for chaining.
-   */
-  public ModelQuery limit(final int limit) {
-    this.query.limit(limit);
-
-    return this;
-  }
-
-  /**
-   * Add an offset clause to the query.
-   *
-   * @param offset  The offset to add.
-   * @return        The current {@link ModelQuery} object, for chaining.
-   */
-  public ModelQuery offset(final int offset) {
-    this.query.offset(offset);
-
-    return this;
-  }
-
-  /**
-   * Count the number of models.
-   *
-   * @return The number of models.
-   *
-   * @throws SQLException In case of a SQL error.
-   */
-  public Number count() throws SQLException {
-    return this.query.count();
-  }
-
-  /**
-   * Get the largest value of a model field.
-   *
-   * @param field The field to find the largest value of.
-   * @return      The largest value of the specified field.
-   *
-   * @throws SQLException In case of a SQL error.
-   */
-  public Object max(final String field) throws SQLException {
-    return this.query.max(this.prefixColumn(field));
-  }
-
-  /**
-   * Get the smallest value of a model field.
-   *
-   * @param field The field to find the smallet value of.
-   * @return      The smallest value of the specified field.
-   *
-   * @throws SQLException In case of a SQL error.
-   */
-  public Object min(final String field) throws SQLException {
-    return this.query.min(this.prefixColumn(field));
-  }
-
-  /**
-   * Get the average value of a model field.
-   *
-   * @param field The field to find the average value of.
-   * @return      The average value of the specified field.
-   *
-   * @throws SQLException In case of a SQL error.
-   */
-  public Number avg(final String field) throws SQLException {
-    return this.query.avg(this.prefixColumn(field));
-  }
-
-  /**
-   * Get the sum of a model field.
-   *
-   * @param field The field to find the sum of.
-   * @return      The sum of the specified field.
-   *
-   * @throws SQLException In case of a SQL error.
-   */
-  public Number sum(final String field) throws SQLException {
-    return this.query.sum(this.prefixColumn(field));
-  }
-
-  /**
    * Recursively traverse a model and join in its relations on the current
    * query object.
    *
@@ -328,9 +245,10 @@ public final class ModelQuery<T extends Model> {
    * Recursively traverse a model and initialize its relations based on a
    * database response.
    *
-   * @param type  The type of model to traverse.
-   * @param rows  The database rows to use for initializing the models.
-   * @return      A list of models initialized with their relations.
+   * @param context The context of the relation.
+   * @param type    The type of model to traverse.
+   * @param rows    The database rows to use for initializing the models.
+   * @return        A list of models initialized with their relations.
    */
   private List<Model> setRelations(
     final Class context,
@@ -343,12 +261,14 @@ public final class ModelQuery<T extends Model> {
     // that only the first occurence of each unique model is instantiated.
     Map<Integer, Model> models = new LinkedHashMap<>();
 
+    // Map model IDs to their associated rows. E.g. a list of posts joined with
+    // their comments would result in a map of post IDs mapped to the database
+    // rows containing the comments associated with that post ID.
     Map<Integer, List<Row>> modelRows = new LinkedHashMap<>();
 
-    // Partition the rows.
+    // Partition the rows according to the specified type.
     for (Row row: rows) {
       Model model = Model.instantiate(type);
-      List<Row> subRows;
 
       // Grab the ID of the current model table from the row.
       Integer id = (Integer) row.get(
@@ -359,10 +279,12 @@ public final class ModelQuery<T extends Model> {
         continue;
       }
 
+      // List of database rows associated with a given model.
+      List<Row> subRows;
+
       if (!models.containsKey(id)) {
         subRows = new ArrayList<>();
         subRows.add(row);
-        modelRows.put(id, subRows);
 
         models.put(id, model);
 
@@ -374,10 +296,9 @@ public final class ModelQuery<T extends Model> {
       else {
         subRows = modelRows.get(id);
         subRows.add(row);
-        modelRows.put(id, subRows);
-
-        model = models.get(id);
       }
+
+      modelRows.put(id, subRows);
     }
 
     for (Model model: models.values()) {
