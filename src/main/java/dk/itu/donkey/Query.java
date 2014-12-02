@@ -162,11 +162,7 @@ public final class Query {
     final String localColumn,
     final String foreignColumn
   ) {
-    this.grammar.addJoin(
-      "inner", foreignTable, localColumn, "=", foreignColumn
-    );
-
-    return this;
+    return this.join(foreignTable, localColumn, "=", foreignColumn);
   }
 
   /**
@@ -204,11 +200,7 @@ public final class Query {
     final String localColumn,
     final String foreignColumn
   ) {
-    this.grammar.addJoin(
-      "left outer", foreignTable, localColumn, "=", foreignColumn
-    );
-
-    return this;
+    return this.leftJoin(foreignTable, localColumn, "=", foreignColumn);
   }
 
   /**
