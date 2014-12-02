@@ -48,11 +48,6 @@ public final class ModelQuery<T extends Model> {
   private Set<String> tables = new HashSet<>();
 
   /**
-   * Keep track of the types of models whose relations have been initialized.
-   */
-  private Set<Class> types = new HashSet<>();
-
-  /**
    * Initialize a model query.
    *
    * @param type The model subclass to query.
@@ -337,30 +332,44 @@ public final class ModelQuery<T extends Model> {
    * @param rows  The database rows to use for initializing the models.
    * @return      A list of models initialized with their relations.
    */
-  private List<Model> setRelations(final Class type, final List<Row> rows) {
+  private List<Model> setRelations(
+    final Class context,
+    final Class type,
+    final List<Row> rows
+  ) {
     // Create a map for tracking model instances by their ID. When joining data,
     // the same instance of a model might appear several times in the query
     // response (e.g. the same post for several comments). The map will ensure
     // that only the first occurence of each unique model is instantiated.
     Map<Integer, Model> models = new LinkedHashMap<>();
 
+    Map<Integer, List<Row>> modelRows = new LinkedHashMap<>();
+
     for (Row row: rows) {
       Model model = Model.instantiate(type);
 
       // Grab the ID of the current model table from the row.
-      int id = (int) row.get(String.format("%s_%s", model.table(), "id"));
+      Integer id = (Integer) row.get(
+        String.format("%s_%s", model.table(), "id")
+      );
 
-      if (models.containsKey(id)) {
-        continue;
+      if (!models.containsKey(id)) {
+        List<Row> subRows = new ArrayList<>();
+        subRows.add(row);
+        modelRows.put(id, subRows);
+        models.put(id, model);
+
+        // Set the current row on the model. Since each column in the response
+        // is prefixed with the table name of the model, only columns specific
+        // to the model will be set on it.
+        model.setRow(row);
       }
-
-      // Store the model in the map.
-      models.put(id, model);
-
-      // Set the current row on the model. Since each column in the response is
-      // prefixed with the table name of the model, only columns specific to the
-      // model will be set on it.
-      model.setRow(row);
+      else {
+        List<Row> subRows = modelRows.get(id);
+        subRows.add(row);
+        modelRows.put(id, subRows);
+        model = models.get(id);
+      }
 
       // Run through each of the fields of the model and look for further
       // relations.
@@ -380,19 +389,15 @@ public final class ModelQuery<T extends Model> {
         }
 
         if (Model.class.isAssignableFrom(fieldType)) {
-          // If the field being looked at is the same type as the model being
-          // queried or if the type has already been added as a relation, bail
-          // out. This is to avoid an infinite loop where two models both have
-          // fields of oneanother's type, e.g. a post with a list of comments
-          // and a comment that belongs to a post.
-          if (fieldType == this.type || this.types.contains(fieldType)) {
+          // If the field is of the same type as the context, bail out. This is
+          // to avoid an infinite loop where two models both have fields of
+          // oneanother's type, e.g. a post with a list of comments and a
+          // comment that belongs to a post.
+          if (fieldType == context) {
             continue;
           }
 
-          // Remember that this type has already been added as a relation.
-          this.types.add(fieldType);
-
-          List<Model> value = this.setRelations(fieldType, rows);
+          List<Model> value = this.setRelations(type, fieldType, modelRows.get(id));
 
           if (isList) {
             model.setField(fieldName, value);
@@ -417,6 +422,6 @@ public final class ModelQuery<T extends Model> {
   public List<Model> get() throws SQLException {
     this.getRelations(this.type);
 
-    return this.setRelations(this.type, this.query.get());
+    return this.setRelations(null, this.type, this.query.get());
   }
 }

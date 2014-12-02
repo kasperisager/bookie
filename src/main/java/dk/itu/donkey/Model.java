@@ -11,7 +11,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 
 // SQL utilities
+import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Time;
+import java.sql.Timestamp;
 
 /**
  * The Model class is an object-relational mapper that enables seamles and easy
@@ -188,6 +191,18 @@ public abstract class Model {
       else if (type == Boolean.class || type == boolean.class) {
         schema.bool(column);
       }
+      // SQL Date
+      else if (type == Date.class) {
+        schema.date(column);
+      }
+      // SQL Time
+      else if (type == Time.class) {
+        schema.time(column);
+      }
+      // SQL Timestamp
+      else if (type == Timestamp.class) {
+        schema.timestamp(column);
+      }
       // Model subclass
       else if (Model.class.isAssignableFrom(type)) {
         Model model = this.instantiate(type);
@@ -247,6 +262,8 @@ public abstract class Model {
 
     for (Field field: this.getFields()) {
       String name = field.getName();
+      Class type = field.getType();
+
       Object value = null;
 
       try {
@@ -256,11 +273,11 @@ public abstract class Model {
         continue;
       }
 
-      if (value instanceof Model) {
+      if (Model.class.isAssignableFrom(type)) {
         value = ((Model) value).id();
       }
 
-      if (value instanceof List) {
+      if (List.class.isAssignableFrom(type)) {
         continue;
       }
 
@@ -281,6 +298,10 @@ public abstract class Model {
     }
 
     Integer id = (Integer) row.get("id");
+
+    if (id == null) {
+      id = (Integer) row.get(String.format("%s_id", this.table()));
+    }
 
     if (id != null && id > 0) {
       this.id(id);
