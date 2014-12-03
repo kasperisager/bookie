@@ -4,6 +4,8 @@
 package dk.itu.bookie.controller;
 
 // General utilities
+import java.util.HashSet;
+import java.util.Set;
 import java.util.ResourceBundle;
 
 // Net utilities
@@ -42,9 +44,22 @@ public class ShowtimeController implements Initializable {
     int rows = 10;
     int seats = 15;
 
+    Set<Seat> selectedSeats = new HashSet<>();
+
     for (int row = 1; row <= rows; row++) {
       for (int seat = 1; seat <= seats; seat++) {
-        this.auditorium.add(new Seat(row, seat), seat, row);
+        Seat auditoriumSeat = new Seat(row, seat);
+
+        auditoriumSeat.getState().addListener((e, ov, nv) -> {
+          if (nv) {
+            selectedSeats.add(auditoriumSeat);
+          }
+          else {
+            selectedSeats.remove(auditoriumSeat);
+          }
+        });
+
+        this.auditorium.add(auditoriumSeat, seat, row);
       }
     }
   }

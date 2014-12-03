@@ -9,6 +9,10 @@
   text="Forestillinger"
   xmlns:fx="http://javafx.com/fxml"
 >
+  <tooltip>
+    <Tooltip text="Foretag reservationer til forestillinger" />
+  </tooltip>
+
   <HBox spacing="6" styleClass="borderPane">
     <children>
 

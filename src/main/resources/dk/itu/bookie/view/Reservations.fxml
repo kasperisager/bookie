@@ -4,5 +4,33 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<Tab text="Reservationer">
+<Tab
+  fx:controller="dk.itu.bookie.controller.ReservationController"
+  text="Reservationer"
+  xmlns:fx="http://javafx.com/fxml"
+>
+  <tooltip>
+    <Tooltip text="Administrer eksisterende reservationer" />
+  </tooltip>
+
+  <HBox spacing="6" styleClass="borderPane">
+    <children>
+      <TableView fx:id="reservations" prefWidth="9999">
+        <placeholder>
+          <Label text="Ingen reservationer fundet." />
+        </placeholder>
+
+        <columns>
+          <TableColumn text="Tlf. #" minWidth="300" resizable="false" />
+          <TableColumn text="# Billetter" minWidth="100" resizable="false" />
+          <TableColumn text="Status" minWidth="100" resizable="false" />
+          <TableColumn text="Film" minWidth="200" resizable="false" />
+          <TableColumn text="Sal" minWidth="100" resizable="false" />
+          <TableColumn text="Dato" minWidth="100" resizable="false" />
+          <TableColumn text="Tid" minWidth="100" resizable="false" />
+          <TableColumn text="Handlinger" resizable="false" />
+        </columns>
+      </TableView>
+    </children>
+  </HBox>
 </Tab>

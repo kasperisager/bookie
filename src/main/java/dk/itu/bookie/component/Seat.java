@@ -9,6 +9,10 @@ import javafx.scene.shape.Rectangle;
 // JavaFX paint
 import javafx.scene.paint.Color;
 
+// JavaFX properties
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+
 /**
  * Seat class.
  *
@@ -30,7 +34,7 @@ public final class Seat extends Rectangle {
   private int row;
   private int seat;
 
-  private boolean selected;
+  private BooleanProperty selected = new SimpleBooleanProperty(false);
 
   public Seat(final int row, final int seat) {
     // Set the size of the seat.
@@ -50,23 +54,30 @@ public final class Seat extends Rectangle {
     this.setArcHeight(6);
 
     this.setOnMouseClicked(e -> {
-      this.select();
+      if (!this.selected.get()) {
+        this.select();
+      }
+      else {
+        this.deselect();
+      }
     });
   }
 
   public void select() {
-    System.out.println("\nRow:  " + this.row);
-    System.out.println("Seat: " + this.seat);
+    this.setFill(this.COLOR_FILL_ACTIVE);
+    this.setStroke(this.COLOR_STROKE_ACTIVE);
 
-    if (!this.selected) {
-      this.setFill(this.COLOR_FILL_ACTIVE);
-      this.setStroke(this.COLOR_STROKE_ACTIVE);
-    }
-    else {
-      this.setFill(this.COLOR_FILL);
-      this.setStroke(this.COLOR_STROKE);
-    }
+    this.selected.set(true);
+  }
 
-    this.selected = !this.selected;
+  public void deselect() {
+    this.setFill(this.COLOR_FILL);
+    this.setStroke(this.COLOR_STROKE);
+
+    this.selected.set(false);
+  }
+
+  public BooleanProperty getState() {
+    return this.selected;
   }
 }
