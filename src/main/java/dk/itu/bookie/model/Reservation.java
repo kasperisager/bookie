@@ -17,7 +17,7 @@ import dk.itu.bookie.Bookie;
  *
  * @version 1.0.0
  */
-public class Reservation extends Model {
+public final class Reservation extends Model {
   /**
    * The phone number for identifying the reservation.
    */

@@ -14,7 +14,7 @@ import dk.itu.bookie.Bookie;
  *
  * @version 1.0.0
  */
-public class Ticket extends Model {
+public final class Ticket extends Model {
   /**
    * The showtime that the ticket is for.
    */

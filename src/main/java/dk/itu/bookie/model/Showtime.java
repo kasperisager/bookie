@@ -4,7 +4,6 @@
 package dk.itu.bookie.model;
 
 // General utilities
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -29,7 +28,7 @@ import dk.itu.bookie.Bookie;
  *
  * @version 1.0.0
  */
-public class Showtime extends Model {
+public final class Showtime extends Model {
   /**
    * The movie to show.
    */
@@ -73,11 +72,11 @@ public class Showtime extends Model {
   /**
    * Helper method for initializing the showtime's playingAt field.
    *
-   * @param year
-   * @param month
-   * @param day
-   * @param hour
-   * @param minute
+   * @param year    The year that the showtime is playing.
+   * @param month   The month that the showtime is playing.
+   * @param day     The day that the showtime is playing.
+   * @param hour    The hour that the showtime is playing.
+   * @param minute  The minute that the showtime is playing.
    */
   public void playingAt(
     final int year,

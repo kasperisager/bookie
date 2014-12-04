@@ -19,39 +19,20 @@ import javafx.beans.property.SimpleBooleanProperty;
  * @since 1.0.0 Initial release.
  */
 public final class Seat extends Rectangle {
-  private static final Color COLOR_FILL = Color.web("#61BD6D");
-  private static final Color COLOR_STROKE = Color.web("#41A85F");
-
-  private static final Color COLOR_FILL_ACTIVE = Color.web("#475577");
-  private static final Color COLOR_STROKE_ACTIVE = Color.web("#28324e");
-
-  private static final Color COLOR_FILL_RESERVED = Color.web("#54acd2");
-  private static final Color COLOR_STROKE_RESERVED = Color.web("#3D8EB9");
-
-  private static final Color COLOR_FILL_BOUGHT = Color.web("#D14841");
-  private static final Color COLOR_STROKE_BOUGHT = Color.web("#B8312F");
-
   private int row;
   private int seat;
 
+  private BooleanProperty reserved = new SimpleBooleanProperty(false);
+  private BooleanProperty bought = new SimpleBooleanProperty(false);
   private BooleanProperty selected = new SimpleBooleanProperty(false);
 
   public Seat(final int row, final int seat) {
-    // Set the size of the seat.
     super(40, 40);
 
     this.row = row;
     this.seat = seat;
 
-    // Set fill color of the seat.
-    this.setFill(this.COLOR_FILL);
-
-    // Add a stroke around the seat.
-    this.setStroke(this.COLOR_STROKE);
-
-    // Add rounded corners.
-    this.setArcWidth(6);
-    this.setArcHeight(6);
+    this.getStyleClass().add("seat");
 
     this.setOnMouseClicked(e -> {
       if (!this.selected.get()) {
@@ -64,17 +45,47 @@ public final class Seat extends Rectangle {
   }
 
   public void select() {
-    this.setFill(this.COLOR_FILL_ACTIVE);
-    this.setStroke(this.COLOR_STROKE_ACTIVE);
+    // If this ticket has been either reserved or bought, don't allow that it
+    // be selected.
+    if (this.reserved.get() || this.bought.get()) {
+      return;
+    }
+
+    this.getStyleClass().add("seat-selected");
 
     this.selected.set(true);
   }
 
   public void deselect() {
-    this.setFill(this.COLOR_FILL);
-    this.setStroke(this.COLOR_STROKE);
+    // If this ticket has been either reserved or bought, don't allow that it
+    // be selected.
+    if (this.reserved.get() || this.bought.get()) {
+      return;
+    }
+
+    this.getStyleClass().remove("seat-selected");
 
     this.selected.set(false);
+  }
+
+  public void reserve() {
+    // If this ticket has been bought, don't allow that it be reserved.
+    if (this.bought.get()) {
+      return;
+    }
+
+    this.getStyleClass().remove("seat-selected");
+    this.getStyleClass().add("seat-reserved");
+
+    this.reserved.set(true);
+  }
+
+  public void buy() {
+    this.getStyleClass().remove("seat-selected");
+    this.getStyleClass().remove("seat-reserved");
+    this.getStyleClass().add("seat-bought");
+
+    this.bought.set(true);
   }
 
   public BooleanProperty getState() {

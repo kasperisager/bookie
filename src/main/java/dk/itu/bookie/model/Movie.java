@@ -14,7 +14,7 @@ import dk.itu.bookie.Bookie;
  *
  * @version 1.0.0
  */
-public class Movie extends Model {
+public final class Movie extends Model {
   /**
    * The name of the movie.
    */

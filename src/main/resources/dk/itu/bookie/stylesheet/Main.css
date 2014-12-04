@@ -1,0 +1,43 @@
+.padded {
+  -fx-padding: 6px;
+}
+
+.legend {
+  -fx-padding: 20px 0;
+}
+
+.legend-label {
+  -fx-pref-height: 20px;
+  -fx-padding: 0 0 0 10px;
+}
+
+.seat {
+  -fx-arc-width: 6px;
+  -fx-arc-height: 6px;
+  -fx-fill: #61bd6d;
+  -fx-stroke: #41a85f;
+}
+.seat:hover {
+  -fx-effect: dropshadow(gaussian, #54acd2, 1, 1, 0, 0);
+}
+
+.seat-selected {
+  -fx-fill: #a38f84;
+  -fx-stroke: #75706b;
+}
+
+.seat-reserved {
+  -fx-fill: #2c82c9;
+  -fx-stroke: #2969b0;
+}
+.seat-reserved:hover {
+  -fx-effect: none;
+}
+
+.seat-bought {
+  -fx-fill: #d14841;
+  -fx-stroke: #B8312F;
+}
+.seat-bought:hover {
+  -fx-effect: none;
+}

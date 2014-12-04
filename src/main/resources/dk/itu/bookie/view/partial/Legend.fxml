@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.shape.*?>
+
+<HBox styleClass="legend" alignment="CENTER" spacing="40">
+  <children>
+    <HBox>
+      <children>
+        <Rectangle styleClass="seat, seat-available" width="20" height="20" />
+        <Label text="Ledig" styleClass="legend-label" />
+      </children>
+    </HBox>
+
+    <HBox>
+      <children>
+        <Rectangle styleClass="seat, seat-selected" width="20" height="20" />
+        <Label text="Valgt" styleClass="legend-label" />
+      </children>
+    </HBox>
+
+    <HBox>
+      <children>
+        <Rectangle styleClass="seat, seat-reserved" width="20" height="20" />
+        <Label text="Reserveret" styleClass="legend-label" />
+      </children>
+    </HBox>
+
+    <HBox>
+      <children>
+        <Rectangle styleClass="seat, seat-bought" width="20" height="20" />
+        <Label text="Købt" styleClass="legend-label" />
+      </children>
+    </HBox>
+  </children>
+</HBox>

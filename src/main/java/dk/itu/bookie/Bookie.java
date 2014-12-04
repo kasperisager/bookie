@@ -4,7 +4,9 @@
 package dk.itu.bookie;
 
 // General utilities
+import java.util.Locale;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 // IO utilities
 import java.io.IOException;
@@ -67,14 +69,22 @@ public final class Bookie extends Application {
    */
   @Override
   public void start(final Stage primaryStage) throws IOException {
-    Parent root = FXMLLoader.load(
+    FXMLLoader fxmlLoader = new FXMLLoader();
+
+    Locale locale = new Locale("da", "DK");
+
+    fxmlLoader.setResources(
+      ResourceBundle.getBundle("dk.itu.bookie.Locale", locale)
+    );
+
+    Parent root = fxmlLoader.load(
       this.getClass().getResource("view/Application.fxml")
     );
 
     Scene scene = new Scene(root);
 
     scene.getStylesheets().add(
-      this.getClass().getResource("stylesheets/Main.css").toExternalForm()
+      this.getClass().getResource("stylesheet/Main.css").toExternalForm()
     );
 
     primaryStage.setTitle("Bookie");

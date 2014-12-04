@@ -17,7 +17,14 @@ import javafx.fxml.Initializable;
  *
  * @version 1.0.0
  */
-public class ApplicationController implements Initializable {
+public final class ApplicationController implements Initializable {
+  private static ApplicationController instance;
+
+  public ApplicationController getInstance() {
+    return ApplicationController.instance;
+  }
+
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    ApplicationController.instance = this;
   }
 }

@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<!-- JavaFX layouts -->
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- JavaFX controls -->
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.Tooltip?>
 
 <Tab
   fx:controller="dk.itu.bookie.controller.ShowtimeController"
@@ -13,7 +22,7 @@
     <Tooltip text="Foretag reservationer til forestillinger" />
   </tooltip>
 
-  <HBox spacing="6" styleClass="borderPane">
+  <HBox styleClass="padded" spacing="6">
     <children>
 
       <TableView fx:id="showtimes" minWidth="500">
@@ -22,22 +31,26 @@
         </placeholder>
 
         <columns>
-          <TableColumn text="Film" prefWidth="200" resizable="false" />
-          <TableColumn text="Sal" prefWidth="100" resizable="false" />
-          <TableColumn text="Dato" prefWidth="100" resizable="false" />
-          <TableColumn text="Tid" prefWidth="100" resizable="false" />
+          <TableColumn fx:id="movieColumn" text="Film" resizable="false" />
+          <TableColumn fx:id="auditoriumColumn" text="Sal" resizable="false" />
+          <TableColumn fx:id="dateColumn" text="Dato" resizable="false" />
+          <TableColumn fx:id="timeColumn" text="Tid" resizable="false" />
         </columns>
       </TableView>
 
       <TitledPane text="Reservation" collapsible="false">
-        <GridPane
-          fx:id="auditorium"
-          alignment="CENTER"
-          prefHeight="9999"
-          prefWidth="9999"
-          hgap="10"
-          vgap="10"
-        />
+        <VBox>
+          <fx:include source="partial/Legend.fxml" />
+
+          <GridPane
+            fx:id="auditorium"
+            alignment="CENTER"
+            prefHeight="9999"
+            prefWidth="9999"
+            hgap="10"
+            vgap="10"
+          />
+        </VBox>
       </TitledPane>
 
     </children>

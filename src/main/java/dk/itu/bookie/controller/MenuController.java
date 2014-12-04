@@ -17,7 +17,14 @@ import javafx.fxml.Initializable;
  *
  * @version 1.0.0
  */
-public class MenuController implements Initializable {
+public final class MenuController implements Initializable {
+  private static MenuController instance;
+
+  public MenuController getInstance() {
+    return MenuController.instance;
+  }
+
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    MenuController.instance = this;
   }
 }

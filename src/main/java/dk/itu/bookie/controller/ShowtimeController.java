@@ -34,13 +34,35 @@ import dk.itu.bookie.model.Showtime;
  * @version 1.0.0
  */
 public class ShowtimeController implements Initializable {
+  private static ShowtimeController instance;
+
   @FXML
   private TableView<Showtime> showtimes;
 
   @FXML
+  private TableColumn movieColumn;
+
+  @FXML
+  private TableColumn auditoriumColumn;
+
+  @FXML
+  private TableColumn dateColumn;
+
+  @FXML
+  private TableColumn timeColumn;
+
+  @FXML
   private GridPane auditorium;
 
+  public ShowtimeController getInstance() {
+    return ShowtimeController.instance;
+  }
+
   public void initialize(final URL url, final ResourceBundle resourceBundle) {
+    ShowtimeController.instance = this;
+
+    this.bindTableColumnWidths();
+
     int rows = 10;
     int seats = 15;
 
@@ -62,5 +84,23 @@ public class ShowtimeController implements Initializable {
         this.auditorium.add(auditoriumSeat, seat, row);
       }
     }
+  }
+
+  public void bindTableColumnWidths() {
+    this.movieColumn.prefWidthProperty().bind(
+      this.showtimes.widthProperty().multiply(0.30)
+    );
+
+    this.auditoriumColumn.prefWidthProperty().bind(
+      this.showtimes.widthProperty().multiply(0.30)
+    );
+
+    this.dateColumn.prefWidthProperty().bind(
+      this.showtimes.widthProperty().multiply(0.20)
+    );
+
+    this.timeColumn.prefWidthProperty().bind(
+      this.showtimes.widthProperty().multiply(0.20)
+    );
   }
 }

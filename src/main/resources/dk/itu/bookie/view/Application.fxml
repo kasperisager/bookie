@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<!-- JavaFX layouts -->
+<?import javafx.scene.layout.VBox?>
+
+<!-- JavaFX controls -->
+<?import javafx.scene.control.TabPane?>
+
 
 <VBox
   fx:controller="dk.itu.bookie.controller.ApplicationController"

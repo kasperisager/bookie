@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<!-- JavaFX layouts -->
+<?import javafx.scene.layout.HBox?>
+
+<!-- JavaFX controls -->
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.Tooltip?>
 
 <Tab
   fx:controller="dk.itu.bookie.controller.ReservationController"
@@ -13,7 +19,7 @@
     <Tooltip text="Administrer eksisterende reservationer" />
   </tooltip>
 
-  <HBox spacing="6" styleClass="borderPane">
+  <HBox spacing="6" styleClass="padded">
     <children>
       <TableView fx:id="reservations" prefWidth="9999">
         <placeholder>
@@ -21,14 +27,14 @@
         </placeholder>
 
         <columns>
-          <TableColumn text="Tlf. #" minWidth="300" resizable="false" />
-          <TableColumn text="# Billetter" minWidth="100" resizable="false" />
-          <TableColumn text="Status" minWidth="100" resizable="false" />
-          <TableColumn text="Film" minWidth="200" resizable="false" />
-          <TableColumn text="Sal" minWidth="100" resizable="false" />
-          <TableColumn text="Dato" minWidth="100" resizable="false" />
-          <TableColumn text="Tid" minWidth="100" resizable="false" />
-          <TableColumn text="Handlinger" resizable="false" />
+          <TableColumn fx:id="phoneColumn" text="Tlf. #" resizable="false" />
+          <TableColumn fx:id="ticketColumn" text="# Billetter" resizable="false" />
+          <TableColumn fx:id="statusColumn" text="Status" resizable="false" />
+          <TableColumn fx:id="movieColumn" text="Film" resizable="false" />
+          <TableColumn fx:id="auditoriumColumn" text="Sal" resizable="false" />
+          <TableColumn fx:id="dateColumn" text="Dato" resizable="false" />
+          <TableColumn fx:id="timeColumn" text="Tid" resizable="false" />
+          <TableColumn fx:id="actionsColumn" text="Handlinger" resizable="false" />
         </columns>
       </TableView>
     </children>

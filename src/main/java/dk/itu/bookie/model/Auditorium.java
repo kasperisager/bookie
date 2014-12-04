@@ -16,7 +16,7 @@ import dk.itu.bookie.Bookie;
  *
  * @version 1.0.0
  */
-public class Auditorium extends Model {
+public final class Auditorium extends Model {
   /**
    * Number of rows in the auditorium.
    */
