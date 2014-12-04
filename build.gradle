@@ -38,6 +38,10 @@ test {
   }
 }
 
+checkstyle {
+  toolVersion = "5.9"
+}
+
 jacocoTestReport {
   reports {
     xml.enabled = true
