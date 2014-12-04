@@ -4,6 +4,7 @@
 package dk.itu.bookie;
 
 // General utilities
+import java.sql.SQLException;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -56,7 +57,9 @@ public final class Bookie extends Application {
    *
    * @param args Runtime arguments.
    */
-  public static void main(final String[] args) {
+  public static void main(final String[] args) throws SQLException {
+    Seeder.reset();
+    Seeder.init();
     Bookie.launch(args);
   }
 

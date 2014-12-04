@@ -145,6 +145,8 @@ public class ShowtimeController implements Initializable {
       return;
     }
 
+    System.out.println(models);
+
     ObservableList<Showtime> showtimes = FXCollections.observableArrayList(models);
 
     this.showtimes.setItems(showtimes);
