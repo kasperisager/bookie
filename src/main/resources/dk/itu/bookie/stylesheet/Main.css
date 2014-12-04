@@ -41,3 +41,11 @@
 .seat-bought:hover {
   -fx-effect: none;
 }
+
+.screen {
+  -fx-padding: 30px 0 10px;
+}
+
+.screen-canvas {
+  -fx-stroke-width: 6px;
+}

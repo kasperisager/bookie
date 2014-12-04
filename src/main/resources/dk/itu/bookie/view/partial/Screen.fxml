@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- JavaFX layouts -->
+<?import javafx.scene.layout.HBox?>
+
+<!-- JavaFX geometry -->
+<?import javafx.scene.shape.Line?>
+
+<HBox alignment="CENTER" styleClass="screen">
+  <children>
+    <Line endX="0" startX="500" styleClass="screen-canvas" />
+  </children>
+</HBox>
