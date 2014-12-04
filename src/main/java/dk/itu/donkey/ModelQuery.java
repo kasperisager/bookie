@@ -254,7 +254,7 @@ public final class ModelQuery<T extends Model> {
    * @param rows    The database rows to use for initializing the models.
    * @return        A list of models initialized with their relations.
    */
-  private List<Model> setRelations(
+  private List<T> setRelations(
     final Class context,
     final Class type,
     final List<Row> rows
@@ -263,7 +263,7 @@ public final class ModelQuery<T extends Model> {
     // the same instance of a model might appear several times in the query
     // response (e.g. the same post for several comments). The map will ensure
     // that only the first occurence of each unique model is instantiated.
-    Map<Integer, Model> models = new LinkedHashMap<>();
+    Map<Integer, T> models = new LinkedHashMap<>();
 
     // Map model IDs to their associated rows. E.g. a list of posts joined with
     // their comments would result in a map of post IDs mapped to the database
@@ -290,12 +290,12 @@ public final class ModelQuery<T extends Model> {
         subRows = new ArrayList<>();
         subRows.add(row);
 
-        models.put(id, model);
-
         // Set the current row on the model. Since each column in the response
         // is prefixed with the table name of the model, only columns specific
         // to the model will be set on it.
         model.setRow(row);
+
+        models.put(id, (T) model);
       }
       else {
         subRows = modelRows.get(id);
@@ -332,7 +332,7 @@ public final class ModelQuery<T extends Model> {
             continue;
           }
 
-          List<Model> value = this.setRelations(
+          List<T> value = this.setRelations(
             type, fieldType, modelRows.get(model.id())
           );
 
@@ -346,7 +346,7 @@ public final class ModelQuery<T extends Model> {
       }
     }
 
-    return new ArrayList<Model>(models.values());
+    return new ArrayList<T>(models.values());
   }
 
   /**
@@ -356,7 +356,7 @@ public final class ModelQuery<T extends Model> {
    *
    * @throws SQLException In case of a SQL error.
    */
-  public List<Model> get() throws SQLException {
+  public List<T> get() throws SQLException {
     this.getRelations(this.type);
 
     return this.setRelations(null, this.type, this.query.get());

@@ -11,10 +11,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 
 // SQL utilities
-import java.sql.Date;
 import java.sql.SQLException;
-import java.sql.Time;
-import java.sql.Timestamp;
 
 /**
  * The Model class is an object-relational mapper that enables seamless and easy
@@ -191,18 +188,6 @@ public abstract class Model {
       else if (type == Boolean.class || type == boolean.class) {
         schema.bool(column);
       }
-      // SQL Date
-      else if (type == Date.class) {
-        schema.date(column);
-      }
-      // SQL Time
-      else if (type == Time.class) {
-        schema.time(column);
-      }
-      // SQL Timestamp
-      else if (type == Timestamp.class) {
-        schema.timestamp(column);
-      }
       // Model subclass
       else if (Model.class.isAssignableFrom(type)) {
         Model model = this.instantiate(type);
@@ -308,16 +293,17 @@ public abstract class Model {
     }
 
     for (Field field: this.getFields()) {
-      String column = field.getName();
-      Object value = row.get(column.toLowerCase());
+      String name = field.getName();
+      String column = name.toLowerCase();
+      Object value = row.get(column);
 
       if (value == null) {
         value = row.get(String.format(
-          "%s_%s", this.table(), column.toLowerCase()
+          "%s_%s", this.table(), column
         ));
       }
 
-      this.setField(column, value);
+      this.setField(name, value);
     }
   }
 
@@ -376,7 +362,7 @@ public abstract class Model {
    *
    * @throws SQLException In case of a SQL error.
    */
-  public static final <T extends Model> List<Model> findAll(
+  public static final <T extends Model> List<T> findAll(
     final Class<T> type
   ) throws SQLException {
     return Model.find(type).get();
