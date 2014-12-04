@@ -100,6 +100,8 @@ public class ShowtimeController implements Initializable {
       for (int seat = 2; seat <= (seats + 1); seat++) {
         Seat auditoriumSeat = new Seat(row, seat);
 
+	this.bindSeatWidth(auditoriumSeat);
+
         auditoriumSeat.getState().addListener((e, ov, nv) -> {
           if (nv) {
             selectedSeats.add(auditoriumSeat);
@@ -129,6 +131,19 @@ public class ShowtimeController implements Initializable {
 
     this.timeColumn.prefWidthProperty().bind(
       this.showtimes.widthProperty().multiply(0.20)
+    );
+  }
+
+  public void bindSeatWidth(final Seat seat) {
+    int rows = 10;
+    int seats = 15;
+
+    seat.widthProperty().bind(
+      this.showtimes.widthProperty().divide(seats)
+    );
+
+    seat.heightProperty().bind(
+      this.showtimes.widthProperty().divide(seats)
     );
   }
 }

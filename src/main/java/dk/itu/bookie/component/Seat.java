@@ -27,8 +27,6 @@ public final class Seat extends Rectangle {
   private BooleanProperty selected = new SimpleBooleanProperty(false);
 
   public Seat(final int row, final int seat) {
-    super(40, 40);
-
     this.row = row;
     this.seat = seat;
 
