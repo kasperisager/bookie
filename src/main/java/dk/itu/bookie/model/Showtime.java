@@ -4,6 +4,7 @@
 package dk.itu.bookie.model;
 
 // General utilities
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -13,6 +14,7 @@ import java.text.SimpleDateFormat;
 
 // Time utilities
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 // SQL utilities
 import java.sql.Timestamp;
@@ -47,7 +49,7 @@ public final class Showtime extends Model {
   /**
    * The time at which the movie is playing.
    */
-  public Timestamp playingAt;
+  public Long playingAt;
 
   /**
    * Initialize a showtime.
@@ -61,12 +63,25 @@ public final class Showtime extends Model {
    *
    * @return A formatted showtime date.
    */
-  public String playingAt() {
+  public String date() {
     DateFormat df = new SimpleDateFormat(
-      "EEEE dd/MM yyyy, HH:mm", new Locale("da")
+      "EEE dd/MM yyyy", new Locale("da")
     );
 
-    return df.format(this.playingAt.getTime());
+    return df.format(new Date(this.playingAt));
+  }
+
+  /**
+   * Return a pretty version of the showtime's time.
+   *
+   * @return A formatted showtime time.
+   */
+  public String time() {
+    DateFormat df = new SimpleDateFormat(
+      "HH:mm", new Locale("da")
+    );
+
+    return df.format(new Date(this.playingAt));
   }
 
   /**
@@ -85,8 +100,7 @@ public final class Showtime extends Model {
     final int hour,
     final int minute
   ) {
-    this.playingAt = Timestamp.valueOf(
-      LocalDateTime.of(year, month, day, hour, minute)
-    );
+    this.playingAt = LocalDateTime.of(year, month, day, hour, minute)
+                                  .toEpochSecond(ZoneOffset.of("Z")) * 1000;
   }
 }

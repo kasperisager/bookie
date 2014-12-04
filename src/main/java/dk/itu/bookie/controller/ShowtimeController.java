@@ -4,7 +4,7 @@
 package dk.itu.bookie.controller;
 
 // General utilities
-import java.awt.*;
+import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.ResourceBundle;
@@ -18,21 +18,34 @@ import javafx.scene.layout.GridPane;
 // JavaFX controls
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 
 // JavaFX geometry
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 
+// JavaFX collections
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
+// JavaFX properties
+import javafx.beans.property.SimpleStringProperty;
+
 // FXML utilities
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+
+// Donkey utilities
+import dk.itu.donkey.Model;
 
 // Components
 import dk.itu.bookie.component.Seat;
 
 // Models
+import dk.itu.bookie.model.Auditorium;
 import dk.itu.bookie.model.Showtime;
+import dk.itu.bookie.model.Movie;
 
 /**
  * Showtime controller class.
@@ -51,16 +64,16 @@ public class ShowtimeController implements Initializable {
   private TableView<Showtime> showtimes;
 
   @FXML
-  private TableColumn movieColumn;
+  private TableColumn<Showtime, String> movieColumn;
 
   @FXML
-  private TableColumn auditoriumColumn;
+  private TableColumn<Showtime, String> auditoriumColumn;
 
   @FXML
-  private TableColumn dateColumn;
+  private TableColumn<Showtime, String> dateColumn;
 
   @FXML
-  private TableColumn timeColumn;
+  private TableColumn<Showtime, String> timeColumn;
 
   @FXML
   private GridPane auditorium;
@@ -122,15 +135,44 @@ public class ShowtimeController implements Initializable {
         this.auditorium.add(auditoriumSeat, seat, row);
       }
     }
+
+    List<Showtime> models = null;
+
+    try {
+      models = Model.findAll(Showtime.class);
+    }
+    catch (Exception e) {
+      return;
+    }
+
+    ObservableList<Showtime> showtimes = FXCollections.observableArrayList(models);
+
+    this.showtimes.setItems(showtimes);
+
+    this.auditoriumColumn.setCellValueFactory((data) -> {
+      return new SimpleStringProperty(data.getValue().auditorium.name);
+    });
+
+    this.movieColumn.setCellValueFactory((data) -> {
+      return new SimpleStringProperty(data.getValue().movie.name);
+    });
+
+    this.dateColumn.setCellValueFactory((data) -> {
+      return new SimpleStringProperty(data.getValue().date());
+    });
+
+    this.timeColumn.setCellValueFactory((data) -> {
+      return new SimpleStringProperty(data.getValue().time());
+    });
   }
 
   public void bindTableColumnWidths() {
     this.movieColumn.prefWidthProperty().bind(
-      this.showtimes.widthProperty().multiply(0.30)
+      this.showtimes.widthProperty().multiply(0.35)
     );
 
     this.auditoriumColumn.prefWidthProperty().bind(
-      this.showtimes.widthProperty().multiply(0.30)
+      this.showtimes.widthProperty().multiply(0.35)
     );
 
     this.dateColumn.prefWidthProperty().bind(
@@ -138,7 +180,7 @@ public class ShowtimeController implements Initializable {
     );
 
     this.timeColumn.prefWidthProperty().bind(
-      this.showtimes.widthProperty().multiply(0.20)
+      this.showtimes.widthProperty().multiply(0.10)
     );
   }
 
