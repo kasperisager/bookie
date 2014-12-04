@@ -20,6 +20,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
 
+// JavaFX geometry
+import javafx.geometry.HPos;
+import javafx.geometry.VPos;
+
 // FXML utilities
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -93,6 +97,10 @@ public class ShowtimeController implements Initializable {
         Label label = new Label(text);
 
         this.auditorium.add(label, seat, row);
+
+        // Center alignment the label within its column.
+        this.auditorium.setHalignment(label, HPos.CENTER);
+        this.auditorium.setValignment(label, VPos.CENTER);
       }
     }
 
@@ -100,7 +108,7 @@ public class ShowtimeController implements Initializable {
       for (int seat = 2; seat <= (seats + 1); seat++) {
         Seat auditoriumSeat = new Seat(row, seat);
 
-	this.bindSeatWidth(auditoriumSeat);
+        this.bindSeatWidth(auditoriumSeat, seats);
 
         auditoriumSeat.getState().addListener((e, ov, nv) -> {
           if (nv) {
@@ -134,10 +142,7 @@ public class ShowtimeController implements Initializable {
     );
   }
 
-  public void bindSeatWidth(final Seat seat) {
-    int rows = 10;
-    int seats = 15;
-
+  public void bindSeatWidth(final Seat seat, final int seats) {
     seat.widthProperty().bind(
       this.showtimes.widthProperty().divide(seats)
     );
