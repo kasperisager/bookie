@@ -4,6 +4,7 @@
 package dk.itu.bookie.controller;
 
 // General utilities
+import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.ResourceBundle;
@@ -15,6 +16,7 @@ import java.net.URL;
 import javafx.scene.layout.GridPane;
 
 // JavaFX controls
+import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
 
@@ -35,6 +37,11 @@ import dk.itu.bookie.model.Showtime;
  */
 public class ShowtimeController implements Initializable {
   private static ShowtimeController instance;
+
+  private char[] alphabet = new char[]{
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
+    'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+  };
 
   @FXML
   private TableView<Showtime> showtimes;
@@ -68,8 +75,29 @@ public class ShowtimeController implements Initializable {
 
     Set<Seat> selectedSeats = new HashSet<>();
 
-    for (int row = 1; row <= rows; row++) {
-      for (int seat = 1; seat <= seats; seat++) {
+    for (int row = 1; row <= (rows + 1); row++) {
+      for (int seat = 1; seat <= (seats + 1); seat++) {
+        if ((row > 1) && (seat > 1) || (seat == row)) {
+          continue;
+        }
+
+        String text;
+
+        if (row == 1) {
+          text = String.format("%s", seat - 1);
+        }
+        else {
+          text = String.format("%s", this.alphabet[row - 2]);
+        }
+
+        Label label = new Label(text);
+
+        this.auditorium.add(label, seat, row);
+      }
+    }
+
+    for (int row = 2; row <= (rows + 1); row++) {
+      for (int seat = 2; seat <= (seats + 1); seat++) {
         Seat auditoriumSeat = new Seat(row, seat);
 
         auditoriumSeat.getState().addListener((e, ov, nv) -> {

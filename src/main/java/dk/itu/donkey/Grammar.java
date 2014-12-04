@@ -263,7 +263,7 @@ public abstract class Grammar {
    * Build a list of formatted set clauses.
    *
    * <p>
-   * <code>["col1 = ?", "col2 = ?"]</code> becomes <code>"set col1 = ?, col2 =
+   * <code>["col1", "col2"], ["?", "?"]</code> becomes <code>"set col1 = ?, col2 =
    * ?"</code>
    *
    * @param columns The columns of the set clause.
@@ -426,11 +426,11 @@ public abstract class Grammar {
   }
 
   /**
-   * Build a list of formatetd order by clauses.
+   * Build a list of formatted order by clauses.
    *
    * <p>
-   * <code>["col1 asc", "col2 desc"]</code> becomes <code>"col1 asc, col2 desc"
-   * </code>
+   * <code>["col1 asc", "col2 desc"]</code> becomes <code>"order by col1 asc,
+   * col2 desc"</code>
    *
    * @param orders  The formatted order by clauses.
    * @return        A comma-separated list of order by clauses.

@@ -112,7 +112,7 @@ public final class Schema {
    * @return        The current {@link Schema} object, for chaining.
    */
   public Schema floatingPoint(final String column) {
-    this.grammar.addDataType(column, "float(24)", true);
+    this.grammar.addDataType(column, "float", 24, true);
 
     return this;
   }

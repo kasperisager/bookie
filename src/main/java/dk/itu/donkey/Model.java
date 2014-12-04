@@ -17,7 +17,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 
 /**
- * The Model class is an object-relational mapper that enables seamles and easy
+ * The Model class is an object-relational mapper that enables seamless and easy
  * persistance of data-models to any of the supported database systems.
  *
  * <p>
@@ -288,9 +288,9 @@ public abstract class Model {
   }
 
   /**
-   * Apply a Row representaion to an empty model.
+   * Apply a Row representation to an empty model.
    *
-   * @param row The Row representaion to apply to the model.
+   * @param row The Row representation to apply to the model.
    */
   public final void setRow(final Row row) {
     if (row == null || this.id != null) {

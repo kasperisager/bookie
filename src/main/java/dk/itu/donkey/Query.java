@@ -11,7 +11,7 @@ import java.sql.SQLException;
 
 /**
  * The Query class is used for executing Data Manipulation Language (DML)
- * statements against a databse and returns {@link Row}-representations of the
+ * statements against a database and returns {@link Row}-representations of the
  * database response.
  *
  * @see <a href="https://en.wikipedia.org/wiki/Data_manipulation_language">
@@ -128,7 +128,7 @@ public final class Query {
   }
 
   /**
-   * Add a `right join` clause to the query.
+   * Add a `join` clause to the query.
    *
    * @param foreignTable  The foreign table to join.
    * @param localColumn   The column in the local table.

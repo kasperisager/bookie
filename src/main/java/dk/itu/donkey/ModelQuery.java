@@ -210,6 +210,8 @@ public final class ModelQuery<T extends Model> {
               String.format("%s.%s", inner.table(), "id")
             );
 
+            //select ... from showtimes join movies on showtimes.movie = movies.id
+
             // Remember that this table has already been added as a relation.
             this.tables.add(inner.table());
           }
@@ -228,6 +230,8 @@ public final class ModelQuery<T extends Model> {
             String.format("%s.%s", inner.table(), "id"),
             String.format("%s.%s", outer.table(), fieldName)
           );
+
+          //select ... from showtimes join tickets on showtimes.id = tickets.showtime
         }
       }
       else {
