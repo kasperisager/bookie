@@ -40,7 +40,7 @@
 
       <TitledPane text="Reservation" collapsible="false">
         <VBox>
-	  <fx:include source="partial/Screen.fxml" />
+          <fx:include source="partial/Screen.fxml" />
 
           <GridPane
             fx:id="auditorium"
@@ -51,8 +51,7 @@
             vgap="10"
           />
 
-	  <fx:include source="partial/Legend.fxml" />
-
+          <fx:include source="partial/Legend.fxml" />
         </VBox>
       </TitledPane>
 

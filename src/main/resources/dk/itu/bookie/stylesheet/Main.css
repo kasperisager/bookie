@@ -47,5 +47,10 @@
 }
 
 .screen-canvas {
+  -fx-stroke: #553982;
   -fx-stroke-width: 6px;
+}
+
+.screen-label {
+  -fx-font-weight: bold;
 }
