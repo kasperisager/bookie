@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- JavaFX layouts -->
-<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- JavaFX controls -->
+<?import javafx.scene.control.Label?>
 
 <!-- JavaFX geometry -->
 <?import javafx.scene.shape.Line?>
 
-<HBox alignment="CENTER" styleClass="screen">
+<VBox alignment="CENTER" styleClass="screen" spacing="6">
   <children>
     <Line endX="0" startX="500" styleClass="screen-canvas" />
+    <Label text="Lærred" styleClass="screen-label" />
   </children>
-</HBox>
+</VBox>

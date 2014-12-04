@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.shape.*?>
+<!-- JavaFX layouts -->
+<?import javafx.scene.layout.HBox?>
+
+<!-- JavaFX controls -->
+<?import javafx.scene.control.Label?>
+
+<!-- JavaFX shapes -->
+<?import javafx.scene.shape.Rectangle?>
+
+<!-- JavaFX geometry -->
+<?import javafx.scene.shape.Line?>
 
 <HBox styleClass="legend" alignment="CENTER" spacing="40">
   <children>
@@ -33,7 +38,7 @@
     <HBox>
       <children>
         <Rectangle styleClass="seat, seat-bought" width="20" height="20" />
-        <Label text="Købt" styleClass="legend-label" />
+        <Label text="Betalt" styleClass="legend-label" />
       </children>
     </HBox>
   </children>
