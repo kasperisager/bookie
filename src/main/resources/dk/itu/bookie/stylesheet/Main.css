@@ -47,8 +47,10 @@
 }
 
 .screen-canvas {
+  -fx-arc-width: 6px;
+  -fx-arc-height: 6px;
+  -fx-fill: #9365B8;
   -fx-stroke: #553982;
-  -fx-stroke-width: 6px;
 }
 
 .screen-label {

@@ -7,11 +7,11 @@
 <?import javafx.scene.control.Label?>
 
 <!-- JavaFX geometry -->
-<?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.Rectangle?>
 
 <VBox alignment="CENTER" styleClass="screen" spacing="6">
   <children>
-    <Line endX="0" startX="500" styleClass="screen-canvas" />
+    <Rectangle width="400" height="6" styleClass="screen-canvas" />
     <Label text="Lærred" styleClass="screen-label" />
   </children>
 </VBox>

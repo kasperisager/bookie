@@ -21,11 +21,11 @@ import dk.itu.bookie.model.Showtime;
 public final class Seeder {
 
   public static void reset() throws SQLException{
+    Bookie.db().schema().drop("tickets");
+    Bookie.db().schema().drop("reservations");
+    Bookie.db().schema().drop("showtimes");
     Bookie.db().schema().drop("auditoriums");
     Bookie.db().schema().drop("movies");
-    Bookie.db().schema().drop("tickets");
-    Bookie.db().schema().drop("showtimes");
-    Bookie.db().schema().drop("reservations");
   }
 
   public static void init() throws SQLException{
