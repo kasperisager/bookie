@@ -204,7 +204,7 @@ public final class ModelQuery<T extends Model> {
         // to a post, and look for further relations...
         if (!this.tables.contains(inner.table())) {
           if (!isList) {
-            this.query.join(
+            this.query.leftJoin(
               inner.table(),
               String.format("%s.%s", outer.table(), fieldName),
               String.format("%s.%s", inner.table(), "id")
@@ -225,7 +225,7 @@ public final class ModelQuery<T extends Model> {
         // field isn't a list, e.g. joining a single post with a list of
         // comments.
         else if (!isList) {
-          this.query.join(
+          this.query.leftJoin(
             outer.table(),
             String.format("%s.%s", inner.table(), "id"),
             String.format("%s.%s", outer.table(), fieldName)
@@ -259,6 +259,10 @@ public final class ModelQuery<T extends Model> {
     final Class type,
     final List<Row> rows
   ) {
+    if (rows == null) {
+      return null;
+    }
+
     // Create a map for tracking model instances by their ID. When joining data,
     // the same instance of a model might appear several times in the query
     // response (e.g. the same post for several comments). The map will ensure
@@ -335,6 +339,10 @@ public final class ModelQuery<T extends Model> {
           List<T> value = this.setRelations(
             type, fieldType, modelRows.get(model.id())
           );
+
+          if (value == null) {
+            continue;
+          }
 
           if (isList) {
             model.setField(fieldName, value);
