@@ -53,7 +53,7 @@ public final class ModelQuery<T extends Model> {
    * @param type The model subclass to query.
    */
   public ModelQuery(final Class<T> type) {
-    Model model = Model.instantiate(type);
+    T model = Model.instantiate(type);
 
     this.type = type;
     this.query = model.query();
@@ -172,8 +172,8 @@ public final class ModelQuery<T extends Model> {
    *
    * @param type The model type to traverse.
    */
-  private void getRelations(final Class type) {
-    Model outer = Model.instantiate(type);
+  private void getRelations(final Class<?> type) {
+    T outer = Model.instantiate(type);
 
     // Remember that this model has already been added as a relation.
     this.tables.add(outer.table());
@@ -183,7 +183,7 @@ public final class ModelQuery<T extends Model> {
 
     for (Field field: outer.getFields()) {
       String fieldName = field.getName();
-      Class fieldType = field.getType();
+      Class<?> fieldType = field.getType();
 
       boolean isList = false;
 
@@ -197,7 +197,7 @@ public final class ModelQuery<T extends Model> {
       }
 
       if (Model.class.isAssignableFrom(fieldType)) {
-        Model inner = Model.instantiate(fieldType);
+        T inner = Model.instantiate(fieldType);
 
         // If the model hasn't already been added as a relation, join it into
         // the query if it represents a single field, e.g. a comment belonging
@@ -257,8 +257,8 @@ public final class ModelQuery<T extends Model> {
    * @return        A list of models initialized with their relations.
    */
   private List<T> setRelations(
-    final Model context,
-    final Class type,
+    final T context,
+    final Class<?> type,
     final List<Row> rows
   ) {
     if (rows == null) {
@@ -278,7 +278,7 @@ public final class ModelQuery<T extends Model> {
 
     // Partition the rows according to the specified type.
     for (Row row: rows) {
-      Model model = Model.instantiate(type);
+      T model = Model.instantiate(type);
 
       // Grab the ID of the current model table from the row.
       Integer id = (Integer) row.get(
@@ -301,7 +301,7 @@ public final class ModelQuery<T extends Model> {
         // to the model will be set on it.
         model.setRow(row);
 
-        models.put(id, (T) model);
+        models.put(id, model);
       }
       else {
         subRows = modelRows.get(id);
@@ -311,12 +311,12 @@ public final class ModelQuery<T extends Model> {
       modelRows.put(id, subRows);
     }
 
-    for (Model model: models.values()) {
+    for (T model: models.values()) {
       // Run through each of the fields of the model and look for further
       // relations.
       for (Field field: model.getFields()) {
         String fieldName = field.getName();
-        Class fieldType = field.getType();
+        Class<?> fieldType = field.getType();
 
         boolean isList = false;
 

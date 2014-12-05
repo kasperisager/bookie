@@ -71,10 +71,10 @@ public abstract class Model {
    * @param field The field to inspect.
    * @return      The generic type of the field.
    */
-  public static final Class getGenericType(final Field field) {
+  public static final Class<?> getGenericType(final Field field) {
     ParameterizedType type = (ParameterizedType) field.getGenericType();
 
-    return (Class) type.getActualTypeArguments()[0];
+    return (Class<?>) type.getActualTypeArguments()[0];
   }
 
   /**
@@ -152,7 +152,7 @@ public abstract class Model {
    *
    * @throws SQLException In case of a SQL error.
    */
-  private void defineSchema() throws SQLException {
+  private <T extends Model> void defineSchema() throws SQLException {
     Schema schema = this.db.schema();
     schema.create(this.table);
 
@@ -160,44 +160,44 @@ public abstract class Model {
     schema.increments("id");
 
     for (Field field: this.getFields()) {
-      String name = field.getName();
-      Class type = field.getType();
-      String column = name.toLowerCase();
+      String fieldName = field.getName();
+      Class<?> fieldType = field.getType();
+      String column = fieldName.toLowerCase();
 
       // String type
-      if (type == String.class) {
+      if (fieldType == String.class) {
         schema.text(column);
       }
       // Integer type (wrapped + primitive)
-      else if (type == Integer.class || type == int.class) {
+      else if (fieldType == Integer.class || fieldType == int.class) {
         schema.integer(column);
       }
       // Double type (wrapped + primitive)
-      else if (type == Double.class || type == double.class) {
+      else if (fieldType == Double.class || fieldType == double.class) {
         schema.doublePrecision(column);
       }
       // Float type (wrapped + primitive)
-      else if (type == Float.class || type == float.class) {
+      else if (fieldType == Float.class || fieldType == float.class) {
         schema.floatingPoint(column);
       }
       // Long type (wrapped + primitive)
-      else if (type == Long.class || type == long.class) {
+      else if (fieldType == Long.class || fieldType == long.class) {
         schema.longInteger(column);
       }
       // Boolean type (wrapped + primitive)
-      else if (type == Boolean.class || type == boolean.class) {
+      else if (fieldType == Boolean.class || fieldType == boolean.class) {
         schema.bool(column);
       }
       // Model subclass
-      else if (Model.class.isAssignableFrom(type)) {
-        Model model = this.instantiate(type);
+      else if (Model.class.isAssignableFrom(fieldType)) {
+        T model = this.instantiate(fieldType);
 
         schema.integer(column);
         schema.foreignKey(column, model.table(), "id");
       }
       // List subclass
-      else if (List.class.isAssignableFrom(type)) {
-        Class genericType = this.getGenericType(field);
+      else if (List.class.isAssignableFrom(fieldType)) {
+        Class<?> genericType = this.getGenericType(field);
 
         if (Model.class.isAssignableFrom(genericType)) {
           continue;
@@ -209,7 +209,7 @@ public abstract class Model {
       }
       else {
         throw new IllegalArgumentException(
-          "Unsupported data type for column: " + name
+          "Unsupported data type for column: " + fieldName
         );
       }
     }
@@ -223,9 +223,10 @@ public abstract class Model {
    * @param type  The type of model to instantiate.
    * @return      The instantiated model.
    */
-  public static final Model instantiate(final Class type) {
+  @SuppressWarnings("unchecked")
+  public static final <T extends Model> T instantiate(final Class<?> type) {
     try {
-      return (Model) type.newInstance();
+      return (T) type.newInstance();
     }
     catch (ClassCastException e) {
       // Catch casting exceptions since this indicates that a wrong type was
@@ -246,8 +247,9 @@ public abstract class Model {
     Row row = new Row();
 
     for (Field field: this.getFields()) {
-      String name = field.getName();
-      Class type = field.getType();
+      String fieldName = field.getName();
+      Class<?> fieldType = field.getType();
+      String column = fieldName.toLowerCase();
 
       Object value = null;
 
@@ -258,15 +260,15 @@ public abstract class Model {
         continue;
       }
 
-      if (Model.class.isAssignableFrom(type)) {
+      if (Model.class.isAssignableFrom(fieldType)) {
         value = ((Model) value).id();
       }
 
-      if (List.class.isAssignableFrom(type)) {
+      if (List.class.isAssignableFrom(fieldType)) {
         continue;
       }
 
-      row.put(name.toLowerCase(), value);
+      row.put(column, value);
     }
 
     return row;
@@ -293,8 +295,8 @@ public abstract class Model {
     }
 
     for (Field field: this.getFields()) {
-      String name = field.getName();
-      String column = name.toLowerCase();
+      String fieldName = field.getName();
+      String column = fieldName.toLowerCase();
       Object value = row.get(column);
 
       if (value == null) {
@@ -303,7 +305,7 @@ public abstract class Model {
         ));
       }
 
-      this.setField(name, value);
+      this.setField(fieldName, value);
     }
   }
 
@@ -327,30 +329,6 @@ public abstract class Model {
     final Class<T> type
   ) {
     return new ModelQuery<T>(type);
-  }
-
-  /**
-   * Find a single model by its ID.
-   *
-   * @param type  The type of model to find.
-   * @param <T>   The type of model to find.
-   * @param id    The ID of the model.
-   * @return      The model if found, otherwise null.
-   *
-   * @throws SQLException In case of a SQL error.
-   */
-  public static final <T extends Model> Model find(
-    final Class<T> type,
-    final int id
-  ) throws SQLException {
-    List<Model> models = Model.find(type).where("id", id).get();
-
-    if (!models.isEmpty()) {
-      return models.get(0);
-    }
-    else {
-      return null;
-    }
   }
 
   /**
