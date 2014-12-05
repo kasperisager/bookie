@@ -181,7 +181,14 @@ public enum Driver {
 
       connectionUrl = String.format("sqlite:%s.db", database);
 
-      return DriverManager.getConnection("jdbc:" + connectionUrl);
+      Properties connectionProps = new Properties();
+
+      // Enable foreign key support.
+      connectionProps.setProperty("foreign_keys", "true");
+
+      return DriverManager.getConnection(
+        "jdbc:" + connectionUrl, connectionProps
+      );
     }
   };
 
