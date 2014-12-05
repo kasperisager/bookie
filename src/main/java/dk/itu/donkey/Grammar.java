@@ -263,8 +263,8 @@ public abstract class Grammar {
    * Build a list of formatted set clauses.
    *
    * <p>
-   * <code>["col1", "col2"], ["?", "?"]</code> becomes <code>"set col1 = ?, col2 =
-   * ?"</code>
+   * <code>["col1", "col2"], ["?", "?"]</code> becomes <code>"set col1 = ?,
+   * col2 = ?"</code>
    *
    * @param columns The columns of the set clause.
    * @param values  The values of the set clause.
