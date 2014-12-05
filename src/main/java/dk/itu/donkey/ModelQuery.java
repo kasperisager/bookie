@@ -202,6 +202,9 @@ public final class ModelQuery<T extends Model> {
         // If the model hasn't already been added as a relation, join it into
         // the query if it represents a single field, e.g. a comment belonging
         // to a post, and look for further relations...
+        //
+        // Example:
+        // [...] from showtimes join movies on showtimes.movie = movies.id
         if (!this.tables.contains(inner.table())) {
           if (!isList) {
             this.query.leftJoin(
@@ -209,8 +212,6 @@ public final class ModelQuery<T extends Model> {
               String.format("%s.%s", outer.table(), fieldName),
               String.format("%s.%s", inner.table(), "id")
             );
-
-            //select ... from showtimes join movies on showtimes.movie = movies.id
 
             // Remember that this table has already been added as a relation.
             this.tables.add(inner.table());
@@ -224,14 +225,15 @@ public final class ModelQuery<T extends Model> {
         // One-to-One or One-to-Many) and so a reverse join is performed if the
         // field isn't a list, e.g. joining a single post with a list of
         // comments.
+        //
+        // Example:
+        // [...] from showtimes join tickets on showtimes.id = tickets.showtime
         else if (!isList) {
           this.query.leftJoin(
             outer.table(),
             String.format("%s.%s", inner.table(), "id"),
             String.format("%s.%s", outer.table(), fieldName)
           );
-
-          //select ... from showtimes join tickets on showtimes.id = tickets.showtime
         }
       }
       else {
@@ -255,7 +257,7 @@ public final class ModelQuery<T extends Model> {
    * @return        A list of models initialized with their relations.
    */
   private List<T> setRelations(
-    final Class context,
+    final Model context,
     final Class type,
     final List<Row> rows
   ) {
@@ -332,23 +334,24 @@ public final class ModelQuery<T extends Model> {
           // to avoid an infinite loop where two models both have fields of
           // oneanother's type, e.g. a post with a list of comments and a
           // comment that belongs to a post.
-          if (fieldType == context) {
-            continue;
-          }
-
-          List<T> value = this.setRelations(
-            type, fieldType, modelRows.get(model.id())
-          );
-
-          if (value == null) {
-            continue;
-          }
-
-          if (isList) {
-            model.setField(fieldName, value);
+          if (context != null && fieldType == context.getClass()) {
+            model.setField(fieldName, context);
           }
           else {
-            model.setField(fieldName, value.get(0));
+            List<T> value = this.setRelations(
+              model, fieldType, modelRows.get(model.id())
+            );
+
+            if (value == null) {
+              continue;
+            }
+
+            if (isList) {
+              model.setField(fieldName, value);
+            }
+            else {
+              model.setField(fieldName, value.get(0));
+            }
           }
         }
       }
