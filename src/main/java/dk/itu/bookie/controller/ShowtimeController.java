@@ -4,6 +4,7 @@
 package dk.itu.bookie.controller;
 
 // General utilities
+import java.util.Date;
 import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
@@ -159,6 +160,21 @@ public class ShowtimeController implements Initializable {
 
     this.dateColumn.setCellValueFactory((data) -> {
       return new SimpleStringProperty(data.getValue().date());
+    });
+
+    this.dateColumn.setComparator((date1, date2) -> {
+      Date date1Parsed = null;
+      Date date2Parsed = null;
+
+      try {
+	date1Parsed = Showtime.dateFormat().parse(date1);
+	date2Parsed = Showtime.dateFormat().parse(date2);
+      }
+      catch (Exception e) {
+	return 0;
+      }
+
+      return date1Parsed.compareTo(date2Parsed);
     });
 
     this.timeColumn.setCellValueFactory((data) -> {

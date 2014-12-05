@@ -58,17 +58,21 @@ public final class Showtime extends Model {
     super("showtimes", Bookie.db());
   }
 
+  public static SimpleDateFormat dateFormat() {
+    return new SimpleDateFormat("EEE dd/MM yyyy", new Locale("da"));
+  }
+
   /**
    * Return a pretty version of the showtime's date.
    *
    * @return A formatted showtime date.
    */
   public String date() {
-    DateFormat df = new SimpleDateFormat(
-      "EEE dd/MM yyyy", new Locale("da")
-    );
+    return this.dateFormat().format(new Date(this.playingAt));
+  }
 
-    return df.format(new Date(this.playingAt));
+  public static SimpleDateFormat timeFormat() {
+    return new SimpleDateFormat("HH:mm", new Locale("da"));
   }
 
   /**
@@ -77,11 +81,7 @@ public final class Showtime extends Model {
    * @return A formatted showtime time.
    */
   public String time() {
-    DateFormat df = new SimpleDateFormat(
-      "HH:mm", new Locale("da")
-    );
-
-    return df.format(new Date(this.playingAt));
+    return this.timeFormat().format(new Date(this.playingAt));
   }
 
   /**
