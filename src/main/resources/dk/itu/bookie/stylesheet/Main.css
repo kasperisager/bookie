@@ -1,3 +1,11 @@
+#dateColumn.table-cell {
+  -fx-alignment: CENTER-RIGHT;
+}
+
+#timeColumn.table-cell {
+  -fx-alignment: CENTER-LEFT;
+}
+
 .padded {
   -fx-padding: 6px;
 }
