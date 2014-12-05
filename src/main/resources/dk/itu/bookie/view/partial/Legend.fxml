@@ -5,6 +5,7 @@
 
 <!-- JavaFX controls -->
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tooltip?>
 
 <!-- JavaFX shapes -->
 <?import javafx.scene.shape.Rectangle?>
@@ -17,28 +18,44 @@
     <HBox>
       <children>
         <Rectangle styleClass="seat, seat-available" width="20" height="20" />
-        <Label text="Ledig" styleClass="legend-label" />
+        <Label text="Ledig" styleClass="legend-label">
+          <tooltip>
+            <Tooltip text="Ledige sæder, som kan vælges" />
+          </tooltip>
+        </Label>
       </children>
     </HBox>
 
     <HBox>
       <children>
         <Rectangle styleClass="seat, seat-selected" width="20" height="20" />
-        <Label text="Valgt" styleClass="legend-label" />
+        <Label text="Valgt" styleClass="legend-label">
+          <tooltip>
+            <Tooltip text="Sæder valgt til reservation" />
+          </tooltip>
+        </Label>
       </children>
     </HBox>
 
     <HBox>
       <children>
         <Rectangle styleClass="seat, seat-reserved" width="20" height="20" />
-        <Label text="Reserveret" styleClass="legend-label" />
+        <Label text="Reserveret" styleClass="legend-label">
+          <tooltip>
+            <Tooltip text="Reserverede sæder, der ikke kan vælges" />
+          </tooltip>
+        </Label>
       </children>
     </HBox>
 
     <HBox>
       <children>
         <Rectangle styleClass="seat, seat-bought" width="20" height="20" />
-        <Label text="Betalt" styleClass="legend-label" />
+        <Label text="Betalt" styleClass="legend-label">
+          <tooltip>
+            <Tooltip text="Betalte sæder, som ikke kan reserveres" />
+          </tooltip>
+        </Label>
       </children>
     </HBox>
   </children>
