@@ -3,6 +3,9 @@
  */
 package dk.itu.bookie;
 
+// General utilities
+import java.util.Calendar;
+
 // SQL utilities
 import java.sql.SQLException;
 
@@ -29,25 +32,26 @@ public final class Seeder {
   }
 
   public static void init() throws SQLException{
-    Auditorium aud1 = new Auditorium();
-    aud1.name = "Sal 1";
-    aud1.rows = 10;
-    aud1.seats = 15;
-    aud1.insert();
+    Object[][] auditoriumData = new Object[][] {{
+      "Sal 1", 10, 15
+    }, {
+      "Sal 2", 8, 14
+    }, {
+      "Sal 3", 15, 25
+    }};
 
-    Auditorium aud2 = new Auditorium();
-    aud2.name = "Sal 2";
-    aud2.rows = 8;
-    aud2.seats = 14;
-    aud2.insert();
+    Auditorium[] auditoriums = new Auditorium[auditoriumData.length];
 
-    Auditorium aud3 = new Auditorium();
-    aud3.name = "Sal 3";
-    aud3.rows = 15;
-    aud3.seats = 25;
-    aud3.insert();
+    for (int i = 0; i < auditoriumData.length; i++) {
+      Auditorium auditorium = new Auditorium();
+      auditorium.name = (String) auditoriumData[i][0];
+      auditorium.rows = (int) auditoriumData[i][1];
+      auditorium.seats = (int) auditoriumData[i][2];
+      auditorium.insert();
+      auditoriums[i] = auditorium;
+    }
 
-    String[] movies = new String[]{
+    String[] movieData = new String[]{
       "Interstellar",
       "The Hobbit",
       "The Hunger Games: Mockingjay - Part 1",
@@ -57,56 +61,57 @@ public final class Seeder {
       "Jurassic Park 4"
     };
 
-    for (String movieName: movies) {
-      Movie mov = new Movie();
-      mov.name = movieName;
-      mov.insert();
+    Movie[] movies = new Movie[movieData.length];
 
-      Showtime show1 = new Showtime();
-      show1.auditorium = aud1;
-      show1.movie = mov;
-      show1.playingAt(2015, 1, 12, 18, 30);
-      show1.insert();
+    for (int i = 0; i < movieData.length; i++) {
+      Movie movie = new Movie();
+      movie.name = movieData[i];
+      movie.insert();
+      movies[i] = movie;
+    }
 
-      Showtime show2 = new Showtime();
-      show2.auditorium = aud2;
-      show2.movie = mov;
-      show2.playingAt(2015, 1, 12, 19, 00);
-      show2.insert();
+    Showtime[] showtimes = new Showtime[40];
 
-      Showtime show3 = new Showtime();
-      show3.auditorium = aud3;
-      show3.movie = mov;
-      show3.playingAt(2015, 1, 14, 17, 00);
-      show3.insert();
+    Calendar cal = Calendar.getInstance();
 
-      Showtime show4 = new Showtime();
-      show4.auditorium = aud2;
-      show4.movie = mov;
-      show4.playingAt(2015, 1, 14, 18, 30);
-      show4.insert();
+    for (int i = 0; i < 40; i++) {
+      Showtime showtime = new Showtime();
 
-      Showtime show5 = new Showtime();
-      show5.auditorium = aud1;
-      show5.movie = mov;
-      show5.playingAt(2015, 1, 12, 18, 30);
-      show5.insert();
+      // Get the next auditorium.
+      showtime.auditorium = auditoriums[i % auditoriums.length];
 
-      Reservation res1 = new Reservation();
-      res1.insert();
+      // Get a random movie.
+      showtime.movie = movies[(int) (Math.random() * movies.length)];
 
-      Reservation res2 = new Reservation();
-      res2.insert();
+      // Set the showtime date.
+      showtime.playingAt(
+        cal.get(Calendar.YEAR),
+        cal.get(Calendar.MONTH),
+        (i % 29) + 1,
+        i % 23,
+        ((i % 2) * 15) % 60
+      );
 
-      Ticket tick1 = new Ticket();
-      tick1.showtime = show1;
-      tick1.reservation = res1;
-      tick1.insert();
+      showtime.insert();
+      showtimes[i] = showtime;
+    }
 
-      Ticket tick2 = new Ticket();
-      tick2.showtime = show1;
-      tick2.reservation = res1;
-      tick2.insert();
+    Reservation[] reservations = new Reservation[100];
+
+    for (int i = 0; i < 100; i++) {
+      Reservation reservation = new Reservation();
+      reservation.phoneNumber = 10000000 + (int) (Math.random() * 90000000);
+      reservation.insert();
+
+      // Grab the next showtime.
+      Showtime showtime = showtimes[i % showtimes.length];
+
+      for (int j = 0; j < (int) (Math.random() * 10); j++) {
+        Ticket ticket = new Ticket();
+        ticket.showtime = showtime;
+        ticket.reservation = reservation;
+        ticket.insert();
+      }
     }
   }
 }
