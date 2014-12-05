@@ -225,16 +225,19 @@ public abstract class Model {
    */
   @SuppressWarnings("unchecked")
   public static final <T extends Model> T instantiate(final Class<?> type) {
-    try {
-      return (T) type.newInstance();
+    if (Model.class.isAssignableFrom(type)) {
+      try {
+        return (T) type.newInstance();
+      }
+      catch (InstantiationException e) {
+        return null;
+      }
+      catch (IllegalAccessException e) {
+        return null;
+      }
     }
-    catch (ClassCastException e) {
-      // Catch casting exceptions since this indicates that a wrong type was
-      // passed to the method. Throw an illegal argument exception instead.
+    else {
       throw new IllegalArgumentException("Type must be subclass of Model");
-    }
-    catch (Exception e) {
-      return null;
     }
   }
 
