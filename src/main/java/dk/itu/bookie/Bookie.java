@@ -9,12 +9,8 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-// IO utilities
-import java.io.IOException;
-
 // JavaFX utilities
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.Parent;
@@ -60,6 +56,8 @@ public final class Bookie extends Application {
    * Launch the application.
    *
    * @param args Runtime arguments.
+   *
+   * @throws SQLException In case of a SQL exception during seeding.
    */
   public static void main(final String[] args) throws SQLException {
     Seeder.reset();
@@ -71,17 +69,9 @@ public final class Bookie extends Application {
    * Start the JavaFX thread and hand off control to the primary controller.
    *
    * @param primaryStage The primary stage of the application.
-   *
-   * @throws IOException If the main FXML-view or CSS stylesheet cannot load.
    */
   @Override
-  public void start(final Stage primaryStage) throws Exception {
-    Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
-      Platform.runLater(() -> {
-        ErrorController.crash(t, e);
-      });
-    });
-
+  public void start(final Stage primaryStage) {
     Thread.currentThread().setUncaughtExceptionHandler(
       ErrorController::crash
     );

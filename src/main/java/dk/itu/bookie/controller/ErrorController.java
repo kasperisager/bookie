@@ -9,7 +9,6 @@ import java.io.StringWriter;
 
 // JavaFX layouts
 import javafx.scene.layout.VBox;
-import javafx.scene.layout.Priority;
 
 // JavaFX controls
 import javafx.scene.control.Alert;
@@ -24,7 +23,33 @@ import javafx.scene.control.TextArea;
  */
 public final class ErrorController {
   /**
+   * The singleton instance of the controller.
+   */
+  private static ErrorController instance;
+
+  /**
+   * Get the singleton instance of the controller.
+   *
+   * @return The singleton Error controller.
+   */
+  public ErrorController getInstance() {
+    return ErrorController.instance;
+  }
+
+  /**
+   * Initialize the controller.
+   *
+   * @throws Exception In case of uncaught errors.
+   */
+  public void initialize() throws Exception {
+    ErrorController.instance = this;
+  }
+
+  /**
    * "Graceful" crash handling.
+   *
+   * @param thread    The thread in which the crash happened.
+   * @param throwable The exception that caused the crash.
    */
   public static void crash(final Thread thread, final Throwable throwable) {
     Alert alert = new Alert(AlertType.ERROR);

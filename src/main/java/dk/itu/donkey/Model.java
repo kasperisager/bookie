@@ -150,6 +150,8 @@ public abstract class Model {
   /**
    * Define the database schema of a model.
    *
+   * @param <T> The type of model to define the schema for.
+   *
    * @throws SQLException In case of a SQL error.
    */
   private <T extends Model> void defineSchema() throws SQLException {
@@ -221,6 +223,7 @@ public abstract class Model {
    * Given a type, attempt instantiating a new model.
    *
    * @param type  The type of model to instantiate.
+   * @param <T>   The type of model to instantiate.
    * @return      The instantiated model.
    */
   @SuppressWarnings("unchecked")

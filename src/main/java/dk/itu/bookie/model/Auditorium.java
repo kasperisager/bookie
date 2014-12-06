@@ -3,8 +3,6 @@
  */
 package dk.itu.bookie.model;
 
-import java.util.List;
-
 // Base model
 import dk.itu.donkey.Model;
 

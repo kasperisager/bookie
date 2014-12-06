@@ -22,7 +22,19 @@ import dk.itu.bookie.model.Showtime;
  * @version 1.0.0
  */
 public final class Seeder {
-  public static void reset() throws SQLException{
+  /**
+   * Don't allow instantiating the class.
+   */
+  private Seeder() {
+    super();
+  }
+
+  /**
+   * Drop all database tables.
+   *
+   * @throws SQLException In case of a SQL error.
+   */
+  public static void reset() throws SQLException {
     Bookie.db().schema().drop("tickets");
     Bookie.db().schema().drop("reservations");
     Bookie.db().schema().drop("showtimes");
@@ -30,7 +42,12 @@ public final class Seeder {
     Bookie.db().schema().drop("movies");
   }
 
-  public static void init() throws SQLException{
+  /**
+   * Initialize database with test data.
+   *
+   * @throws SQLException In case of a SQL error.
+   */
+  public static void init() throws SQLException {
     Object[][] auditoriumData = new Object[][] {{
       "Sal 1", 10, 15
     }, {

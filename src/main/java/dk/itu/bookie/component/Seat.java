@@ -6,9 +6,6 @@ package dk.itu.bookie.component;
 // JavaFX shapes
 import javafx.scene.shape.Rectangle;
 
-// JavaFX paint
-import javafx.scene.paint.Color;
-
 // JavaFX properties
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -19,13 +16,37 @@ import javafx.beans.property.SimpleBooleanProperty;
  * @since 1.0.0 Initial release.
  */
 public final class Seat extends Rectangle {
+  /**
+   * The row number of the seat.
+   */
   private int row;
+
+  /**
+   * The seat number (column) of the seat.
+   */
   private int seat;
 
+  /**
+   * Whether or not the seat is reserved.
+   */
   private BooleanProperty reserved = new SimpleBooleanProperty(false);
+
+  /**
+   * Whether or not the seat is bought.
+   */
   private BooleanProperty bought = new SimpleBooleanProperty(false);
+
+  /**
+   * Whether or not the seat is selected for reservation.
+   */
   private BooleanProperty selected = new SimpleBooleanProperty(false);
 
+  /**
+   * Initialize a seat.
+   *
+   * @param row   The row number of the seat.
+   * @param seat  The seat number (column) of the seat.
+   */
   public Seat(final int row, final int seat) {
     this.row = row;
     this.seat = seat;
@@ -42,6 +63,9 @@ public final class Seat extends Rectangle {
     });
   }
 
+  /**
+   * Select a seat.
+   */
   public void select() {
     // If this ticket has been either reserved or bought, don't allow that it
     // be selected.
@@ -54,6 +78,9 @@ public final class Seat extends Rectangle {
     this.selected.set(true);
   }
 
+  /**
+   * De-select a seat.
+   */
   public void deselect() {
     // If this ticket has been either reserved or bought, don't allow that it
     // be selected.
@@ -66,6 +93,9 @@ public final class Seat extends Rectangle {
     this.selected.set(false);
   }
 
+  /**
+   * Reserve a seat.
+   */
   public void reserve() {
     // If this ticket has been bought, don't allow that it be reserved.
     if (this.bought.get()) {
@@ -78,6 +108,9 @@ public final class Seat extends Rectangle {
     this.reserved.set(true);
   }
 
+  /**
+   * Buy a seat.
+   */
   public void buy() {
     this.getStyleClass().remove("seat-selected");
     this.getStyleClass().remove("seat-reserved");
@@ -86,6 +119,11 @@ public final class Seat extends Rectangle {
     this.bought.set(true);
   }
 
+  /**
+   * Get the state of the seat (selected or not).
+   *
+   * @return Boolean property describing whether or not the seat is selected.
+   */
   public BooleanProperty getState() {
     return this.selected;
   }

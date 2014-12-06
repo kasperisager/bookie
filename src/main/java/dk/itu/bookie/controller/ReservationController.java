@@ -5,10 +5,6 @@ package dk.itu.bookie.controller;
 
 // General utilities
 import java.util.Date;
-import java.util.ResourceBundle;
-
-// Net utilities
-import java.net.URL;
 
 // JavaFX controls
 import javafx.scene.control.TableView;
@@ -30,40 +26,82 @@ import dk.itu.bookie.model.Reservation;
  *
  * @version 1.0.0
  */
-public class ReservationController {
+public final class ReservationController {
+  /**
+   * The singleton instance of the controller.
+   */
   private static ReservationController instance;
 
+  /**
+   * Table containing the different reservations.
+   */
   @FXML
   private TableView<Reservation> reservations;
 
+  /**
+   * The column containing the phone number of the reservation.
+   */
   @FXML
   private TableColumn<Reservation, Number> phoneColumn;
 
+  /**
+   * The column containing the number of tickets reserved.
+   */
   @FXML
   private TableColumn<Reservation, Number> ticketColumn;
 
+  /**
+   * The column containing the status of the reservation.
+   */
   @FXML
   private TableColumn<Reservation, String> statusColumn;
 
+  /**
+   * The column containing the name of the movie playing.
+   */
   @FXML
   private TableColumn<Reservation, String> movieColumn;
 
+  /**
+   * The column containing the name of the auditorium that the movie is playing
+   * in.
+   */
   @FXML
   private TableColumn<Reservation, String> auditoriumColumn;
 
+  /**
+   * The column containing the date that the movie is playing.
+   */
   @FXML
   private TableColumn<Reservation, String> dateColumn;
 
+  /**
+   * The column containing the time at which the movie is playing.
+   */
   @FXML
   private TableColumn<Reservation, String> timeColumn;
 
+  /**
+   * The column containing the different actions that can be taken for each
+   * reservation.
+   */
   @FXML
   private TableColumn<Reservation, String> actionsColumn;
 
+  /**
+   * Get the singleton instance of the controller.
+   *
+   * @return The singleton Reservation controller.
+   */
   public ReservationController getInstance() {
     return ReservationController.instance;
   }
 
+  /**
+   * Initialize the controller.
+   *
+   * @throws Exception In case of uncaught errors.
+   */
   public void initialize() throws Exception {
     ReservationController.instance = this;
 
@@ -117,6 +155,10 @@ public class ReservationController {
     });
   }
 
+  /**
+   * Bind the widths of the individual columns to the entire width of the
+   * containing table.
+   */
   public void bindTableColumnWidths() {
     this.phoneColumn.prefWidthProperty().bind(
       this.reservations.widthProperty().subtract(18).multiply(0.15)

@@ -5,13 +5,8 @@ package dk.itu.bookie.controller;
 
 // General utilities
 import java.util.Date;
-import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.ResourceBundle;
-
-// Net utilities
-import java.net.URL;
 
 // JavaFX layouts
 import javafx.scene.layout.GridPane;
@@ -19,17 +14,11 @@ import javafx.scene.layout.GridPane;
 // JavaFX controls
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.ScrollPane;
 
 // JavaFX geometry
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
-
-// JavaFX collections
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 // JavaFX properties
 import javafx.beans.property.SimpleStringProperty;
@@ -37,52 +26,82 @@ import javafx.beans.property.SimpleStringProperty;
 // FXML utilities
 import javafx.fxml.FXML;
 
-// Donkey utilities
-import dk.itu.donkey.Model;
-
 // Components
 import dk.itu.bookie.component.Seat;
 
 // Models
-import dk.itu.bookie.model.Auditorium;
 import dk.itu.bookie.model.Showtime;
-import dk.itu.bookie.model.Movie;
 
 /**
  * Showtime controller class.
  *
  * @version 1.0.0
  */
-public class ShowtimeController {
+public final class ShowtimeController {
+  /**
+   * The singleton instance of the controller.
+   */
   private static ShowtimeController instance;
 
+  /**
+   * List of letters in the English alphabet.
+   */
   private char[] alphabet = new char[]{
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
     'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
   };
 
+  /**
+   * Table containing the different showtimes.
+   */
   @FXML
   private TableView<Showtime> showtimes;
 
+  /**
+   * The column containing the name of the movie playing.
+   */
   @FXML
   private TableColumn<Showtime, String> movieColumn;
 
+  /**
+   * The column containing the name of the auditorium that the movie is playing
+   * in.
+   */
   @FXML
   private TableColumn<Showtime, String> auditoriumColumn;
 
+  /**
+   * The column containing the date that the movie is playing.
+   */
   @FXML
   private TableColumn<Showtime, String> dateColumn;
 
+  /**
+   * The column containing the time at which the movie is playing.
+   */
   @FXML
   private TableColumn<Showtime, String> timeColumn;
 
+  /**
+   * The gridpane containing the seats in the auditorium.
+   */
   @FXML
   private GridPane auditorium;
 
+  /**
+   * Get the singleton instance of the controller.
+   *
+   * @return The singleton Showtime controller.
+   */
   public ShowtimeController getInstance() {
     return ShowtimeController.instance;
   }
 
+  /**
+   * Initialize the controller.
+   *
+   * @throws Exception In case of uncaught errors.
+   */
   public void initialize() throws Exception {
     ShowtimeController.instance = this;
 
@@ -171,6 +190,10 @@ public class ShowtimeController {
     });
   }
 
+  /**
+   * Bind the widths of the individual columns to the entire width of the
+   * containing table.
+   */
   public void bindTableColumnWidths() {
     this.movieColumn.prefWidthProperty().bind(
       this.showtimes.widthProperty().subtract(18).multiply(0.35)
@@ -189,6 +212,13 @@ public class ShowtimeController {
     );
   }
 
+  /**
+   * Bind the widths of the individual seats to the entire width of the
+   * containing grid.
+   *
+   * @param seat  The seat whose width to bind.
+   * @param seats The total number of seats per row in the grid.
+   */
   public void bindSeatWidth(final Seat seat, final int seats) {
     seat.widthProperty().bind(
       this.showtimes.widthProperty().divide(seats)

@@ -9,15 +9,11 @@ import java.util.List;
 import java.util.Locale;
 
 // Text utilities
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 // Time utilities
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-
-// SQL utilities
-import java.sql.Timestamp;
 
 // Base model
 import dk.itu.donkey.Model;
@@ -58,6 +54,11 @@ public final class Showtime extends Model {
     super("showtimes", Bookie.db());
   }
 
+  /**
+   * Return a date format for formatting showtime dates.
+   *
+   * @return A date format for formatting showtime dates.
+   */
   public static SimpleDateFormat dateFormat() {
     return new SimpleDateFormat("EEE dd/MM yyyy", new Locale("da"));
   }
@@ -71,6 +72,11 @@ public final class Showtime extends Model {
     return this.dateFormat().format(new Date(this.playingAt));
   }
 
+  /**
+   * Return a date format for formatting showtime times.
+   *
+   * @return A date format for formatting showtime times.
+   */
   public static SimpleDateFormat timeFormat() {
     return new SimpleDateFormat("HH:mm", new Locale("da"));
   }
@@ -100,7 +106,8 @@ public final class Showtime extends Model {
     final int hour,
     final int minute
   ) {
-    this.playingAt = LocalDateTime.of(year, month, day, hour, minute)
-                                  .toEpochSecond(ZoneOffset.of("Z")) * 1000;
+    this.playingAt = LocalDateTime
+      .of(year, month, day, hour, minute)
+      .toEpochSecond(ZoneOffset.of("Z")) * 1000;
   }
 }

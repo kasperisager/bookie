@@ -3,28 +3,32 @@
  */
 package dk.itu.bookie.controller;
 
-// General utilities
-import java.util.ResourceBundle;
-
-// Net utilities
-import java.net.URL;
-
-// FXML utilities
-import javafx.fxml.FXML;
-
 /**
  * Menu controller class.
  *
  * @version 1.0.0
  */
 public final class MenuController {
+  /**
+   * The singleton instance of the controller.
+   */
   private static MenuController instance;
 
+  /**
+   * Get the singleton instance of the controller.
+   *
+   * @return The singleton Menu controller.
+   */
   public MenuController getInstance() {
     return MenuController.instance;
   }
 
-  public void initialize() {
+  /**
+   * Initialize the controller.
+   *
+   * @throws Exception In case of uncaught errors.
+   */
+  public void initialize() throws Exception {
     MenuController.instance = this;
   }
 }
