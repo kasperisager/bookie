@@ -32,6 +32,12 @@ dependencies {
 
 mainClassName = "dk.itu.bookie.Bookie"
 
+allprojects {
+  tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked"
+  }
+}
+
 test {
   testLogging {
     showStandardStreams = true
