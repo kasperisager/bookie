@@ -44,4 +44,3 @@ public class ConcreteModel2 extends Model {
     super("test1", ModelTest.db());
   }
 }
-
