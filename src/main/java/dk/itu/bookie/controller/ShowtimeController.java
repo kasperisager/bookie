@@ -21,6 +21,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.ScrollPane;
 
 // JavaFX geometry
 import javafx.geometry.HPos;
@@ -35,7 +36,6 @@ import javafx.beans.property.SimpleStringProperty;
 
 // FXML utilities
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 
 // Donkey utilities
 import dk.itu.donkey.Model;
@@ -53,7 +53,7 @@ import dk.itu.bookie.model.Movie;
  *
  * @version 1.0.0
  */
-public class ShowtimeController implements Initializable {
+public class ShowtimeController {
   private static ShowtimeController instance;
 
   private char[] alphabet = new char[]{
@@ -83,7 +83,7 @@ public class ShowtimeController implements Initializable {
     return ShowtimeController.instance;
   }
 
-  public void initialize(final URL url, final ResourceBundle resourceBundle) {
+  public void initialize() throws Exception {
     ShowtimeController.instance = this;
 
     this.bindTableColumnWidths();
@@ -112,7 +112,7 @@ public class ShowtimeController implements Initializable {
 
         this.auditorium.add(label, seat, row);
 
-        // Center alignment the label within its column.
+        // Center align the label within its column.
         this.auditorium.setHalignment(label, HPos.CENTER);
         this.auditorium.setValignment(label, VPos.CENTER);
       }
@@ -137,18 +137,7 @@ public class ShowtimeController implements Initializable {
       }
     }
 
-    List<Showtime> models = null;
-
-    try {
-      models = Model.findAll(Showtime.class);
-    }
-    catch (Exception e) {
-      return;
-    }
-
-    ObservableList<Showtime> showtimes = FXCollections.observableArrayList(models);
-
-    this.showtimes.setItems(showtimes);
+    this.showtimes.setItems(ApplicationController.showtimes());
 
     this.auditoriumColumn.setCellValueFactory((data) -> {
       return new SimpleStringProperty(data.getValue().auditorium.name);
@@ -167,11 +156,11 @@ public class ShowtimeController implements Initializable {
       Date date2Parsed = null;
 
       try {
-	date1Parsed = Showtime.dateFormat().parse(date1);
-	date2Parsed = Showtime.dateFormat().parse(date2);
+        date1Parsed = Showtime.dateFormat().parse(date1);
+        date2Parsed = Showtime.dateFormat().parse(date2);
       }
       catch (Exception e) {
-	return 0;
+        return 0;
       }
 
       return date1Parsed.compareTo(date2Parsed);
@@ -184,19 +173,19 @@ public class ShowtimeController implements Initializable {
 
   public void bindTableColumnWidths() {
     this.movieColumn.prefWidthProperty().bind(
-      this.showtimes.widthProperty().multiply(0.35)
+      this.showtimes.widthProperty().subtract(18).multiply(0.35)
     );
 
     this.auditoriumColumn.prefWidthProperty().bind(
-      this.showtimes.widthProperty().multiply(0.35)
+      this.showtimes.widthProperty().subtract(18).multiply(0.35)
     );
 
     this.dateColumn.prefWidthProperty().bind(
-      this.showtimes.widthProperty().multiply(0.20)
+      this.showtimes.widthProperty().subtract(18).multiply(0.20)
     );
 
     this.timeColumn.prefWidthProperty().bind(
-      this.showtimes.widthProperty().multiply(0.10)
+      this.showtimes.widthProperty().subtract(18).multiply(0.10)
     );
   }
 
