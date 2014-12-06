@@ -1,9 +1,19 @@
-#dateColumn.table-cell {
-  -fx-alignment: CENTER-RIGHT;
+.button {
+  -fx-base: #EFEFEF;
 }
 
-#timeColumn.table-cell {
+.button-danger {
+  -fx-base: #B8312F;
+  -fx-text-fill: #fff;
+}
+
+.table-cell {
+  -fx-pref-height: 36px;
   -fx-alignment: CENTER-LEFT;
+}
+
+#dateColumn.table-cell {
+  -fx-alignment: CENTER-RIGHT;
 }
 
 .padded {

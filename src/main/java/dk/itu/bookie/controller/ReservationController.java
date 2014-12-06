@@ -6,16 +6,30 @@ package dk.itu.bookie.controller;
 // General utilities
 import java.util.Date;
 
+// SQL utilities
+import java.sql.SQLException;
+
 // JavaFX controls
+import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+
+// JavaFX layouts
+import javafx.scene.layout.HBox;
 
 // JavaFX properties
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 
 // FXML utilities
 import javafx.fxml.FXML;
+
+// ControlsFX
+import org.controlsfx.dialog.Dialog;
+import org.controlsfx.dialog.Dialogs;
+import org.controlsfx.control.action.Action;
 
 // Models
 import dk.itu.bookie.model.Showtime;
@@ -86,7 +100,7 @@ public final class ReservationController {
    * reservation.
    */
   @FXML
-  private TableColumn<Reservation, String> actionsColumn;
+  private TableColumn<Reservation, Reservation> actionsColumn;
 
   /**
    * Get the singleton instance of the controller.
@@ -153,6 +167,14 @@ public final class ReservationController {
     this.timeColumn.setCellValueFactory((data) -> {
       return new SimpleStringProperty(data.getValue().showtime.time());
     });
+
+    this.actionsColumn.setCellValueFactory((data) -> {
+      return new ReadOnlyObjectWrapper(data.getValue());
+    });
+
+    this.actionsColumn.setCellFactory((column) -> {
+      return new ButtonCell();
+    });
   }
 
   /**
@@ -191,5 +213,69 @@ public final class ReservationController {
     this.actionsColumn.prefWidthProperty().bind(
       this.reservations.widthProperty().subtract(18).multiply(0.20)
     );
+  }
+
+  /**
+   * Custom cell with support for button actions.
+   */
+  private class ButtonCell extends TableCell<Reservation, Reservation> {
+    /**
+     * Render the cell.
+     *
+     * @param reservation The reservation associated with the row.
+     * @param empty       Whether or not the cell has content.
+     */
+    protected void updateItem(
+      final Reservation reservation,
+      final boolean empty
+    ) {
+      super.updateItem(reservation, empty);
+
+      HBox buttons = new HBox();
+      buttons.setSpacing(4);
+
+      Button editButton = new Button("Redigér");
+
+      Button deleteButton = new Button("Slet");
+      deleteButton.getStyleClass().add("button-danger");
+
+      deleteButton.setOnAction((e) -> {
+        Action response = Dialogs
+          .create()
+          .title("Confirm action")
+          .masthead("Are you sure you want to delete the reservation?")
+          .actions(Dialog.ACTION_OK, Dialog.ACTION_CANCEL)
+          .showConfirm();
+
+        if (response == Dialog.ACTION_CANCEL) {
+          return;
+        }
+
+        try {
+          // Attempt deleting the reservation from the database. If this fails,
+          // a SQL exception will be thrown.
+          reservation.delete();
+
+          // Once the reservation has been deleted from the database, remove it
+          // from the list of reservations.
+          ApplicationController
+            .reservations()
+            .removeAll(reservation);
+        }
+        catch (SQLException ex) {
+          return;
+        }
+      });
+
+      buttons.getChildren().add(editButton);
+      buttons.getChildren().add(deleteButton);
+
+      if (!empty) {
+        this.setGraphic(buttons);
+      }
+      else {
+        this.setGraphic(null);
+      }
+    }
   }
 }
