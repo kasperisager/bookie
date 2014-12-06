@@ -14,6 +14,7 @@ import java.io.IOException;
 
 // JavaFX utilities
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.Parent;
@@ -24,6 +25,9 @@ import javafx.fxml.FXMLLoader;
 // Donkey utilities
 import dk.itu.donkey.Database;
 import dk.itu.donkey.Driver;
+
+// Controllers
+import dk.itu.bookie.controller.ErrorController;
 
 /**
  * Bookie class.
@@ -44,7 +48,7 @@ public final class Bookie extends Application {
   public static Database db() {
     if (Bookie.db == null) {
       Properties config = new Properties();
-      config.put("database", "sqlite");
+      config.put("database", "Bookie");
 
       Bookie.db = new Database(Driver.SQLITE, config);
     }
@@ -71,28 +75,43 @@ public final class Bookie extends Application {
    * @throws IOException If the main FXML-view or CSS stylesheet cannot load.
    */
   @Override
-  public void start(final Stage primaryStage) throws IOException {
-    FXMLLoader fxmlLoader = new FXMLLoader();
+  public void start(final Stage primaryStage) throws Exception {
+    Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+      Platform.runLater(() -> {
+        ErrorController.crash(t, e);
+      });
+    });
 
-    Locale locale = new Locale("da", "DK");
-
-    fxmlLoader.setResources(
-      ResourceBundle.getBundle("dk.itu.bookie.Locale", locale)
+    Thread.currentThread().setUncaughtExceptionHandler(
+      ErrorController::crash
     );
 
-    Parent root = fxmlLoader.load(
-      this.getClass().getResource("view/Application.fxml")
-    );
+    try {
+      FXMLLoader fxmlLoader = new FXMLLoader();
 
-    Scene scene = new Scene(root);
+      Locale locale = new Locale("da", "DK");
 
-    scene.getStylesheets().add(
-      this.getClass().getResource("stylesheet/Main.css").toExternalForm()
-    );
+      fxmlLoader.setResources(
+        ResourceBundle.getBundle("dk.itu.bookie.Locale", locale)
+      );
 
-    primaryStage.setTitle("Bookie");
-    primaryStage.setScene(scene);
-    primaryStage.setResizable(false);
-    primaryStage.show();
+      Parent root = fxmlLoader.load(
+        this.getClass().getResource("view/Application.fxml")
+      );
+
+      Scene scene = new Scene(root);
+
+      scene.getStylesheets().add(
+        this.getClass().getResource("stylesheet/Main.css").toExternalForm()
+      );
+
+      primaryStage.setTitle("Bookie");
+      primaryStage.setScene(scene);
+      primaryStage.setResizable(false);
+      primaryStage.show();
+    }
+    catch (Throwable t) {
+      ErrorController.crash(Thread.currentThread(), t);
+    }
   }
 }

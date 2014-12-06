@@ -10,21 +10,21 @@ import java.util.ResourceBundle;
 import java.net.URL;
 
 // FXML utilities
-import javafx.fxml.Initializable;
+import javafx.fxml.FXML;
 
 /**
  * Menu controller class.
  *
  * @version 1.0.0
  */
-public final class MenuController implements Initializable {
+public final class MenuController {
   private static MenuController instance;
 
   public MenuController getInstance() {
     return MenuController.instance;
   }
 
-  public void initialize(URL url, ResourceBundle resourceBundle) {
+  public void initialize() {
     MenuController.instance = this;
   }
 }
