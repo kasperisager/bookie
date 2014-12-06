@@ -3,18 +3,8 @@
  */
 package dk.itu.bookie.controller;
 
-// IO utilities
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
-// JavaFX layouts
-import javafx.scene.layout.VBox;
-
-// JavaFX controls
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+// ControlsFX
+import org.controlsfx.dialog.Dialogs;
 
 /**
  * Error controller class.
@@ -52,36 +42,16 @@ public final class ErrorController {
    * @param throwable The exception that caused the crash.
    */
   public static void crash(final Thread thread, final Throwable throwable) {
-    Alert alert = new Alert(AlertType.ERROR);
-    alert.setTitle("Whoops!");
-    alert.setHeaderText("Bookie crashed!");
-    alert.setContentText(
-      "Bookie detected an unexpected error and had to shut down."
-    + "\n\nThe details below have been passed along to our team of highly"
-    + " trained marmosets for further analysis.\n"
-    );
-
-    // Create expandable Exception.
-    StringWriter sw = new StringWriter();
-    PrintWriter pw = new PrintWriter(sw);
-    throwable.printStackTrace(pw);
-    String exceptionText = sw.toString();
-
-    Label label = new Label("Something went wrong about here-ish:");
-
-    TextArea textArea = new TextArea(exceptionText);
-    textArea.setEditable(false);
-    textArea.setWrapText(true);
-
-    VBox expContent = new VBox();
-    expContent.setSpacing(10);
-    expContent.getChildren().add(label);
-    expContent.getChildren().add(textArea);
-
-    // Set expandable Exception into the dialog pane.
-    alert.getDialogPane().setExpandableContent(expContent);
-
-    alert.showAndWait();
+    Dialogs
+      .create()
+      .title("Whoops!")
+      .masthead("Bookie crashed!")
+      .message(
+        "Bookie detected an unexpected error and had to shut down."
+      + "\n\nThe details below have been passed along to our team of highly"
+      + " trained marmosets for further analysis.\n"
+      )
+      .showException(throwable);
 
     System.exit(1);
   }
