@@ -17,12 +17,11 @@ import dk.itu.bookie.model.Ticket;
 import dk.itu.bookie.model.Showtime;
 
 /**
- * Bookie class.
+ * Seeder class.
  *
  * @version 1.0.0
  */
 public final class Seeder {
-
   public static void reset() throws SQLException{
     Bookie.db().schema().drop("tickets");
     Bookie.db().schema().drop("reservations");
@@ -70,11 +69,11 @@ public final class Seeder {
       movies[i] = movie;
     }
 
-    Showtime[] showtimes = new Showtime[40];
+    Showtime[] showtimes = new Showtime[80];
 
     Calendar cal = Calendar.getInstance();
 
-    for (int i = 0; i < 40; i++) {
+    for (int i = 0; i < 80; i++) {
       Showtime showtime = new Showtime();
 
       // Get the next auditorium.
@@ -86,10 +85,10 @@ public final class Seeder {
       // Set the showtime date.
       showtime.playingAt(
         cal.get(Calendar.YEAR),
-        cal.get(Calendar.MONTH),
+        cal.get(Calendar.MONTH) + 1,
         (i % 29) + 1,
         i % 23,
-        ((i % 2) * 15) % 60
+        ((i % 2) * 30) % 60
       );
 
       showtime.insert();
@@ -101,14 +100,11 @@ public final class Seeder {
     for (int i = 0; i < 100; i++) {
       Reservation reservation = new Reservation();
       reservation.phoneNumber = 10000000 + (int) (Math.random() * 90000000);
+      reservation.showtime = showtimes[i % showtimes.length];
       reservation.insert();
-
-      // Grab the next showtime.
-      Showtime showtime = showtimes[i % showtimes.length];
 
       for (int j = 0; j < (int) (Math.random() * 10); j++) {
         Ticket ticket = new Ticket();
-        ticket.showtime = showtime;
         ticket.reservation = reservation;
         ticket.insert();
       }
