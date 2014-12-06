@@ -24,6 +24,11 @@ public final class Reservation extends Model {
   public int phoneNumber;
 
   /**
+   * The showtime that the reservation is for.
+   */
+  public Showtime showtime;
+
+  /**
    * The reserved tickets.
    */
   public List<Ticket> tickets;

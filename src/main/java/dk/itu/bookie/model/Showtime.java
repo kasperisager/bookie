@@ -42,9 +42,9 @@ public final class Showtime extends Model {
   public Auditorium auditorium;
 
   /**
-   * List of tickets.
+   * List of reservations.
    */
-  public List<Ticket> tickets;
+  public List<Reservation> reservations;
 
   /**
    * The time at which the movie is playing.
