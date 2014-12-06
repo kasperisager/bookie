@@ -11,12 +11,5 @@
   xmlns:fx="http://javafx.com/fxml"
 >
   <menus>
-
-    <Menu text="File">
-      <items>
-        <MenuItem text="Indlæs demo data..." />
-      </items>
-    </Menu>
-
   </menus>
 </MenuBar>

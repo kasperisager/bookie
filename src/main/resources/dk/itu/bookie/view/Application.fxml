@@ -6,7 +6,6 @@
 <!-- JavaFX controls -->
 <?import javafx.scene.control.TabPane?>
 
-
 <VBox
   fx:controller="dk.itu.bookie.controller.ApplicationController"
   xmlns:fx="http://javafx.com/fxml"
