@@ -1,5 +1,21 @@
-.button {
-  -fx-base: #EFEFEF;
+.button-primary {
+  -fx-base: #2C82C9;
+  -fx-text-fill: #fff;
+}
+
+.button-success {
+  -fx-base: #41A85F;
+  -fx-text-fill: #fff;
+}
+
+.button-info {
+  -fx-base: #54acd2;
+  -fx-text-fill: #fff;
+}
+
+.button-warning {
+  -fx-base: #FAC51C;
+  -fx-text-fill: #fff;
 }
 
 .button-danger {
@@ -10,6 +26,14 @@
 .table-cell {
   -fx-pref-height: 36px;
   -fx-alignment: CENTER-LEFT;
+}
+
+.table-row-cell:empty {
+  -fx-background-color: #fff;
+}
+
+.table-row-cell:empty .table-cell {
+  -fx-border-width: 0px;
 }
 
 #dateColumn.table-cell {

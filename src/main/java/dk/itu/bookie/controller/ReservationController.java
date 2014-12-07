@@ -14,9 +14,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.SelectionMode;
 
 // JavaFX layouts
 import javafx.scene.layout.HBox;
+
+// JavaFX paint
+import javafx.scene.paint.Color;
 
 // JavaFX properties
 import javafx.beans.property.SimpleIntegerProperty;
@@ -30,6 +34,8 @@ import javafx.fxml.FXML;
 import org.controlsfx.dialog.Dialog;
 import org.controlsfx.dialog.Dialogs;
 import org.controlsfx.control.action.Action;
+import org.controlsfx.glyphfont.GlyphFont;
+import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 // Models
 import dk.itu.bookie.model.Showtime;
@@ -120,6 +126,10 @@ public final class ReservationController {
     ReservationController.instance = this;
 
     this.bindTableColumnWidths();
+
+    this.reservations
+      .getSelectionModel()
+      .setSelectionMode(SelectionMode.MULTIPLE);
 
     this.reservations.setItems(ApplicationController.reservations());
 
@@ -268,14 +278,21 @@ public final class ReservationController {
     ) {
       super.updateItem(reservation, empty);
 
+      GlyphFont fontAwesome = GlyphFontRegistry.font("FontAwesome");
+
       HBox buttons = new HBox();
       buttons.setSpacing(4);
 
       Button editButton = new Button("Redigér");
 
-      Button buyButton = new Button("Markér købt");
+      Button buyButton = new Button(
+        "", fontAwesome.create("money").color(Color.WHITE)
+      );
+      buyButton.getStyleClass().add("button-success");
 
-      Button deleteButton = new Button("Slet");
+      Button deleteButton = new Button(
+        "", fontAwesome.create("trash_alt").color(Color.WHITE)
+      );
       deleteButton.getStyleClass().add("button-danger");
 
       deleteButton.setOnAction((e) -> {
