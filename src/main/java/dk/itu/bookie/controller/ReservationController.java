@@ -216,6 +216,43 @@ public final class ReservationController {
   }
 
   /**
+   * Delete a reservation.
+   *
+   * @param reservation The reservation to delete.
+   */
+  public static void deleteReservation(final Reservation reservation) {
+    Action response = Dialogs
+      .create()
+      .title("Confirm action")
+      .masthead("Are you sure you want to delete the reservation?")
+      .actions(Dialog.ACTION_OK, Dialog.ACTION_CANCEL)
+      .showConfirm();
+
+    if (response == Dialog.ACTION_CANCEL) {
+      return;
+    }
+
+    try {
+      // Attempt deleting the reservation from the database. If this fails,
+      // a SQL exception will be thrown.
+      reservation.delete();
+
+      // Once the reservation has been deleted from the database, remove it
+      // from the list of reservations.
+      ApplicationController
+        .reservations()
+        .removeAll(reservation);
+
+      // Lastly, remove the reservation from the list of reservations in
+      // the associated showtime. Circular relations FTW!
+      reservation.showtime.reservations.remove(reservation);
+    }
+    catch (SQLException ex) {
+      return;
+    }
+  }
+
+  /**
    * Custom cell with support for button actions.
    */
   private class ButtonCell extends TableCell<Reservation, Reservation> {
@@ -236,38 +273,17 @@ public final class ReservationController {
 
       Button editButton = new Button("Redigér");
 
+      Button buyButton = new Button("Markér købt");
+
       Button deleteButton = new Button("Slet");
       deleteButton.getStyleClass().add("button-danger");
 
       deleteButton.setOnAction((e) -> {
-        Action response = Dialogs
-          .create()
-          .title("Confirm action")
-          .masthead("Are you sure you want to delete the reservation?")
-          .actions(Dialog.ACTION_OK, Dialog.ACTION_CANCEL)
-          .showConfirm();
-
-        if (response == Dialog.ACTION_CANCEL) {
-          return;
-        }
-
-        try {
-          // Attempt deleting the reservation from the database. If this fails,
-          // a SQL exception will be thrown.
-          reservation.delete();
-
-          // Once the reservation has been deleted from the database, remove it
-          // from the list of reservations.
-          ApplicationController
-            .reservations()
-            .removeAll(reservation);
-        }
-        catch (SQLException ex) {
-          return;
-        }
+        ReservationController.deleteReservation(reservation);
       });
 
       buttons.getChildren().add(editButton);
+      buttons.getChildren().add(buyButton);
       buttons.getChildren().add(deleteButton);
 
       if (!empty) {

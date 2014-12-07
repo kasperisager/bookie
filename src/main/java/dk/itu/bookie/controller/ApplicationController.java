@@ -3,6 +3,9 @@
  */
 package dk.itu.bookie.controller;
 
+// General utilities
+import java.util.List;
+
 // SQL utilities
 import java.sql.SQLException;
 
@@ -87,13 +90,13 @@ public final class ApplicationController {
    */
   public static ObservableList<Reservation> reservations() throws SQLException {
     if (ApplicationController.reservations == null) {
-      ApplicationController.reservations = FXCollections.observableArrayList(
-        Model
-          .find(Reservation.class)
-          .where("showtimes.playingat", ">", System.currentTimeMillis())
-          .orderBy("showtimes.playingat")
-          .get()
-      );
+      List<Showtime> showtimes = ApplicationController.showtimes();
+
+      ApplicationController.reservations = FXCollections.observableArrayList();
+
+      for (Showtime showtime: showtimes) {
+        ApplicationController.reservations.addAll(showtime.reservations);
+      }
     }
 
     return ApplicationController.reservations;
