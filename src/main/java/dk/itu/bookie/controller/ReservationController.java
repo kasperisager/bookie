@@ -38,9 +38,6 @@ import org.controlsfx.control.action.Action;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
 
-// Components
-import dk.itu.bookie.component.Filter;
-
 // Models
 import dk.itu.bookie.model.Showtime;
 import dk.itu.bookie.model.Reservation;
