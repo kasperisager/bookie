@@ -48,8 +48,8 @@
             alignment="CENTER"
             prefHeight="9999"
             prefWidth="9999"
-            hgap="10"
-            vgap="10"
+            hgap="2"
+            vgap="2"
           />
 
           <fx:include source="partial/Legend.fxml" />

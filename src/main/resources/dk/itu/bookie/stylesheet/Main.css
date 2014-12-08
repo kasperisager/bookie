@@ -58,8 +58,8 @@
 }
 
 .seat {
-  -fx-arc-width: 6px;
-  -fx-arc-height: 6px;
+  -fx-arc-width: 4px;
+  -fx-arc-height: 4px;
   -fx-fill: #61bd6d;
   -fx-stroke: #41a85f;
 }
