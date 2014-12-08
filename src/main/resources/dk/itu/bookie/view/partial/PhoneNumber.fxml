@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+
+
+
+<HBox alignment="CENTER" styleClass="phone-label" spacing="30">
+  <children>
+    <TextField prefHeight="26.0" prefWidth="163.0" styleClass="label-textField" promptText="Telefon:"/>
+    <Button mnemonicParsing="false" text="Reservér" styleClass="reservation">
+      <HBox.margin>
+        <Insets left="10.0" />
+      </HBox.margin>
+    </Button>
+  </children>
+</HBox>

@@ -53,6 +53,7 @@
           />
 
           <fx:include source="partial/Legend.fxml" />
+          <fx:include source="partial/PhoneNumber.fxml" />
         </VBox>
       </TitledPane>
 

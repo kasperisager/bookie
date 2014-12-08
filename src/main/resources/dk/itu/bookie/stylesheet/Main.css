@@ -102,3 +102,12 @@
 .screen-label {
   -fx-font-weight: bold;
 }
+
+.phone-label {
+  -fx-padding: 25px;
+}
+
+.reservation {
+  -fx-padding: 25px;
+}
+
