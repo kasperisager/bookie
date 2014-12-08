@@ -12,14 +12,9 @@ import java.util.Set;
 import javafx.scene.layout.GridPane;
 
 // JavaFX controls
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TableRow;
-
-// JavaFX paint
-import javafx.scene.paint.Color;
 
 // JavaFX geometry
 import javafx.geometry.HPos;
@@ -122,7 +117,9 @@ public final class ShowtimeController {
 
     this.showtimes.setItems(ApplicationController.showtimes());
 
-    this.showtimes.getSelectionModel().selectedItemProperty().addListener((ob, ov, nv) -> {
+    this.showtimes
+      .getSelectionModel()
+      .selectedItemProperty().addListener((ob, ov, nv) -> {
       if (nv == null) {
         return;
       }
@@ -209,6 +206,11 @@ public final class ShowtimeController {
     );
   }
 
+  /**
+   * Render an auditorium.
+   *
+   * @param auditorium The Auditorium to render.
+   */
   public void renderAuditorium(final Auditorium auditorium) {
     this.auditorium.getChildren().clear();
 
