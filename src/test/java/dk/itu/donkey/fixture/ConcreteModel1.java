@@ -1,5 +1,7 @@
 package dk.itu.donkey.fixture;
 
+import java.util.List;
+
 import dk.itu.donkey.Model;
 import dk.itu.donkey.ModelTest;
 
@@ -36,6 +38,11 @@ public class ConcreteModel1 extends Model {
    * Boolean field (primitive).
    */
   public boolean booleanPrimitive;
+
+  /**
+   * List of model subclasses.
+   */
+  public List<ConcreteModel2> models;
 
   /**
    * Initialize a model.
