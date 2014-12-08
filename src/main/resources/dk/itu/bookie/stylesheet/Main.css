@@ -27,6 +27,24 @@
   -fx-text-fill: #fff;
 }
 
+.filter {
+  -fx-font-size: 10px;
+}
+.filter .popover {
+  -fx-font-size: 13px;
+}
+
+.filter-label {
+  -fx-text-fill: darkgray;
+  -fx-font-weight: bold;
+}
+
+.filter-content {
+  -fx-padding: 12px;
+  -fx-font-size: 13px;
+  -fx-font-weight: normal;
+}
+
 .table-cell {
   -fx-pref-height: 36px;
   -fx-alignment: CENTER-LEFT;
@@ -35,9 +53,13 @@
 .table-row-cell:empty {
   -fx-background-color: #fff;
 }
-
 .table-row-cell:empty .table-cell {
   -fx-border-width: 0px;
+}
+
+.text-input,
+.text-input:focused {
+  -fx-prompt-text-fill: darkgray;
 }
 
 #dateColumn.table-cell {

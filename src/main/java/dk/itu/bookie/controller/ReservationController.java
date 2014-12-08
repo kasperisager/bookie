@@ -142,7 +142,7 @@ public final class ReservationController {
       );
     });
 
-    this.phoneColumn.setGraphic(new Filter("Telefon"));
+    this.phoneColumn.setGraphic(new Filter("Telefon", Filter.TEXT));
 
     this.ticketColumn.setCellValueFactory((data) -> {
       return new SimpleIntegerProperty(
