@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 // JUnit annotations
@@ -187,6 +188,55 @@ public final class ModelTest {
       ConcreteModel3 model = new ConcreteModel3();
       model.setRow(row);
       assertNull(model.field);
+    }
+  }
+
+  /**
+   * Test dynamic model field methods.
+   */
+  @Test
+  public void testFieldMethods() {
+    for (Database db: this.databases) {
+      // Set the database being tested.
+      ModelTest.db = db;
+
+      ConcreteModel3 model = new ConcreteModel3();
+
+      model.setField("field", "Value2");
+      assertEquals("Value2", model.field);
+
+      // Should not blow up.
+      model.setField("doesNotExist", "Herp");
+    }
+  }
+
+  /**
+   * Test model instantiation.
+   */
+  @Test
+  public void testModelInstantiation() throws SQLException {
+    for (Database db: this.databases) {
+      // Set the database being tested.
+      ModelTest.db = db;
+
+      ConcreteModel3 model1 = Model.instantiate(ConcreteModel3.class);
+      assertNotNull(model1);
+
+      model1.field = "Test";
+      model1.insert();
+    }
+  }
+
+  /**
+   * Test model instantiation with an illegal type.
+   */
+  @Test(expected = IllegalArgumentException.class)
+  public void testModelInstantiationWithWrongType() {
+    for (Database db: this.databases) {
+      // Set the database being tested.
+      ModelTest.db = db;
+
+      Model.instantiate(String.class);
     }
   }
 

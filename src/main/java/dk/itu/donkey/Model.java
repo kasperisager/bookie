@@ -233,10 +233,14 @@ public abstract class Model {
         return (T) type.newInstance();
       }
       catch (InstantiationException e) {
-        return null;
+        throw new IllegalArgumentException(
+          "The class cannot be instantiated: " + e.getMessage()
+        );
       }
       catch (IllegalAccessException e) {
-        return null;
+        throw new IllegalArgumentException(
+          "The class or its constructor are unaccessible: " + e.getMessage()
+        );
       }
     }
     else {
