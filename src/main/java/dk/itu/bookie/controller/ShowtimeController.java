@@ -21,9 +21,7 @@ import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 
 // JavaFX properties
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 
 // JavaFX bindings
