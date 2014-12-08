@@ -212,6 +212,8 @@ public final class ModelTest {
 
   /**
    * Test model instantiation.
+   *
+   * @throws SQLException In case of a SQL error.
    */
   @Test
   public void testModelInstantiation() throws SQLException {
