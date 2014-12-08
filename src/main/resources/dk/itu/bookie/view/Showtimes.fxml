@@ -33,6 +33,7 @@
         <columns>
           <TableColumn fx:id="movieColumn" text="Film" resizable="false" />
           <TableColumn fx:id="auditoriumColumn" text="Sal" resizable="false" />
+          <TableColumn fx:id="availableColumn" text="# Ledige" resizable="false" />
           <TableColumn fx:id="dateColumn" text="Dato" resizable="false" />
           <TableColumn fx:id="timeColumn" text="Tid" resizable="false" />
         </columns>

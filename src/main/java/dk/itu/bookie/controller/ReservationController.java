@@ -37,6 +37,9 @@ import org.controlsfx.control.action.Action;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
 
+// Components
+import dk.itu.bookie.component.Filter;
+
 // Models
 import dk.itu.bookie.model.Showtime;
 import dk.itu.bookie.model.Reservation;
@@ -138,6 +141,8 @@ public final class ReservationController {
         data.getValue().phoneNumber
       );
     });
+
+    this.phoneColumn.setGraphic(new Filter("Telefon"));
 
     this.ticketColumn.setCellValueFactory((data) -> {
       return new SimpleIntegerProperty(

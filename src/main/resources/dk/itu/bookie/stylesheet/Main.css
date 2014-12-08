@@ -1,3 +1,7 @@
+.button-small {
+  -fx-font-size: 9px;
+}
+
 .button-primary {
   -fx-base: #2C82C9;
   -fx-text-fill: #fff;

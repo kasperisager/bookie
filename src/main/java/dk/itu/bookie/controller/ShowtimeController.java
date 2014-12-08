@@ -12,9 +12,14 @@ import java.util.Set;
 import javafx.scene.layout.GridPane;
 
 // JavaFX controls
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TableRow;
+
+// JavaFX paint
+import javafx.scene.paint.Color;
 
 // JavaFX geometry
 import javafx.geometry.HPos;
@@ -27,9 +32,11 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 
 // Components
+import dk.itu.bookie.component.Filter;
 import dk.itu.bookie.component.Seat;
 
 // Models
+import dk.itu.bookie.model.Auditorium;
 import dk.itu.bookie.model.Showtime;
 
 /**
@@ -71,6 +78,12 @@ public final class ShowtimeController {
   private TableColumn<Showtime, String> auditoriumColumn;
 
   /**
+   * The column containing the number of available seats in the auditorium.
+   */
+  @FXML
+  private TableColumn<Showtime, Integer> availableColumn;
+
+  /**
    * The column containing the date that the movie is playing.
    */
   @FXML
@@ -107,8 +120,100 @@ public final class ShowtimeController {
 
     this.bindTableColumnWidths();
 
-    int rows = 10;
-    int seats = 15;
+    this.showtimes.setItems(ApplicationController.showtimes());
+
+    this.showtimes.getSelectionModel().selectedItemProperty().addListener((ob, ov, nv) -> {
+      if (nv == null) {
+        return;
+      }
+
+      this.renderAuditorium(nv.auditorium);
+    });
+
+    this.movieColumn.setCellValueFactory((data) -> {
+      return new SimpleStringProperty(data.getValue().movie.name);
+    });
+
+    this.movieColumn.setGraphic(new Filter("Film"));
+
+    this.auditoriumColumn.setCellValueFactory((data) -> {
+      return new SimpleStringProperty(data.getValue().auditorium.name);
+    });
+
+    this.dateColumn.setCellValueFactory((data) -> {
+      return new SimpleStringProperty(data.getValue().date());
+    });
+
+    this.dateColumn.setGraphic(new Filter("Dato"));
+
+    this.dateColumn.setComparator((date1, date2) -> {
+      Date date1Parsed = null;
+      Date date2Parsed = null;
+
+      try {
+        date1Parsed = Showtime.dateFormat().parse(date1);
+        date2Parsed = Showtime.dateFormat().parse(date2);
+      }
+      catch (Exception e) {
+        return 0;
+      }
+
+      return date1Parsed.compareTo(date2Parsed);
+    });
+
+    this.timeColumn.setCellValueFactory((data) -> {
+      return new SimpleStringProperty(data.getValue().time());
+    });
+  }
+
+  /**
+   * Bind the widths of the individual columns to the entire width of the
+   * containing table.
+   */
+  public void bindTableColumnWidths() {
+    this.movieColumn.prefWidthProperty().bind(
+      this.showtimes.widthProperty().subtract(18).multiply(0.35)
+    );
+
+    this.auditoriumColumn.prefWidthProperty().bind(
+      this.showtimes.widthProperty().subtract(18).multiply(0.20)
+    );
+
+    this.availableColumn.prefWidthProperty().bind(
+      this.showtimes.widthProperty().subtract(18).multiply(0.15)
+    );
+
+    this.dateColumn.prefWidthProperty().bind(
+      this.showtimes.widthProperty().subtract(18).multiply(0.20)
+    );
+
+    this.timeColumn.prefWidthProperty().bind(
+      this.showtimes.widthProperty().subtract(18).multiply(0.10)
+    );
+  }
+
+  /**
+   * Bind the widths of the individual seats to the entire width of the
+   * containing grid.
+   *
+   * @param seat  The seat whose width to bind.
+   * @param seats The total number of seats per row in the grid.
+   */
+  public void bindSeatWidth(final Seat seat, final int seats) {
+    seat.widthProperty().bind(
+      this.showtimes.widthProperty().divide(seats)
+    );
+
+    seat.heightProperty().bind(
+      this.showtimes.widthProperty().divide(seats)
+    );
+  }
+
+  public void renderAuditorium(final Auditorium auditorium) {
+    this.auditorium.getChildren().clear();
+
+    int rows = auditorium.rows;
+    int seats = auditorium.seats;
 
     Set<Seat> selectedSeats = new HashSet<>();
 
@@ -155,77 +260,5 @@ public final class ShowtimeController {
         this.auditorium.add(auditoriumSeat, seat, row);
       }
     }
-
-    this.showtimes.setItems(ApplicationController.showtimes());
-
-    this.auditoriumColumn.setCellValueFactory((data) -> {
-      return new SimpleStringProperty(data.getValue().auditorium.name);
-    });
-
-    this.movieColumn.setCellValueFactory((data) -> {
-      return new SimpleStringProperty(data.getValue().movie.name);
-    });
-
-    this.dateColumn.setCellValueFactory((data) -> {
-      return new SimpleStringProperty(data.getValue().date());
-    });
-
-    this.dateColumn.setComparator((date1, date2) -> {
-      Date date1Parsed = null;
-      Date date2Parsed = null;
-
-      try {
-        date1Parsed = Showtime.dateFormat().parse(date1);
-        date2Parsed = Showtime.dateFormat().parse(date2);
-      }
-      catch (Exception e) {
-        return 0;
-      }
-
-      return date1Parsed.compareTo(date2Parsed);
-    });
-
-    this.timeColumn.setCellValueFactory((data) -> {
-      return new SimpleStringProperty(data.getValue().time());
-    });
-  }
-
-  /**
-   * Bind the widths of the individual columns to the entire width of the
-   * containing table.
-   */
-  public void bindTableColumnWidths() {
-    this.movieColumn.prefWidthProperty().bind(
-      this.showtimes.widthProperty().subtract(18).multiply(0.35)
-    );
-
-    this.auditoriumColumn.prefWidthProperty().bind(
-      this.showtimes.widthProperty().subtract(18).multiply(0.35)
-    );
-
-    this.dateColumn.prefWidthProperty().bind(
-      this.showtimes.widthProperty().subtract(18).multiply(0.20)
-    );
-
-    this.timeColumn.prefWidthProperty().bind(
-      this.showtimes.widthProperty().subtract(18).multiply(0.10)
-    );
-  }
-
-  /**
-   * Bind the widths of the individual seats to the entire width of the
-   * containing grid.
-   *
-   * @param seat  The seat whose width to bind.
-   * @param seats The total number of seats per row in the grid.
-   */
-  public void bindSeatWidth(final Seat seat, final int seats) {
-    seat.widthProperty().bind(
-      this.showtimes.widthProperty().divide(seats)
-    );
-
-    seat.heightProperty().bind(
-      this.showtimes.widthProperty().divide(seats)
-    );
   }
 }
