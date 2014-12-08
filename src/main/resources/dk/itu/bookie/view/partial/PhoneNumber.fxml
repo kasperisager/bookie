@@ -9,7 +9,8 @@
 
 <HBox alignment="CENTER" styleClass="phone-label" spacing="30">
   <children>
-    <TextField prefHeight="26.0" prefWidth="163.0" styleClass="label-textField" promptText="Telefon:"/>
+    <TextField prefHeight="26.0" prefWidth="163.0" styleClass="label-telephone" promptText="Telefon:"/>
+    <TextField prefHeight="26.0" prefWidth="163.0" styleClass="label-seats" promptText="Pladser:"/>
     <Button mnemonicParsing="false" text="Reservér" styleClass="reservation">
       <HBox.margin>
         <Insets left="10.0" />
