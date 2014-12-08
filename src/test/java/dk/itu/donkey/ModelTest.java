@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 // JUnit annotations
@@ -24,6 +25,8 @@ import org.junit.Test;
 import dk.itu.donkey.fixture.ConcreteModel1;
 import dk.itu.donkey.fixture.ConcreteModel2;
 import dk.itu.donkey.fixture.ConcreteModel3;
+import dk.itu.donkey.fixture.ConcreteModel4;
+import dk.itu.donkey.fixture.ConcreteModel5;
 
 /**
  * Model class unit tests.
@@ -189,6 +192,57 @@ public final class ModelTest {
   }
 
   /**
+   * Test dynamic model field methods.
+   */
+  @Test
+  public void testFieldMethods() {
+    for (Database db: this.databases) {
+      // Set the database being tested.
+      ModelTest.db = db;
+
+      ConcreteModel3 model = new ConcreteModel3();
+
+      model.setField("field", "Value2");
+      assertEquals("Value2", model.field);
+
+      // Should not blow up.
+      model.setField("doesNotExist", "Herp");
+    }
+  }
+
+  /**
+   * Test model instantiation.
+   *
+   * @throws SQLException In case of a SQL error.
+   */
+  @Test
+  public void testModelInstantiation() throws SQLException {
+    for (Database db: this.databases) {
+      // Set the database being tested.
+      ModelTest.db = db;
+
+      ConcreteModel3 model1 = Model.instantiate(ConcreteModel3.class);
+      assertNotNull(model1);
+
+      model1.field = "Test";
+      model1.insert();
+    }
+  }
+
+  /**
+   * Test model instantiation with an illegal type.
+   */
+  @Test(expected = IllegalArgumentException.class)
+  public void testModelInstantiationWithWrongType() {
+    for (Database db: this.databases) {
+      // Set the database being tested.
+      ModelTest.db = db;
+
+      Model.instantiate(String.class);
+    }
+  }
+
+  /**
    * Test model insertion.
    *
    * @throws SQLException In case of a SQL error.
@@ -314,6 +368,49 @@ public final class ModelTest {
 
       Row row = db.table(model.table()).first();
       assertEquals(null, row);
+    }
+  }
+
+  /**
+   * Test model querying.
+   *
+   * @throws SQLException In case of a SQL error.
+   */
+  @Test
+  public void testModelQuerying() throws SQLException {
+    for (Database db: this.databases) {
+      // Set the database being tested.
+      ModelTest.db = db;
+
+      ConcreteModel4 model1 = new ConcreteModel4();
+      model1.field = "Model1";
+      model1.insert();
+
+      ConcreteModel5 model2 = new ConcreteModel5();
+      model2.field = "Model2";
+      model2.model = model1;
+      model2.insert();
+
+      ConcreteModel5 model3 = new ConcreteModel5();
+      model3.field = "Model3";
+      model3.model = model1;
+      model3.insert();
+
+      List<ConcreteModel4> models = Model.findAll(ConcreteModel4.class);
+
+      assertEquals(1, models.size());
+
+      ConcreteModel4 model4 = models.get(0);
+      assertEquals("Model1", model4.field);
+      assertEquals(2, model4.models.size());
+
+      ConcreteModel5 model5 = model4.models.get(0);
+      assertEquals("Model2", model5.field);
+      assertEquals(model4, model5.model);
+
+      ConcreteModel5 model6 = model4.models.get(1);
+      assertEquals("Model3", model6.field);
+      assertEquals(model4, model6.model);
     }
   }
 }
