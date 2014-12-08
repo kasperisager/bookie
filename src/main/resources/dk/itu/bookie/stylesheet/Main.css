@@ -128,3 +128,8 @@
 .phone-label {
   -fx-padding: 25px;
 }
+
+.phone-search {
+  -fx-font-size: 10px;
+  -fx-font-weight: normal;
+}
