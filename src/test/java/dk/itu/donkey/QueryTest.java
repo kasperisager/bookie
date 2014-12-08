@@ -182,7 +182,7 @@ public final class QueryTest {
 
       List<Row> rows1 = db.table("test1")
                           .join(
-			    "test2", "test1.column1", "test2.column2"
+                            "test2", "test1.column1", "test2.column2"
                           )
                           .get();
 
@@ -194,7 +194,7 @@ public final class QueryTest {
 
       List<Row> rows2 = db.table("test1")
                           .leftJoin(
-			    "test2", "test1.column1", "test2.column2"
+                            "test2", "test1.column1", "test2.column2"
                           )
                           .get();
 
