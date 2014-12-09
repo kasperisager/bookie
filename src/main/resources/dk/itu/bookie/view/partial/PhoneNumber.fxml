@@ -1,20 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.geometry.*?>
-<?import java.lang.*?>
+<!-- JavaFX layouts -->
+<?import javafx.scene.layout.HBox?>
 
+<!-- JavaFX controls -->
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
 
-
-<HBox alignment="CENTER" styleClass="phone-label" spacing="30">
+<HBox alignment="CENTER" styleClass="phone-label" spacing="6">
   <children>
-    <TextField prefHeight="26.0" prefWidth="163.0" styleClass="label-telephone" promptText="Telefon:"/>
-    <TextField prefHeight="26.0" prefWidth="163.0" styleClass="label-seats" promptText="Pladser:"/>
-    <Button mnemonicParsing="false" text="Reservér" styleClass="reservation">
-      <HBox.margin>
-        <Insets left="10.0" />
-      </HBox.margin>
-    </Button>
+    <TextField promptText="Telefon"/>
+    <TextField promptText="Pladser"/>
+    <Button text="Reservér" styleClass="button-primary" />
   </children>
 </HBox>
