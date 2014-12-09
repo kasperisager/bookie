@@ -4,6 +4,7 @@
 package dk.itu.bookie.model;
 
 // General utilities
+import java.util.ArrayList;
 import java.util.List;
 
 // Base model
@@ -24,6 +25,11 @@ public final class Reservation extends Model {
   public int phoneNumber;
 
   /**
+   * Has the reservation been payed for?
+   */
+  public boolean bought;
+
+  /**
    * The showtime that the reservation is for.
    */
   public Showtime showtime;
@@ -31,7 +37,7 @@ public final class Reservation extends Model {
   /**
    * The reserved tickets.
    */
-  public List<Ticket> tickets;
+  public List<Ticket> tickets = new ArrayList<>();
 
   /**
    * Initialize a reservation.

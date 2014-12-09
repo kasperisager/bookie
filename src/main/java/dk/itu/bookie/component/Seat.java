@@ -53,7 +53,40 @@ public final class Seat extends Rectangle {
 
     this.getStyleClass().add("seat");
 
+    this.selected.addListener((ob, ov, nv) -> {
+      if (nv) {
+        this.getStyleClass().add("seat-selected");
+      }
+      else {
+        this.getStyleClass().remove("seat-selected");
+      }
+    });
+
+    this.reserved.addListener((ob, ov, nv) -> {
+      if (nv) {
+        this.getStyleClass().add("seat-reserved");
+      }
+      else {
+        this.getStyleClass().remove("seat-reserved");
+      }
+    });
+
+    this.bought.addListener((ob, ov, nv) -> {
+      if (nv) {
+        this.getStyleClass().add("seat-bought");
+      }
+      else {
+        this.getStyleClass().remove("seat-bought");
+      }
+    });
+
     this.setOnMouseClicked(e -> {
+      // If this ticket has been either reserved or bought, don't allow that it
+      // be selected.
+      if (this.reserved.get() || this.bought.get()) {
+        return;
+      }
+
       if (!this.selected.get()) {
         this.select();
       }
@@ -63,18 +96,20 @@ public final class Seat extends Rectangle {
     });
   }
 
+  public int getRow() {
+    return this.row;
+  }
+
+  public int getSeat() {
+    return this.seat;
+  }
+
   /**
    * Select a seat.
    */
   public void select() {
-    // If this ticket has been either reserved or bought, don't allow that it
-    // be selected.
-    if (this.reserved.get() || this.bought.get()) {
-      return;
-    }
-
-    this.getStyleClass().add("seat-selected");
-
+    this.reserved.set(false);
+    this.bought.set(false);
     this.selected.set(true);
   }
 
@@ -82,13 +117,9 @@ public final class Seat extends Rectangle {
    * De-select a seat.
    */
   public void deselect() {
-    // If this ticket has been either reserved or bought, don't allow that it
-    // be selected.
-    if (this.reserved.get() || this.bought.get()) {
+    if (!this.selected.get()) {
       return;
     }
-
-    this.getStyleClass().remove("seat-selected");
 
     this.selected.set(false);
   }
@@ -97,14 +128,7 @@ public final class Seat extends Rectangle {
    * Reserve a seat.
    */
   public void reserve() {
-    // If this ticket has been bought, don't allow that it be reserved.
-    if (this.bought.get()) {
-      return;
-    }
-
-    this.getStyleClass().remove("seat-selected");
-    this.getStyleClass().add("seat-reserved");
-
+    this.selected.set(false);
     this.reserved.set(true);
   }
 
@@ -112,10 +136,8 @@ public final class Seat extends Rectangle {
    * Buy a seat.
    */
   public void buy() {
-    this.getStyleClass().remove("seat-selected");
-    this.getStyleClass().remove("seat-reserved");
-    this.getStyleClass().add("seat-bought");
-
+    this.selected.set(false);
+    this.reserved.set(true);
     this.bought.set(true);
   }
 

@@ -13,7 +13,7 @@
   <children>
     <fx:include fx:id="menu" source="Menu.fxml" />
 
-    <TabPane tabClosingPolicy="UNAVAILABLE">
+    <TabPane fx:id="tabs" tabClosingPolicy="UNAVAILABLE">
       <tabs>
         <fx:include fx:id="showtimes" source="Showtimes.fxml" />
         <fx:include fx:id="reservations" source="Reservations.fxml" />

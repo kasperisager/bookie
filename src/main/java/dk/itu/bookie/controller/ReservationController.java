@@ -114,7 +114,7 @@ public final class ReservationController {
    *
    * @return The singleton Reservation controller.
    */
-  public ReservationController getInstance() {
+  public static ReservationController getInstance() {
     return ReservationController.instance;
   }
 
@@ -239,7 +239,7 @@ public final class ReservationController {
    *
    * @param reservation The reservation to delete.
    */
-  public static void deleteReservation(final Reservation reservation) {
+  public void deleteReservation(final Reservation reservation) {
     Action response = Dialogs
       .create()
       .title("Confirm action")
@@ -294,6 +294,11 @@ public final class ReservationController {
 
       Button editButton = new Button("Redigér");
 
+      editButton.setOnAction((e) -> {
+        ShowtimeController.getInstance().renderReservation(reservation);
+        ApplicationController.getInstance().toShowtimes();
+      });
+
       Button buyButton = new Button(
         "", fontAwesome.create("money").color(Color.WHITE)
       );
@@ -305,7 +310,7 @@ public final class ReservationController {
       deleteButton.getStyleClass().add("button-danger");
 
       deleteButton.setOnAction((e) -> {
-        ReservationController.deleteReservation(reservation);
+        ReservationController.getInstance().deleteReservation(reservation);
       });
 
       buttons.getChildren().add(editButton);

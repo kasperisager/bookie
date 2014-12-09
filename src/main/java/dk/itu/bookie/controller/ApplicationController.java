@@ -9,9 +9,15 @@ import java.util.List;
 // SQL utilities
 import java.sql.SQLException;
 
+// JavaFX controls
+import javafx.scene.control.TabPane;
+
 // JavaFX collections
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+
+// FXML utilities
+import javafx.fxml.FXML;
 
 // Donkey utilities
 import dk.itu.donkey.Model;
@@ -26,6 +32,9 @@ import dk.itu.bookie.model.Reservation;
  * @version 1.0.0
  */
 public final class ApplicationController {
+  @FXML
+  private TabPane tabs;
+
   /**
    * The singleton instance of the controller.
    */
@@ -46,7 +55,7 @@ public final class ApplicationController {
    *
    * @return The singleton Application controller.
    */
-  public ApplicationController getInstance() {
+  public static ApplicationController getInstance() {
     return ApplicationController.instance;
   }
 
@@ -57,6 +66,14 @@ public final class ApplicationController {
    */
   public void initialize() throws Exception {
     ApplicationController.instance = this;
+  }
+
+  public void toShowtimes() {
+    this.tabs.getSelectionModel().select(0);
+  }
+
+  public void toReservations() {
+    this.tabs.getSelectionModel().select(1);
   }
 
   /**

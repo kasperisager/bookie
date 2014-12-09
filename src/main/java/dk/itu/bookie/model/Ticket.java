@@ -15,6 +15,9 @@ import dk.itu.bookie.Bookie;
  * @version 1.0.0
  */
 public final class Ticket extends Model {
+  public int row;
+  public int seat;
+
   /**
    * The reservation that this ticket is part of.
    */

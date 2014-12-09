@@ -115,14 +115,20 @@ public final class Seeder {
     Reservation[] reservations = new Reservation[100];
 
     for (int i = 0; i < 100; i++) {
+      Showtime showtime = showtimes[i % showtimes.length];
+      Auditorium auditorium = showtime.auditorium;
+
       Reservation reservation = new Reservation();
       reservation.phoneNumber = 10000000 + (int) (Math.random() * 90000000);
-      reservation.showtime = showtimes[i % showtimes.length];
+      reservation.showtime = showtime;
+      reservation.bought = Math.random() > 0.5;
       reservation.insert();
 
       for (int j = 0; j < (int) (Math.random() * 10); j++) {
         Ticket ticket = new Ticket();
         ticket.reservation = reservation;
+        ticket.row = (int) (Math.random() * auditorium.rows);
+        ticket.seat = (int) (Math.random() * auditorium.seats);
         ticket.insert();
       }
     }
