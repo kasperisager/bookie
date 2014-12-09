@@ -1,7 +1,7 @@
 # Bookie
 
 [![Build Status](http://img.shields.io/travis/kasperisager/bookie.svg?style=flat)](https://travis-ci.org/kasperisager/bookie) [![Test Coverage](http://img.shields.io/coveralls/kasperisager/bookie.svg?style=flat)](https://coveralls.io/r/kasperisager/bookie) [![Open Issues](http://img.shields.io/github/issues/kasperisager/bookie.svg?style=flat)]
-(https://github.com/kasperisager/bookie/issues)
+(https://github.com/kasperisager/bookie/issues) [![ShareLatex PDF](http://img.shields.io/badge/pdf-built-brightgreen.svg?style=flat)](https://www.sharelatex.com/github/repos/kasperisager/bookie/builds/latest/output.pdf)
 
 _Bookie_ is a ticket reservation system for movie theaters written by [@kasperisager](https://github.com/kasperisager) and [@sigriddalsgard](https://github.com/sigriddalsgard) as our first semester project at the [IT University of Copenhagen](http://itu.dk). Many cups of coffee were harmed in its making :coffee:
 
