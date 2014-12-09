@@ -4,5 +4,6 @@ build/
 .yo-rc.json
 *.db
 *.iml
+*.pdf
 gradlew
 gradlew.bat
