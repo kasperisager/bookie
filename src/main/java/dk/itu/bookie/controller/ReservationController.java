@@ -11,9 +11,10 @@ import java.sql.SQLException;
 
 // JavaFX controls
 import javafx.scene.control.Button;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.SelectionMode;
 
 // JavaFX layouts
@@ -36,9 +37,6 @@ import org.controlsfx.dialog.Dialogs;
 import org.controlsfx.control.action.Action;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
-
-// Components
-import dk.itu.bookie.component.Filter;
 
 // Models
 import dk.itu.bookie.model.Showtime;
@@ -142,7 +140,13 @@ public final class ReservationController {
       );
     });
 
-    this.phoneColumn.setGraphic(new Filter("Telefon"));
+    this.phoneColumn.setText("");
+
+    TextField phoneSearch = new TextField();
+    phoneSearch.setPromptText("Telefon");
+    phoneSearch.getStyleClass().add("phone-search");
+
+    this.phoneColumn.setGraphic(phoneSearch);
 
     this.ticketColumn.setCellValueFactory((data) -> {
       return new SimpleIntegerProperty(

@@ -22,6 +22,11 @@ import javafx.geometry.VPos;
 
 // JavaFX properties
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.ReadOnlyDoubleProperty;
+
+// JavaFX bindings
+import javafx.beans.binding.NumberBinding;
+import javafx.beans.binding.When;
 
 // FXML utilities
 import javafx.fxml.FXML;
@@ -131,7 +136,7 @@ public final class ShowtimeController {
       return new SimpleStringProperty(data.getValue().movie.name);
     });
 
-    this.movieColumn.setGraphic(new Filter("Film"));
+    this.movieColumn.setGraphic(new Filter("Film", Filter.TEXT));
 
     this.auditoriumColumn.setCellValueFactory((data) -> {
       return new SimpleStringProperty(data.getValue().auditorium.name);
@@ -141,7 +146,7 @@ public final class ShowtimeController {
       return new SimpleStringProperty(data.getValue().date());
     });
 
-    this.dateColumn.setGraphic(new Filter("Dato"));
+    this.dateColumn.setGraphic(new Filter("Dato", Filter.DATE));
 
     this.dateColumn.setComparator((date1, date2) -> {
       Date date1Parsed = null;
@@ -190,23 +195,6 @@ public final class ShowtimeController {
   }
 
   /**
-   * Bind the widths of the individual seats to the entire width of the
-   * containing grid.
-   *
-   * @param seat  The seat whose width to bind.
-   * @param seats The total number of seats per row in the grid.
-   */
-  public void bindSeatWidth(final Seat seat, final int seats) {
-    seat.widthProperty().bind(
-      this.showtimes.widthProperty().divide(seats)
-    );
-
-    seat.heightProperty().bind(
-      this.showtimes.widthProperty().divide(seats)
-    );
-  }
-
-  /**
    * Render an auditorium.
    *
    * @param auditorium The Auditorium to render.
@@ -244,11 +232,25 @@ public final class ShowtimeController {
       }
     }
 
+    ReadOnlyDoubleProperty width = this.auditorium.widthProperty();
+    ReadOnlyDoubleProperty height = this.auditorium.heightProperty();
+
+    NumberBinding size = new When(
+      width.divide(seats).lessThan(height.divide(rows))
+    )
+      .then(
+        width.subtract(60).divide(seats).subtract(4)
+      )
+      .otherwise(
+        height.subtract(60).divide(rows).subtract(4)
+      );
+
     for (int row = 2; row <= (rows + 1); row++) {
       for (int seat = 2; seat <= (seats + 1); seat++) {
         Seat auditoriumSeat = new Seat(row, seat);
 
-        this.bindSeatWidth(auditoriumSeat, seats);
+        auditoriumSeat.widthProperty().bind(size);
+        auditoriumSeat.heightProperty().bind(size);
 
         auditoriumSeat.getState().addListener((e, ov, nv) -> {
           if (nv) {
