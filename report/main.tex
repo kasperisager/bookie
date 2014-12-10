@@ -11,10 +11,15 @@ bottom = 2.75cm,
 left   = 2.00cm,
 right  = 2.00cm]{geometry}
 
+% Paragraph indent
+\setlength{\parindent}{0cm}
+
+% Line height
+\usepackage{setspace}
+\onehalfspacing
+
 % Font face
 \renewcommand{\familydefault}{\sfdefault}
-
-\usepackage{lipsum}
 
 % ---------------------------------------------------------------------------- %
 % Language configuration
@@ -47,6 +52,9 @@ right  = 2.00cm]{geometry}
 % ---------------------------------------------------------------------------- %
 
 \usepackage{minted}
+
+% Highlight theme
+\usemintedstyle{trac}
 
 % ---------------------------------------------------------------------------- %
 % Bibliography configuration
@@ -91,13 +99,13 @@ right  = 2.00cm]{geometry}
 % Chapters
 % ---------------------------------------------------------------------------- %
 
-\input{chapters/forord.tex}
-\input{chapters/baggrund.tex}
-\input{chapters/analyse.tex}
-\input{chapters/vejledning.tex}
-\input{chapters/beskrivelse.tex}
-\input{chapters/afproevning.tex}
-\input{chapters/konklusion.tex}
+\input{chapters/forord}
+\input{chapters/baggrund}
+\input{chapters/analyse}
+\input{chapters/vejledning}
+\input{chapters/beskrivelse}
+\input{chapters/afproevning}
+\input{chapters/konklusion}
 
 % ---------------------------------------------------------------------------- %
 % Bibliography
@@ -109,17 +117,19 @@ right  = 2.00cm]{geometry}
 \printbibliography[heading=bibintoc]
 
 % ---------------------------------------------------------------------------- %
-% Figures and tables
+% Figures, tables, and listings
 % ---------------------------------------------------------------------------- %
 
 \listoffigures
 \listoftables
+\listoflistings
 
 % ---------------------------------------------------------------------------- %
 % Appendices
 % ---------------------------------------------------------------------------- %
 
 \begin{appendices}
+\input{appendix/test-cases}
 \end{appendices}
 
 % ---------------------------------------------------------------------------- %
