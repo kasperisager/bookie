@@ -23,6 +23,10 @@ import javafx.scene.layout.HBox;
 // JavaFX paint
 import javafx.scene.paint.Color;
 
+// JavaFX collections
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
+
 // JavaFX properties
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -132,7 +136,7 @@ public final class ReservationController {
       .getSelectionModel()
       .setSelectionMode(SelectionMode.MULTIPLE);
 
-    this.reservations.setItems(ApplicationController.reservations());
+    FilteredList<Reservation> filteredReservations = new FilteredList<>(ApplicationController.reservations(), p -> true);
 
     this.phoneColumn.setCellValueFactory((data) -> {
       return new SimpleIntegerProperty(
@@ -145,6 +149,25 @@ public final class ReservationController {
     TextField phoneSearch = new TextField();
     phoneSearch.setPromptText("Telefon");
     phoneSearch.getStyleClass().add("phone-search");
+
+    phoneSearch.textProperty().addListener((ob, ov, nv) -> {
+      filteredReservations.setPredicate(reservation -> {
+        if (nv == null || nv.isEmpty()) {
+          return true;
+        }
+
+        if (reservation.phoneNumber.toString().indexOf(nv) != -1) {
+          return true;
+        }
+        else {
+          return false;
+        }
+      });
+    });
+
+    SortedList<Reservation> sortedReservation = new SortedList<>(filteredReservations);
+    sortedReservation.comparatorProperty().bind(this.reservations.comparatorProperty());
+    this.reservations.setItems(sortedReservation);
 
     this.phoneColumn.setGraphic(phoneSearch);
 

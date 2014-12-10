@@ -22,7 +22,7 @@ public final class Reservation extends Model {
   /**
    * The phone number for identifying the reservation.
    */
-  public int phoneNumber;
+  public Integer phoneNumber;
 
   /**
    * Has the reservation been payed for?
