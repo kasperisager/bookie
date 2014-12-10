@@ -5,5 +5,15 @@ build/
 *.db
 *.iml
 *.pdf
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.lof
+*.lot
+*.out
+*.pyg
+*.run.xml
+*.toc
 gradlew
 gradlew.bat
