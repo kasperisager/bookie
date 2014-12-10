@@ -202,19 +202,19 @@ public final class ShowtimeController {
 
     this.reserve.setOnAction((e) -> {
       if (activeReservation == null) {
-        this.makeReservation(this.phone.getText(), false);
+        this.makeReservation(false);
       }
       else {
-        this.editReservation(this.activeReservation, false);
+        this.editReservation(false);
       }
     });
 
     this.buy.setOnAction((e) -> {
       if (activeReservation == null) {
-        this.makeReservation(this.phone.getText(), true);
+        this.makeReservation(true);
       }
       else {
-        this.editReservation(this.activeReservation, true);
+        this.editReservation(true);
       }
     });
   }
@@ -450,10 +450,12 @@ public final class ShowtimeController {
     this.activeShowtime = reservation.showtime;
   }
 
-  public void makeReservation(final String phone, final boolean buy) {
+  public void makeReservation(final boolean buy) {
     if (this.selectedSeats.isEmpty()) {
       return;
     }
+
+    String phone = this.phone.getText();
 
     Showtime showtime = this.activeShowtime;
 
@@ -520,7 +522,9 @@ public final class ShowtimeController {
     this.activeReservation = null;
   }
 
-  public void editReservation(final Reservation reservation, final boolean buy) {
+  public void editReservation(final boolean buy) {
+    Reservation reservation = this.activeReservation;
+
     try {
       reservation.delete();
       reservation.showtime.reservations.remove(reservation);
@@ -530,6 +534,6 @@ public final class ShowtimeController {
       return;
     }
 
-    this.makeReservation(reservation.phoneNumber + "", buy);
+    this.makeReservation(buy);
   }
 }
