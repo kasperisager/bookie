@@ -32,6 +32,9 @@ import dk.itu.bookie.model.Reservation;
  * @version 1.0.0
  */
 public final class ApplicationController {
+  /**
+   * The pane containing the different tabs.
+   */
   @FXML
   private TabPane tabs;
 
@@ -68,10 +71,16 @@ public final class ApplicationController {
     ApplicationController.instance = this;
   }
 
+  /**
+   * Navigate to the showtimes tab.
+   */
   public void toShowtimes() {
     this.tabs.getSelectionModel().select(0);
   }
 
+  /**
+   * Navigate to the reservations tab.
+   */
   public void toReservations() {
     this.tabs.getSelectionModel().select(1);
   }

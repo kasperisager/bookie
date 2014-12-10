@@ -15,7 +15,14 @@ import dk.itu.bookie.Bookie;
  * @version 1.0.0
  */
 public final class Ticket extends Model {
+  /**
+   * The row number of the ticket.
+   */
   public int row;
+
+  /**
+   * The seat number of the ticket.
+   */
   public int seat;
 
   /**

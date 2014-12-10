@@ -96,10 +96,20 @@ public final class Seat extends Rectangle {
     });
   }
 
+  /**
+   * Get the row of the seat.
+   *
+   * @return The row of the seat.
+   */
   public int getRow() {
     return this.row;
   }
 
+  /**
+   * Get the seat number of the seat.
+   *
+   * @return The seat number of the seat.
+   */
   public int getSeat() {
     return this.seat;
   }

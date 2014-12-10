@@ -37,6 +37,7 @@ public final class Filter extends ToggleButton {
    * Initialize a filter.
    *
    * @param label The label to add to the filter.
+   * @param type  The type of the filter.
    */
   public Filter(final String label, final String type) {
     this.getStyleClass().add("filter");

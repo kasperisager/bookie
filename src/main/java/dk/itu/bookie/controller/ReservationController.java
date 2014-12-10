@@ -136,7 +136,9 @@ public final class ReservationController {
       .getSelectionModel()
       .setSelectionMode(SelectionMode.MULTIPLE);
 
-    FilteredList<Reservation> filteredReservations = new FilteredList<>(ApplicationController.reservations(), p -> true);
+    FilteredList<Reservation> filteredReservations = new FilteredList<>(
+      ApplicationController.reservations(), p -> true
+    );
 
     this.phoneColumn.setCellValueFactory((data) -> {
       return new SimpleIntegerProperty(
@@ -159,15 +161,20 @@ public final class ReservationController {
         if (reservation.phoneNumber.toString().indexOf(nv) != -1) {
           return true;
         }
-        else {
-          return false;
-        }
+
+        return false;
       });
     });
 
-    SortedList<Reservation> sortedReservation = new SortedList<>(filteredReservations);
-    sortedReservation.comparatorProperty().bind(this.reservations.comparatorProperty());
-    this.reservations.setItems(sortedReservation);
+    SortedList<Reservation> sortedReservations = new SortedList<>(
+      filteredReservations
+    );
+
+    sortedReservations.comparatorProperty().bind(
+      this.reservations.comparatorProperty()
+    );
+
+    this.reservations.setItems(sortedReservations);
 
     this.phoneColumn.setGraphic(phoneSearch);
 

@@ -4,7 +4,6 @@
 package dk.itu.bookie.controller;
 
 // General utilities
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -115,21 +114,43 @@ public final class ShowtimeController {
   @FXML
   private GridPane auditorium;
 
+  /**
+   * The button for making reservation.
+   */
   @FXML
   private Button reserve;
 
+  /**
+   * The button for marking reservations as bought.
+   */
   @FXML
   private Button buy;
 
+  /**
+   * The text field for inputting phone numbers for reservations.
+   */
   @FXML
   private TextField phone;
 
+  /**
+   * The text field for selecting the number of seats to reserve.
+   */
   @FXML
   private TextField seats;
 
+  /**
+   * The currently active showtime.
+   */
   private Showtime activeShowtime;
+
+  /**
+   * The currently active reservation.
+   */
   private Reservation activeReservation;
 
+  /**
+   * The set of selected seats.
+   */
   private ObservableSet<Seat> selectedSeats;
 
   /**
@@ -201,7 +222,7 @@ public final class ShowtimeController {
     });
 
     this.reserve.setOnAction((e) -> {
-      if (activeReservation == null) {
+      if (this.activeReservation == null) {
         this.makeReservation(false);
       }
       else {
@@ -210,7 +231,7 @@ public final class ShowtimeController {
     });
 
     this.buy.setOnAction((e) -> {
-      if (activeReservation == null) {
+      if (this.activeReservation == null) {
         this.makeReservation(true);
       }
       else {
@@ -245,6 +266,11 @@ public final class ShowtimeController {
     );
   }
 
+  /**
+   * Given an auditorium, render its seat labels.
+   *
+   * @param auditorium The auditorium whose seat labels to render.
+   */
   private void renderAuditoriumLabels(final Auditorium auditorium) {
     int rows = auditorium.rows;
     int seats = auditorium.seats;
@@ -275,6 +301,11 @@ public final class ShowtimeController {
     }
   }
 
+  /**
+   * Given an auditorium, render its seats.
+   *
+   * @param auditorium The auditorium whose seats to render.
+   */
   private void renderAuditoriumSeats(final Auditorium auditorium) {
     int rows = auditorium.rows;
     int seats = auditorium.seats;
@@ -315,6 +346,11 @@ public final class ShowtimeController {
     }
   }
 
+  /**
+   * Given a list of selected seats, render them in the current auditorium.
+   *
+   * @param seats The list of selected seats to render.
+   */
   private void renderSelectedSeats(final boolean[][] seats) {
     for (int i = 0; i < seats.length; i++) {
       for (int j = 0; j < seats[i].length; j++) {
@@ -329,6 +365,11 @@ public final class ShowtimeController {
     }
   }
 
+  /**
+   * Given a list of reserved seats, render them in the current auditorium.
+   *
+   * @param seats The list of reserved seats to render.
+   */
   private void renderReservedSeats(final boolean[][] seats) {
     for (int i = 0; i < seats.length; i++) {
       for (int j = 0; j < seats[i].length; j++) {
@@ -343,6 +384,11 @@ public final class ShowtimeController {
     }
   }
 
+  /**
+   * Given a list of bought seats, render them in the current auditorium.
+   *
+   * @param seats The list of bought seats to render.
+   */
   private void renderBoughtSeats(final boolean[][] seats) {
     for (int i = 0; i < seats.length; i++) {
       for (int j = 0; j < seats[i].length; j++) {
@@ -357,6 +403,13 @@ public final class ShowtimeController {
     }
   }
 
+  /**
+   * Get a seat from the current auditorium.
+   *
+   * @param row   The row of the seat.
+   * @param index The seat number of the seat.
+   * @return      The seat if found, otherwise null.
+   */
   public Seat getSeat(final int row, final int index) {
     Seat seat = null;
 
@@ -376,6 +429,12 @@ public final class ShowtimeController {
     return seat;
   }
 
+  /**
+   * Get the reserved seats of a reservation.
+   *
+   * @param reservation The reservation whose reserved seats to get.
+   * @return            A double boolean array indicating reserved seats.
+   */
   public boolean[][] getSeats(final Reservation reservation) {
     int rows = reservation.showtime.auditorium.rows;
     int seats = reservation.showtime.auditorium.seats;
@@ -389,6 +448,12 @@ public final class ShowtimeController {
     return reservedSeats;
   }
 
+  /**
+   * Get the reserved seats of a showtime.
+   *
+   * @param showtime  The showtime whose reserved seats to get.
+   * @return          A double boolean array indicating reserved seats.
+   */
   public boolean[][] getSeats(final Showtime showtime) {
     int rows = showtime.auditorium.rows;
     int seats = showtime.auditorium.seats;
@@ -405,15 +470,15 @@ public final class ShowtimeController {
   }
 
   /**
-   * Render an auditorium.
+   * Render the auditorium of a showtime.
    *
-   * @param auditorium The Auditorium to render.
+   * @param showtime The showtime whose auditorium to render.
    */
   public void renderShowtime(final Showtime showtime) {
     this.auditorium.getChildren().clear();
 
-    if (activeReservation != null) {
-      activeReservation = null;
+    if (this.activeReservation != null) {
+      this.activeReservation = null;
       this.phone.setText("");
       this.phone.setDisable(false);
     }
@@ -433,6 +498,11 @@ public final class ShowtimeController {
     }
   }
 
+  /**
+   * Render the auditorium of a reservation.
+   *
+   * @param reservation The reservation whose auditorium to render.
+   */
   public void renderReservation(final Reservation reservation) {
     this.showtimes.getSelectionModel().clearSelection();
 
@@ -450,6 +520,11 @@ public final class ShowtimeController {
     this.activeShowtime = reservation.showtime;
   }
 
+  /**
+   * Reserve the currently selected seats.
+   *
+   * @param buy Whether or not to mark the reservation as bought.
+   */
   public void makeReservation(final boolean buy) {
     if (this.selectedSeats.isEmpty()) {
       return;
@@ -522,6 +597,11 @@ public final class ShowtimeController {
     this.activeReservation = null;
   }
 
+  /**
+   * Edit the currently active reservation.
+   *
+   * @param buy Whether or not to mark the reservation as bought.
+   */
   public void editReservation(final boolean buy) {
     Reservation reservation = this.activeReservation;
 
