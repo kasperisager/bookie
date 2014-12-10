@@ -10,6 +10,7 @@ build/
 *.bcf
 *.blg
 *.lof
+*.lol
 *.lot
 *.out
 *.pyg
