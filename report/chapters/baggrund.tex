@@ -1,15 +1,14 @@
 \chapter{Baggrund og problemstilling}
 
-
-
-
-
 En ekspedient skal kunne betjene billetlugen og telefonen i en mindre biograf. Opgaven er stillet sådan, at ekspedienten skal kunne betjene begge former for kundehenvendelse uden brug af eksterne midler. Dette indeholder forskellige ting som en reservation skal kunne inkludere, men ikke selve salget af billetterne. Et softwaresystem udvikles til at løse kravene og i vores tilfælde er "Bookie" blevet resultatet.
+
 
 Der er visse brugsscenarier: En kunde skal kunne bestille så mange billetter, vedkommende har lyst til. Disse billetter skal være knyttet til vilkårlige eller bestemte sæder - de skal kunne vælges af ekspedienten. Udover dette, skal ekspedienten kunne fjerne, ændre og tilføje reservationer. Det skal være muligt at vælge én bestemt forestilling, vilkårlige forestillinger, ét bestemt tidspunkt og vilkårlige tidspunkter i løbet af den periode de forskellige forestillinger bliver vist.
 Der er en chance for, at der ikke er nok billetter til den valgte forestilling, eller at der ikke er en forestilling på det valgte tidspunkt. Disse problemer kan visuelt afkodes af brugergrænsefladen.
 
+
 Der er taget det valg, at bruge et klient-tungt system, som inkluderer at det godt kan bruges uafhængigt af en server. Der er ikke et behov for forbindelse til hverken en server eller et netværk. Al dataen er placeret lokalt, og  bl.a. fordi vi får givet, at biografen kun skal have én billetluge og tillader ikke reservationer over nettet. Løsningen behøver ikke at håndtere samtidige opdateringer, hvor SQLite er en optimal database, som vi gør brug af. SQLite, i forhold til MYSQL og PostgreSQL
+
 
 
 
