@@ -325,7 +325,7 @@ public final class ReservationController {
       Button editButton = new Button("Redigér");
 
       editButton.setOnAction((e) -> {
-        ShowtimeController.getInstance().renderReservation(reservation);
+        ShowtimeController.getInstance().setActiveReservation(reservation);
         ApplicationController.getInstance().toShowtimes();
       });
 
