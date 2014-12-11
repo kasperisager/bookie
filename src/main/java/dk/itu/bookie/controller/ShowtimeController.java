@@ -34,6 +34,7 @@ import javafx.collections.ObservableSet;
 // JavaFX properties
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 
 // JavaFX bindings
 import javafx.beans.binding.NumberBinding;
@@ -135,12 +136,12 @@ public final class ShowtimeController {
   /**
    * The currently active showtime.
    */
-  private Showtime activeShowtime;
+  private ReadOnlyObjectWrapper<Showtime> activeShowtime;
 
   /**
    * The currently active reservation.
    */
-  private Reservation activeReservation;
+  private ReadOnlyObjectWrapper<Reservation> activeReservation;
 
   /**
    * The set of selected seats.
@@ -164,20 +165,29 @@ public final class ShowtimeController {
   public void initialize() throws Exception {
     ShowtimeController.instance = this;
 
+    this.activeShowtime = new ReadOnlyObjectWrapper<>();
+    this.activeReservation = new ReadOnlyObjectWrapper<>();
+
     this.bindTableColumnWidths();
 
     this.showtimes.setItems(ApplicationController.showtimes());
 
-    this.showtimes
-      .getSelectionModel()
-      .selectedItemProperty().addListener((ob, ov, nv) -> {
-      if (nv == null) {
-        return;
+    this.showtimes.getSelectionModel().selectedItemProperty().addListener(
+      (ob, ov, nv)-> {
+        this.activeShowtime.set(nv);
       }
+    );
 
-      this.activeShowtime = nv;
+    this.activeShowtime.addListener((ob, ov, nv)-> {
+      if (nv != null) {
+        this.renderShowtime(nv);
+      }
+    });
 
-      this.renderShowtime(this.activeShowtime);
+    this.activeReservation.addListener((ob, ov, nv)-> {
+      if (nv != null) {
+        this.renderReservation(nv);
+      }
     });
 
     this.movieColumn.setCellValueFactory((data) -> {
@@ -235,10 +245,19 @@ public final class ShowtimeController {
   }
 
   /**
+   * Set the currently active reservation.
+   *
+   * @param reservation The reservation to set as the active reservation.
+   */
+  public void setActiveReservation(final Reservation reservation) {
+    this.activeReservation.set(reservation);
+  }
+
+  /**
    * Bind the widths of the individual columns to the entire width of the
    * containing table.
    */
-  public void bindTableColumnWidths() {
+  private void bindTableColumnWidths() {
     this.movieColumn.prefWidthProperty().bind(
       this.showtimes.widthProperty().subtract(18).multiply(0.35)
     );
@@ -404,7 +423,7 @@ public final class ShowtimeController {
    * @param index The seat number of the seat.
    * @return      The seat if found, otherwise null.
    */
-  public Seat getSeat(final int row, final int index) {
+  private Seat getSeat(final int row, final int index) {
     Seat seat = null;
 
     for (Node node: this.auditorium.getChildren()) {
@@ -429,7 +448,7 @@ public final class ShowtimeController {
    * @param reservation The reservation whose reserved seats to get.
    * @return            A double boolean array indicating reserved seats.
    */
-  public boolean[][] getSeats(final Reservation reservation) {
+  private boolean[][] getSeats(final Reservation reservation) {
     int rows = reservation.showtime.auditorium.rows;
     int seats = reservation.showtime.auditorium.seats;
 
@@ -448,7 +467,7 @@ public final class ShowtimeController {
    * @param showtime  The showtime whose reserved seats to get.
    * @return          A double boolean array indicating reserved seats.
    */
-  public boolean[][] getSeats(final Showtime showtime) {
+  private boolean[][] getSeats(final Showtime showtime) {
     int rows = showtime.auditorium.rows;
     int seats = showtime.auditorium.seats;
 
@@ -468,7 +487,7 @@ public final class ShowtimeController {
    *
    * @param showtime The showtime whose auditorium to render.
    */
-  public void renderShowtime(final Showtime showtime) {
+  private void renderShowtime(final Showtime showtime) {
     this.auditorium.getChildren().clear();
 
     if (this.activeReservation != null) {
@@ -497,21 +516,13 @@ public final class ShowtimeController {
    *
    * @param reservation The reservation whose auditorium to render.
    */
-  public void renderReservation(final Reservation reservation) {
-    this.showtimes.getSelectionModel().clearSelection();
-
-    this.renderShowtime(reservation.showtime);
+  private void renderReservation(final Reservation reservation) {
+    this.showtimes.getSelectionModel().select(reservation.showtime);
 
     this.phone.setText(reservation.phoneNumber + "");
     this.phone.setDisable(true);
 
     this.renderSelectedSeats(this.getSeats(reservation));
-
-    // Set the active reservation.
-    this.activeReservation = reservation;
-
-    // Set the active showtime.
-    this.activeShowtime = reservation.showtime;
   }
 
   /**
@@ -519,14 +530,14 @@ public final class ShowtimeController {
    *
    * @param buy Whether or not to mark the reservation as bought.
    */
-  public void makeReservation(final boolean buy) {
+  private void makeReservation(final boolean buy) {
     if (this.selectedSeats.isEmpty()) {
       return;
     }
 
     String phone = this.phone.getText();
 
-    Showtime showtime = this.activeShowtime;
+    Showtime showtime = this.activeShowtime.get();
 
     if (showtime == null) {
       return;
@@ -596,8 +607,8 @@ public final class ShowtimeController {
    *
    * @param buy Whether or not to mark the reservation as bought.
    */
-  public void editReservation(final boolean buy) {
-    Reservation reservation = this.activeReservation;
+  private void editReservation(final boolean buy) {
+    Reservation reservation = this.activeReservation.get();
 
     try {
       reservation.delete();
