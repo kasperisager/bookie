@@ -133,12 +133,6 @@ public final class ShowtimeController {
   private TextField phone;
 
   /**
-   * The text field for selecting the number of seats to reserve.
-   */
-  @FXML
-  private TextField seats;
-
-  /**
    * The currently active showtime.
    */
   private Showtime activeShowtime;
