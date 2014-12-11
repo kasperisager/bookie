@@ -12,15 +12,15 @@ left   = 2.00cm,
 right  = 2.00cm]{geometry}
 
 % Paragraph indent
-\usepackage{parskip}
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{15pt}
+\setlength{\parindent}{15pt}
 
 % Line height
 \usepackage{setspace}
 \onehalfspacing
 
 % Font face
+\renewcommand{\rmdefault}{phv}
+\renewcommand{\sfdefault}{phv}
 \renewcommand{\familydefault}{\sfdefault}
 
 % ---------------------------------------------------------------------------- %
@@ -48,6 +48,7 @@ right  = 2.00cm]{geometry}
 % ---------------------------------------------------------------------------- %
 
 \usepackage{graphicx}
+\usepackage{wrapfig}
 
 % ---------------------------------------------------------------------------- %
 % Code highlighting
