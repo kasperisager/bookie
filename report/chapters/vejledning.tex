@@ -26,54 +26,92 @@ I dette eksempel er der blevet sorteret efter film, hvorefter der er blevet valg
   \label{screenshot: chosen-showtime}
 \end{figure}
 
+\newpage
+
 \subsection{Vælg sæder}
 
-Sæderne er angivet i rækker og kolonner, hvor rækkerne har fået navne efter alfabetet og kolonnerne efter tal. Dette gør det meget nemt at beskrive hvor i salen de valgte sæder befinder sig. Holder ekspedienten musen hen over et af de grønne sæder, og trykker på det, resulterer det i at sædet får en grå farve (dette kan også ses i legenden i \ref{screenshot: chosen-seats1}).
+Sæderne er angivet i rækker og kolonner, hvor rækkerne har fået navne efter alfabetet og kolonnerne efter tal. Dette gør det meget nemt at beskrive hvor i salen de valgte sæder befinder sig. Holder ekspedienten musen hen over et af de grønne sæder, og trykker på det, resulterer det i at sædet får en grå farve (dette kan også ses i legenden i \ref{screenshot: chosen-seats}).
 
 \begin{figure} [h]
   \centering
-  \includegraphics[width=0.4\textwidth]{chosen-seats1.png}
+  \includegraphics[width=0.4\textwidth]{chosen-seats.png}
   \caption{Valgte sæder}
-  \label{screenshot: chosen-seats1}
+  \label{screenshot: chosen-seats}
 \end{figure}
 
 \subsection{Indtast telefonnummer}
 
-Efter at sæderne er blevet valgte, er det muligt at indtaste et telefonnummer (\ref{screenshot: phone-number1}). Trykker man derefter på \textit{Reservér} knappen, ændrer sæderne farve og bliver blå. Hvilket viser ekspedienten, at reservationen er gennemført. Ses også i \ref{screenshot: booked-seats1}
+Efter at sæderne er blevet valgte, er det muligt at indtaste et telefonnummer (\ref{screenshot: phone-number}). Trykker man derefter på \textit{Reservér} knappen, ændrer sæderne farve og bliver blå. Hvilket viser ekspedienten, at reservationen er gennemført. Ses også i \ref{screenshot: booked-seats}
 
 \begin{figure} [h]
   \centering
-  \includegraphics[width=0.4\textwidth]{phone-number1.png}
+  \includegraphics[width=0.4\textwidth]{phone-number.png}
   \caption{Telefonnummer bliver indtastet.}
-  \label{screenshot: phone-number1}
+  \label{screenshot: phone-number}
 \end{figure}
 
 \begin{figure} [h]
   \centering
-  \includegraphics[width=0.4\textwidth]{booked-seats1.png}
+  \includegraphics[width=0.4\textwidth]{booked-seats.png}
   \caption{Reserverede sæder.}
-  \label{screenshot: booked-seats1}
+  \label{screenshot: booked-seats}
 \end{figure}
 
 \section{Reservationer}
 
 \subsection{Gå til Reservationer}
-Efter at sæderne er reserverede, er der blevet oprettet billetter inde i Reservationer. Alle de eksisterende reservationer kan ses inde på \textit{Reservationer} oppe i venstre hjørne (\ref{screenshot: go-to-reservations1}). Her er også muligt at redigere eller slette dem.
+Efter at sæderne er reserverede, er der blevet oprettet billetter inde i Reservationer. Alle de eksisterende reservationer kan ses inde på \textit{Reservationer} oppe i venstre hjørne (\ref{screenshot: go-to-reservations}).
 
 \begin{figure} [h]
   \centering
   \includegraphics[width=0.4\textwidth]{go-to-reservations.png}
   \caption{Gå til alle reservationer.}
-  \label{screenshot: go-to-reservations1}
+  \label{screenshot: go-to-reservations}
+\end{figure}
+
+Alle reservationerne er vist på en liste, som er mulig at sortere efter eget valg. Både film, dag/tidspunkt, sal, antal billetter (hvis ekspedienten evt. skulle få lyst til det). 
+
+\begin{figure} [h]
+  \centering
+  \includegraphics[width=0.4\textwidth]{all-reservations.png}
+  \caption{Gå til alle reservationer.}
+  \label{screenshot: all-reservations}
 \end{figure}
 
 \subsection{Filtrering af telefonnumre}
 
-Øverst i venstre hjørne af denne side er der et felt til filtrering af telefonnumre (\ref{screenshot: filter1}).
+Øverst i venstre hjørne af denne side er der et felt til filtrering af telefonnumrene (\ref{screenshot: filter3}). Dette gør det overskueligt at finde den enkelte reservation, når den skal redigeres eller slettes. 
 
 \begin{figure} [h]
   \centering
-  \includegraphics[width=0.4\textwidth]{filter1.png}
+  \includegraphics[width=0.4\textwidth]{filter3.png}
   \caption{Filtrering af numre.}
-  \label{screenshot: filter1}
+  \label{screenshot: filter3}
+\end{figure}
+
+\subsection{Redigering af reservationer}
+
+Når den eftersøgte reservation er fundet via filtreringen, kan ekspedienten hurtigt redigere dem ved at trykke på knappen ude i højre side, so
+
+\begin{figure} [h]
+  \centering
+  \includegraphics[width=0.4\textwidth]{edit-button.png}
+  \caption{Filtrering af numre.}
+  \label{screenshot: edit-button}
+\end{figure}
+
+\subsection{Sletning af reservationer}
+
+\begin{figure} [h]
+  \centering
+  \includegraphics[width=0.4\textwidth]{delete-button.png}
+  \caption{Filtrering af numre.}
+  \label{screenshot: delete-button}
+\end{figure}
+
+\begin{figure} [h]
+  \centering
+  \includegraphics[width=0.4\textwidth]{delete-reservation.png}
+  \caption{Filtrering af numre.}
+  \label{screenshot: delete-reservation}
 \end{figure}

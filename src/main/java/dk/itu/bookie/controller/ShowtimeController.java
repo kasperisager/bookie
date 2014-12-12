@@ -29,6 +29,7 @@ import javafx.geometry.VPos;
 
 // JavaFX collections
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableSet;
 
 // JavaFX properties
@@ -38,6 +39,7 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 
 // JavaFX bindings
 import javafx.beans.binding.NumberBinding;
+import javafx.beans.binding.StringBinding;
 import javafx.beans.binding.When;
 
 // FXML utilities
@@ -95,7 +97,7 @@ public final class ShowtimeController {
    * The column containing the number of available seats in the auditorium.
    */
   @FXML
-  private TableColumn<Showtime, Integer> availableColumn;
+  private TableColumn<Showtime, String> availableColumn;
 
   /**
    * The column containing the date that the movie is playing.
@@ -195,6 +197,27 @@ public final class ShowtimeController {
 
     this.auditoriumColumn.setCellValueFactory((data) -> {
       return new SimpleStringProperty(data.getValue().auditorium.name);
+    });
+
+    this.availableColumn.setCellValueFactory((data) -> {
+      Showtime showtime = data.getValue();
+
+      SimpleStringProperty availableSeats = new SimpleStringProperty();
+
+      availableSeats.set(this.countAvailableSeats(showtime).toString());
+
+      try {
+        ApplicationController.reservations().addListener(
+          (ListChangeListener.Change<? extends Reservation> c) -> {
+            availableSeats.set(this.countAvailableSeats(showtime).toString());
+          }
+        );
+      }
+      catch (SQLException ex) {
+        // Nopes.
+      }
+
+      return availableSeats;
     });
 
     this.dateColumn.setCellValueFactory((data) -> {
@@ -617,5 +640,18 @@ public final class ShowtimeController {
     }
 
     this.makeReservation(buy);
+  }
+
+  private Integer countAvailableSeats(final Showtime showtime) {
+    Auditorium auditorium = showtime.auditorium;
+
+    int totalSeatCount = auditorium.rows * auditorium.seats;
+    int reservedSeatCount = 0;
+
+    for (Reservation reservation: showtime.reservations) {
+      reservedSeatCount += reservation.tickets.size();
+    }
+
+    return totalSeatCount - reservedSeatCount;
   }
 }

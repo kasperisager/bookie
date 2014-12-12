@@ -23,12 +23,12 @@ public final class Auditorium extends Model {
   /**
    * Number of rows in the auditorium.
    */
-  public int rows;
+  public Integer rows;
 
   /**
    * Number of seats per row in the auditorium.
    */
-  public int seats;
+  public Integer seats;
 
   /**
    * Initialize an auditorium.
