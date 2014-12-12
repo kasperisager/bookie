@@ -28,12 +28,12 @@ Helt konkret består Donkey af følgende klasser:
 \end{itemize}
 \end{multicols}
 
-Donkey er fra bunden opbygget efter \textit{dependency injection} designmønstret, hvor afhængigheder injiceres i afhængende klasser frem for selv at lade de afhængende klasser finde og instantiere deres afhængigheder (\cite{wiki:di}). Dette designmønster har vi fulgt, da det gav større kontrol over, hvorledes afhængigheder flød igennem systemet. Eftersom \texttt{Grammar}-klassen er en afhængighed i næsten samtlige andre klasser (mere om dette følger), og da \texttt{Grammar} er abstrakt med de konkerete implementationer \texttt{MySqlGrammar}, \texttt{PostgreSqlGrammar}, og \texttt{SqliteGrammar}, ville det have været yderst besværligt at opbygge systemet, hvis ikke denne grundlæggende afhængighed kunne injiceres i de afhængende klasser. Figur \ref{class-diagram:database-abstraction} forsøger at tydeliggøre, hvorledes de forskellige afhængigheder flyder gennem systemet samt hvordan disse injiceres i de afhængende klasser.
+Donkey er fra bunden opbygget efter \textit{dependency injection} designmønstret, hvor afhængigheder injiceres i afhængende klasser frem for selv at lade de afhængende klasser finde og instantiere deres afhængigheder (\cite{wiki:di}). Dette designmønster har vi fulgt, da det gav større kontrol over, hvorledes afhængigheder flød igennem systemet. Eftersom \texttt{Grammar}-klassen er en afhængighed i næsten samtlige andre klasser (mere om dette følger), og da \texttt{Grammar} er abstrakt med de konkerete implementationer \texttt{My\-Sql\-Grammar}, \texttt{Postgre\-Sql\-Grammar}, og \texttt{Sqlite\-Grammar}, ville det have været yderst besværligt at opbygge systemet, hvis ikke denne grundlæggende afhængighed kunne injiceres i de afhængende klasser. Figur \ref{class-diagram:database-abstraction} forsøger at tydeliggøre, hvorledes de forskellige afhængigheder flyder gennem systemet samt hvordan disse injiceres i de afhængende klasser.
 
 \begin{figure}[h]
   \centering
   \includegraphics[scale=0.75]{database-abstraction.pdf}
-  \caption{Lettere forsimplet klassediagram over databaseabstraktionen, ORM ekskluderet.}
+  \caption{Klassediagram over databaseabstraktionen, ORM ekskluderet.}
   \label{class-diagram:database-abstraction}
 \end{figure}
 
@@ -41,11 +41,11 @@ De næste sektioner vil gennemgå hver klasse i det niveau af detalje, som mått
 
 \subsection{Row}
 
-\texttt{Row}-klassen er en subklasse af \texttt{LinkedHashMap} og beskriver en datastruktur, der benyttes til at opbevare databaserækker. Den er fundamental for resten af systemet, idet den er bindeledet mellem Donkeys klasser og JDBCs \texttt{ResultSet}\footnote{\url{https://docs.oracle.com/javase/8/docs/api/java/sql/ResultSet.html}}-strukturer, som bruges til at opbevare tabeller af data resulterende fra databaseforespørgsler.
+\texttt{Row}-klassen er en subklasse af \texttt{Linked\-Hash\-Map} og beskriver en datastruktur, der benyttes til at opbevare databaserækker. Den er fundamental for resten af systemet, idet den er bindeledet mellem Donkeys klasser og JDBCs \texttt{Result\-Set}\footnote{\url{https://docs.oracle.com/javase/8/docs/api/java/sql/ResultSet.html}}-strukturer, som bruges til at opbevare tabeller af data resulterende fra databaseforespørgsler.
 
-\texttt{Row}-klassen benytter sig af de generiske typer \texttt{String} og \texttt{Object} til nøgler og værdier, respektivt, i et \texttt{LinkedHashMap}. Dette gør det muligt at associere en databasekolonne (nøglen) med en hvilken som helst datatype (værdien), hvilket er hensigtmæssigt, da en databasetabel kan indeholde mange forskellige typer af data.
+\texttt{Row}-klassen benytter sig af de generiske typer \texttt{String} og \texttt{Object} til nøgler og værdier, respektivt, i et \texttt{Linked\-Hash\-Map}. Dette gør det muligt at associere en databasekolonne (nøglen) med en hvilken som helst datatype (værdien), hvilket er hensigtmæssigt, da en databasetabel kan indeholde mange forskellige typer af data.
 
-Slutteligt bør det nævnes, at et \texttt{LinkedHashMap} blev valgt, da iterationsrækkefølgen af kolonnerne i en tabel i visse tilfælde \textit{kan} have betydning.
+Slutteligt bør det nævnes, at et \texttt{Linked\-Hash\-Map} blev valgt, da iterationsrækkefølgen af kolonnerne i en tabel i visse tilfælde \textit{kan} have betydning.
 
 \subsection{Grammar}
 
@@ -83,7 +83,7 @@ Figur \ref{class-diagram:grammar-class} viser de vigtigste offentlige metoder ti
 
 \subsection{Driver}
 
-\texttt{Driver}-enumeratoren har til opgave at oprette forbindelse til de understøttede databasesystemer via JDBCs \texttt{DriverManager}\footnote{\url{http://docs.oracle.com/javase/8/docs/api/java/sql/DriverManager.html}} og de tredjepartsdrivere, som måtte være tilgængelige for det pågældende databasesystem. Derudover står \texttt{Driver}-enumeratoren også for at instantiere de konkrete \texttt{Grammar}-objekter, som skal benyttes til de forskellige databasesystemer. MySQL-driveren opretter dermed instanser af \texttt{MySqlGrammar}, PostgreSQL-driveren instanser af \texttt{PostgreSqlGrammar}, og slutteligt SQLite-driveren instanser af \texttt{SqliteGrammar}.
+\texttt{Driver}-enumeratoren har til opgave at oprette forbindelse til de understøttede databasesystemer via JDBCs \texttt{Driver\-Manager}\footnote{\url{http://docs.oracle.com/javase/8/docs/api/java/sql/DriverManager.html}} og de tredjepartsdrivere, som måtte være tilgængelige for det pågældende databasesystem. Derudover står \texttt{Driver}-enumeratoren også for at instantiere de konkrete \texttt{Grammar}-objekter, som skal benyttes til de forskellige databasesystemer. MySQL-driveren opretter dermed instanser af \texttt{MySql\-Grammar}, PostgreSQL-driveren instanser af \texttt{PostgreSql\-Grammar}, og slutteligt SQLite-driveren instanser af \texttt{Sqlite\-Grammar}.
 
 \texttt{Driver} er implementeret som en enumerator og ikke en klasse, da vi ikke så mening i at have et interface med tre implementerende klasser hver med kun to statiske metoder. En enumerator med to abstrakte metoder, som implementeres i hver af enumratorens elementer, var derfor at foretrække.
 
@@ -91,12 +91,76 @@ Der henvises til figur \ref{class-diagram:database-abstraction} for klassediagra
 
 \subsection{Database}
 
+\texttt{Database}-klassen står for al interaktion med de understøttede databasesystemer herunder eksekvering af SQL-forespørgsler samt tolkning af de resulterende \texttt{ResultSet}s.
+
+Alle SQL-forespørgsler bliver eksekverede som \texttt{Prepared\-Statement}s\footnote{\url{http://docs.oracle.com/javase/8/docs/api/java/sql/PreparedStatement.html}}, og det er her, at \texttt{?}-tegnene fra de af \texttt{Grammar} kompilerede SQL-udtryk kommer ind i billedet. Et \texttt{Prepared\-Statement} bliver i første omgang sendt til SQL-serveren og pre-kompileret uden eventuelle brugergenerede parametre. Herefter indsættes de brugergenerede parametre istedet for \texttt{?}-tegnene i den pre-kompilerede forespørgsel, som herefter igen eksekveres mod serveren. Dette negerer effektivt al SQL injektion, idet SQL-serveren nu behandler de brugergenerede parametre som netop det; brugergenerede parametre. Der er derfor ikke tvivl om, at de \textit{ikke} er del af et SQL-udtryk. Ondsindet, omend gyldig SQL kan derfor indsættes som parameter, uden at det vil få indflydelse på den allerede kompilerede SQL-forespørgsel.
+
+Ovenstående er årsagen til inklusionen af metoder som \texttt{compile\-Select\-Values()}, \texttt{compile\-Insert\-Values()}, m.v. som set i figur \ref{class-diagram:grammar-class}. Disse bliver brugt til at kompilere lister af de værdier, som måtte være blevet erstattede med \texttt{?}-tegn i de kompilerede SQL-udtryk.
+
+Slutteligt står \texttt{Database} for at tolke de \texttt{Result\-Set}s, som måtte resultere fra SQL-forespørgsler. Efter hver forespørgsel gennemløbes det resulterende \texttt{Result\-Set} og oversættes til en liste af \texttt{Row}s. Forbindelsen til det pågældende \texttt{Result\-Set} kan herefter lukkes, mens indholdet–nu oversat til \texttt{Row}s–kan returneres til kalderen.
+
+Givet et konkret \texttt{Grammar}-objekt (\texttt{g}) kan SQL eksekveres mod en server på følgende måde:
+
+\begin{figure}[h]
+  \begin{minted}{java}
+  Properties config = new Properties();
+  config.put(...);
+  
+  Database db = new Database(Driver.SOME_DRIVER, config);
+  List<Row> response = db.execute(
+    g.compileSelect(), g.compileSelectValues()
+  );
+  \end{minted}
+  \caption{Eksempel på eksekvering af en SQL-forespørgsel}
+  \label{code-example:sql-execution}
+\end{figure}
+
+Figur \ref{code-example:sql-execution} viser første eksempel på injektion af afhængigheder. Den ønskede \texttt{Driver} injiceres under instantieringen af \texttt{Database} sammen med eventuelle konfigurationsparametre. Dette giver os imidlertid endnu ikke nogen fordel, eftersom eksemplet gør direkte brug af en konkret \texttt{Grammar}-instans. De næste to sektioner vil dog beskrive den tilsigtede brug af \texttt{Grammar} i relation til \texttt{Database}.
+
 \subsection{Query}
 
+\texttt{Query}-klassen beskæftiger sig med de typer af SQL-udtryk, som under eet er kendt som \textit{Data Manipulation Language} (forkortet \textit{DML}). DML bliver brugt til at hente, indsætte, opdatere, og slette data fra databasetabeller (\cite{wiki:dml}) og indkapsler derfor de metoder i \texttt{Grammar}, som står for dette. Der henvises til figur \ref{class-diagram:database-abstraction} for en liste over disse.
+
+\texttt{Query}-klassen instantieres ved at injicere en instans af \texttt{Database} samt navnet på den tabel, som \texttt{Query} skal eksekvere DML-udtryk mod. \texttt{Query} får fra \texttt{Database} adgang til dennes \texttt{Driver}-instans og kan herfra tilgå den specifikke \texttt{Grammar}-subklasse, som skal benyttes til det pågældende databasesystem. Det er her, som tidligere nævnt, at injicering af afhængigheder bliver uundværdligt.
+
+\texttt{Query}-klassen kan benyttes direkte, men er tiltænkt benyttet gennem \texttt{Database}, som via dennes \texttt{table()}-metode kan instantiere nye \texttt{Query}-objekter mod den pågælende database:
+
+\begin{figure}[h]
+  \begin{minted}{java}
+  List<Row> response = db.table("table")
+    .select("col1", "col2")
+    .where("col1", ">", 123)
+    .orWhere("col2", "bar")
+    .get();
+  \end{minted}
+  \caption{Eksempel på brug af \texttt{Query} med samme forespørgsel som set i figur \ref{code-example:grammar-select-compilation}}
+  \label{code-example:query-select}
+\end{figure}
+
 \subsection{Schema}
+
+Modsat \texttt{Query} beskæftiger \texttt{Schema} sig med de typer af SQL-udtryk, der er kendt som \textit{Data Definition Language} (forkortet \textit{DDL}). Mens DML som sagt tager sig af at hente samt manipulere data i databasetabeller, så benyttes DDL til at definere strukturen af disse (\cite{wiki:ddl}). Som var tilfældet med \texttt{Query}, instantieres \texttt{Schema} ved at injicere en instans af \texttt{Database} hvorfra der er adgang til et \texttt{Grammar}-objekt passende til det pågældende databasesystem.
+
+Der henvises til figur \ref{class-diagram:database-abstraction} for de specikke \texttt{Grammar}-metoder, som \texttt{Schema} indkapsler. Disse er primært baserede på \texttt{addDataType()}-metoden i \texttt{Grammar}, der kompilerer datatypekolonner til SQL \texttt{create}-udtryk.
+
+Ligesom med \texttt{Query} er \texttt{Schema} tiltænkt brugt gennem \texttt{Database} via dennes \texttt{schema()}-metode:
+
+\begin{figure}[h]
+  \begin{minted}{java}
+  db.schema()
+    .create("table")
+    .integer("col1")
+    .text("col2")
+    .run();
+  \end{minted}
+  \caption{Eksempel på brug af \texttt{Schema} med udgangspunkt i tabellen tilgået i figur \ref{code-example:query-select}}
+  \label{code-example:schema-create}
+\end{figure}
 
 \subsection{Model}
 
 \subsection{ModelQuery}
 
 \section{Databasedesign}
+
+\section{Brugergrænseflade}
