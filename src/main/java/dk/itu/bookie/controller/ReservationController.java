@@ -76,12 +76,6 @@ public final class ReservationController {
   private TableColumn<Reservation, Number> ticketColumn;
 
   /**
-   * The column containing the status of the reservation.
-   */
-  @FXML
-  private TableColumn<Reservation, String> statusColumn;
-
-  /**
    * The column containing the name of the movie playing.
    */
   @FXML
@@ -232,14 +226,10 @@ public final class ReservationController {
    */
   public void bindTableColumnWidths() {
     this.phoneColumn.prefWidthProperty().bind(
-      this.reservations.widthProperty().subtract(18).multiply(0.15)
+      this.reservations.widthProperty().subtract(18).multiply(0.20)
     );
 
     this.ticketColumn.prefWidthProperty().bind(
-      this.reservations.widthProperty().subtract(18).multiply(0.10)
-    );
-
-    this.statusColumn.prefWidthProperty().bind(
       this.reservations.widthProperty().subtract(18).multiply(0.10)
     );
 
@@ -252,7 +242,7 @@ public final class ReservationController {
     );
 
     this.dateColumn.prefWidthProperty().bind(
-      this.reservations.widthProperty().subtract(18).multiply(0.10)
+      this.reservations.widthProperty().subtract(18).multiply(0.15)
     );
 
     this.timeColumn.prefWidthProperty().bind(
@@ -329,11 +319,6 @@ public final class ReservationController {
         ApplicationController.getInstance().toShowtimes();
       });
 
-      Button buyButton = new Button(
-        "", fontAwesome.create("money").color(Color.WHITE)
-      );
-      buyButton.getStyleClass().add("button-success");
-
       Button deleteButton = new Button(
         "", fontAwesome.create("trash_alt").color(Color.WHITE)
       );
@@ -344,7 +329,6 @@ public final class ReservationController {
       });
 
       buttons.getChildren().add(editButton);
-      buttons.getChildren().add(buyButton);
       buttons.getChildren().add(deleteButton);
 
       if (!empty) {

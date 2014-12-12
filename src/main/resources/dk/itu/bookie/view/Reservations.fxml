@@ -29,7 +29,6 @@
         <columns>
           <TableColumn fx:id="phoneColumn" text="Tlf. #" resizable="false" />
           <TableColumn fx:id="ticketColumn" text="# Billetter" resizable="false" />
-          <TableColumn fx:id="statusColumn" text="Status" resizable="false" />
           <TableColumn fx:id="movieColumn" text="Film" resizable="false" />
           <TableColumn fx:id="auditoriumColumn" text="Sal" resizable="false" />
           <TableColumn fx:id="dateColumn" text="Dato" resizable="false" />
