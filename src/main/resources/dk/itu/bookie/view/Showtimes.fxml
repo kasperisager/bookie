@@ -59,7 +59,6 @@
           <HBox alignment="CENTER" styleClass="phone-label" spacing="6">
             <children>
               <TextField fx:id="phone" promptText="Telefon"/>
-              <TextField fx:id="seats" promptText="Pladser"/>
               <Button fx:id="reserve" text="Reservér" styleClass="button-primary" />
               <Button fx:id="buy" text="Køb" styleClass="button-success" />
             </children>
