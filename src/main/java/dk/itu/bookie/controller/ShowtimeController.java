@@ -136,12 +136,12 @@ public final class ShowtimeController {
   /**
    * The currently active showtime.
    */
-  private ReadOnlyObjectWrapper<Showtime> activeShowtime;
+  private ReadOnlyObjectWrapper<Showtime> activeShowtime = new ReadOnlyObjectWrapper<>();
 
   /**
    * The currently active reservation.
    */
-  private ReadOnlyObjectWrapper<Reservation> activeReservation;
+  private ReadOnlyObjectWrapper<Reservation> activeReservation = new ReadOnlyObjectWrapper();
 
   /**
    * The set of selected seats.
@@ -164,9 +164,6 @@ public final class ShowtimeController {
    */
   public void initialize() throws Exception {
     ShowtimeController.instance = this;
-
-    this.activeShowtime = new ReadOnlyObjectWrapper<>();
-    this.activeReservation = new ReadOnlyObjectWrapper<>();
 
     this.bindTableColumnWidths();
 
@@ -226,7 +223,7 @@ public final class ShowtimeController {
     });
 
     this.reserve.setOnAction((e) -> {
-      if (this.activeReservation == null) {
+      if (this.activeReservation.isNull().get()) {
         this.makeReservation(false);
       }
       else {
@@ -235,7 +232,7 @@ public final class ShowtimeController {
     });
 
     this.buy.setOnAction((e) -> {
-      if (this.activeReservation == null) {
+      if (this.activeReservation.isNull().get()) {
         this.makeReservation(true);
       }
       else {
@@ -490,8 +487,8 @@ public final class ShowtimeController {
   private void renderShowtime(final Showtime showtime) {
     this.auditorium.getChildren().clear();
 
-    if (this.activeReservation != null) {
-      this.activeReservation = null;
+    if (this.activeReservation.isNotNull().get()) {
+      this.activeReservation.set(null);
       this.phone.setText("");
       this.phone.setDisable(false);
     }
@@ -599,7 +596,7 @@ public final class ShowtimeController {
 
     this.phone.setText("");
     this.phone.setDisable(false);
-    this.activeReservation = null;
+    this.activeReservation.set(null);
   }
 
   /**
