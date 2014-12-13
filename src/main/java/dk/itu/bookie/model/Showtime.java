@@ -4,6 +4,7 @@
 package dk.itu.bookie.model;
 
 // General utilities
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -40,7 +41,7 @@ public final class Showtime extends Model {
   /**
    * List of reservations.
    */
-  public List<Reservation> reservations;
+  public List<Reservation> reservations = new ArrayList<>();
 
   /**
    * The time at which the movie is playing.

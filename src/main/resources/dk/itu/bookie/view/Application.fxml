@@ -11,8 +11,6 @@
   xmlns:fx="http://javafx.com/fxml"
 >
   <children>
-    <fx:include fx:id="menu" source="Menu.fxml" />
-
     <TabPane fx:id="tabs" tabClosingPolicy="UNAVAILABLE">
       <tabs>
         <fx:include fx:id="showtimes" source="Showtimes.fxml" />

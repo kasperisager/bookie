@@ -15,7 +15,6 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.SelectionMode;
 
 // JavaFX layouts
 import javafx.scene.layout.HBox;
@@ -31,6 +30,9 @@ import javafx.collections.transformation.SortedList;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+
+// JavaFX bindings
+import javafx.beans.binding.DoubleBinding;
 
 // FXML utilities
 import javafx.fxml.FXML;
@@ -125,10 +127,6 @@ public final class ReservationController {
     ReservationController.instance = this;
 
     this.bindTableColumnWidths();
-
-    this.reservations
-      .getSelectionModel()
-      .setSelectionMode(SelectionMode.MULTIPLE);
 
     FilteredList<Reservation> filteredReservations = new FilteredList<>(
       ApplicationController.reservations(), p -> true
@@ -225,33 +223,19 @@ public final class ReservationController {
    * containing table.
    */
   public void bindTableColumnWidths() {
-    this.phoneColumn.prefWidthProperty().bind(
-      this.reservations.widthProperty().subtract(18).multiply(0.20)
-    );
+    DoubleBinding tableWidth = this.reservations.widthProperty().subtract(128);
 
-    this.ticketColumn.prefWidthProperty().bind(
-      this.reservations.widthProperty().subtract(18).multiply(0.10)
-    );
+    this.phoneColumn.prefWidthProperty().bind(tableWidth.multiply(0.20));
 
-    this.movieColumn.prefWidthProperty().bind(
-      this.reservations.widthProperty().subtract(18).multiply(0.15)
-    );
+    this.ticketColumn.prefWidthProperty().bind(tableWidth.multiply(0.10));
 
-    this.auditoriumColumn.prefWidthProperty().bind(
-      this.reservations.widthProperty().subtract(18).multiply(0.10)
-    );
+    this.movieColumn.prefWidthProperty().bind(tableWidth.multiply(0.30));
 
-    this.dateColumn.prefWidthProperty().bind(
-      this.reservations.widthProperty().subtract(18).multiply(0.15)
-    );
+    this.auditoriumColumn.prefWidthProperty().bind(tableWidth.multiply(0.10));
 
-    this.timeColumn.prefWidthProperty().bind(
-      this.reservations.widthProperty().subtract(18).multiply(0.10)
-    );
+    this.dateColumn.prefWidthProperty().bind(tableWidth.multiply(0.20));
 
-    this.actionsColumn.prefWidthProperty().bind(
-      this.reservations.widthProperty().subtract(18).multiply(0.20)
-    );
+    this.timeColumn.prefWidthProperty().bind(tableWidth.multiply(0.10));
   }
 
   /**

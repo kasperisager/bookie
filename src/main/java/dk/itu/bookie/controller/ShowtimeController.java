@@ -29,7 +29,6 @@ import javafx.geometry.VPos;
 
 // JavaFX collections
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableSet;
 
 // JavaFX properties
@@ -38,6 +37,7 @@ import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 
 // JavaFX bindings
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.binding.When;
 
@@ -91,12 +91,6 @@ public final class ShowtimeController {
    */
   @FXML
   private TableColumn<Showtime, String> auditoriumColumn;
-
-  /**
-   * The column containing the number of available seats in the auditorium.
-   */
-  @FXML
-  private TableColumn<Showtime, String> availableColumn;
 
   /**
    * The column containing the date that the movie is playing.
@@ -200,27 +194,6 @@ public final class ShowtimeController {
       return new SimpleStringProperty(data.getValue().auditorium.name);
     });
 
-    this.availableColumn.setCellValueFactory((data) -> {
-      Showtime showtime = data.getValue();
-
-      SimpleStringProperty availableSeats = new SimpleStringProperty();
-
-      availableSeats.set(this.countAvailableSeats(showtime).toString());
-
-      try {
-        ApplicationController.reservations().addListener(
-          (ListChangeListener.Change<? extends Reservation> c) -> {
-            availableSeats.set(this.countAvailableSeats(showtime).toString());
-          }
-        );
-      }
-      catch (SQLException ex) {
-        return null;
-      }
-
-      return availableSeats;
-    });
-
     this.dateColumn.setCellValueFactory((data) -> {
       return new SimpleStringProperty(data.getValue().date());
     });
@@ -279,25 +252,15 @@ public final class ShowtimeController {
    * containing table.
    */
   private void bindTableColumnWidths() {
-    this.movieColumn.prefWidthProperty().bind(
-      this.showtimes.widthProperty().subtract(18).multiply(0.35)
-    );
+    DoubleBinding tableWidth = this.showtimes.widthProperty().subtract(18);
 
-    this.auditoriumColumn.prefWidthProperty().bind(
-      this.showtimes.widthProperty().subtract(18).multiply(0.20)
-    );
+    this.movieColumn.prefWidthProperty().bind(tableWidth.multiply(0.55));
 
-    this.availableColumn.prefWidthProperty().bind(
-      this.showtimes.widthProperty().subtract(18).multiply(0.15)
-    );
+    this.auditoriumColumn.prefWidthProperty().bind(tableWidth.multiply(0.15));
 
-    this.dateColumn.prefWidthProperty().bind(
-      this.showtimes.widthProperty().subtract(18).multiply(0.20)
-    );
+    this.dateColumn.prefWidthProperty().bind(tableWidth.multiply(0.20));
 
-    this.timeColumn.prefWidthProperty().bind(
-      this.showtimes.widthProperty().subtract(18).multiply(0.10)
-    );
+    this.timeColumn.prefWidthProperty().bind(tableWidth.multiply(0.10));
   }
 
   /**
@@ -513,8 +476,8 @@ public final class ShowtimeController {
 
     if (this.activeReservation.isNotNull().get()) {
       this.activeReservation.set(null);
-      this.phone.setText("");
-      this.phone.setDisable(false);
+      this.clearPhone();
+      this.enablePhone();
     }
 
     this.renderAuditoriumLabels(showtime.auditorium);
@@ -533,6 +496,60 @@ public final class ShowtimeController {
   }
 
   /**
+   * Get the value of the phone input field as an integer.
+   *
+   * @return  The value of the phone input field if a valid integer, otherwise
+   *          null.
+   */
+  private Integer getPhone() {
+    try {
+      return Integer.parseInt(this.phone.getText());
+    }
+    catch (NumberFormatException ex) {
+      return null;
+    }
+  }
+
+  /**
+   * Set the phone input field.
+   *
+   * @param number The number to set.
+   */
+  private void setPhone(final String number) {
+    this.phone.setText(number);
+  }
+
+  /**
+   * Set the phone input field.
+   *
+   * @param number The number to set.
+   */
+  private void setPhone(final Integer number) {
+    this.phone.setText(number.toString());
+  }
+
+  /**
+   * Clear the phone input field.
+   */
+  private void clearPhone() {
+    this.phone.clear();
+  }
+
+  /**
+   * Enable the phone input field.
+   */
+  private void enablePhone() {
+    this.phone.setDisable(false);
+  }
+
+  /**
+   * Disable the phone input field.
+   */
+  private void disablePhone() {
+    this.phone.setDisable(true);
+  }
+
+  /**
    * Render the auditorium of a reservation.
    *
    * @param reservation The reservation whose auditorium to render.
@@ -540,8 +557,8 @@ public final class ShowtimeController {
   private void renderReservation(final Reservation reservation) {
     this.showtimes.getSelectionModel().select(reservation.showtime);
 
-    this.phone.setText(reservation.phoneNumber + "");
-    this.phone.setDisable(true);
+    this.setPhone(reservation.phoneNumber);
+    this.disablePhone();
 
     this.renderSelectedSeats(this.getSeats(reservation));
   }
@@ -556,24 +573,15 @@ public final class ShowtimeController {
       return;
     }
 
-    String phone = this.phone.getText();
-
     Showtime showtime = this.activeShowtime.get();
 
     if (showtime == null) {
       return;
     }
 
-    if (phone == null || phone.isEmpty()) {
-      return;
-    }
+    Integer phoneNumber = this.getPhone();
 
-    int phoneNumber;
-
-    try {
-      phoneNumber = Integer.parseInt(phone);
-    }
-    catch (NumberFormatException ex) {
+    if (phoneNumber == null) {
       return;
     }
 

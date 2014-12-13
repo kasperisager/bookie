@@ -5,9 +5,7 @@ package dk.itu.bookie;
 
 // General utilities
 import java.sql.SQLException;
-import java.util.Locale;
 import java.util.Properties;
-import java.util.ResourceBundle;
 
 // JavaFX utilities
 import javafx.application.Application;
@@ -60,8 +58,13 @@ public final class Bookie extends Application {
    * @throws SQLException In case of a SQL exception during seeding.
    */
   public static void main(final String[] args) throws SQLException {
+    // Clear the demo database.
     Seeder.reset();
+
+    // Initialize the demo database.
     Seeder.init();
+
+    // Liftoff!
     Bookie.launch(args);
   }
 
@@ -78,12 +81,6 @@ public final class Bookie extends Application {
 
     try {
       FXMLLoader fxmlLoader = new FXMLLoader();
-
-      Locale locale = new Locale("da", "DK");
-
-      fxmlLoader.setResources(
-        ResourceBundle.getBundle("dk.itu.bookie.Locale", locale)
-      );
 
       Parent root = fxmlLoader.load(
         this.getClass().getResource("view/Application.fxml")

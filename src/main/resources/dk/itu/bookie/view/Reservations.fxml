@@ -27,13 +27,13 @@
         </placeholder>
 
         <columns>
-          <TableColumn fx:id="phoneColumn" text="Tlf. #" resizable="false" />
+          <TableColumn fx:id="phoneColumn" text="Tlf. #" resizable="false" sortable="false" />
           <TableColumn fx:id="ticketColumn" text="# Billetter" resizable="false" />
           <TableColumn fx:id="movieColumn" text="Film" resizable="false" />
           <TableColumn fx:id="auditoriumColumn" text="Sal" resizable="false" />
           <TableColumn fx:id="dateColumn" text="Dato" resizable="false" />
           <TableColumn fx:id="timeColumn" text="Tid" resizable="false" />
-          <TableColumn fx:id="actionsColumn" text="Handlinger" resizable="false" sortable="false" />
+          <TableColumn fx:id="actionsColumn" text="Handlinger" resizable="false" sortable="false" prefWidth="110" />
         </columns>
       </TableView>
     </children>
