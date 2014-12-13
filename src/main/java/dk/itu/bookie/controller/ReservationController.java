@@ -71,6 +71,9 @@ public final class ReservationController {
   @FXML
   private TableColumn<Reservation, Number> phoneColumn;
 
+  @FXML
+  private TextField phoneFilter;
+
   /**
    * The column containing the number of tickets reserved.
    */
@@ -138,13 +141,7 @@ public final class ReservationController {
       );
     });
 
-    this.phoneColumn.setText("");
-
-    TextField phoneSearch = new TextField();
-    phoneSearch.setPromptText("Telefon");
-    phoneSearch.getStyleClass().add("phone-search");
-
-    phoneSearch.textProperty().addListener((ob, ov, nv) -> {
+    this.phoneFilter.textProperty().addListener((ob, ov, nv) -> {
       filteredReservations.setPredicate(reservation -> {
         if (nv == null || nv.isEmpty()) {
           return true;
@@ -167,8 +164,6 @@ public final class ReservationController {
     );
 
     this.reservations.setItems(sortedReservations);
-
-    this.phoneColumn.setGraphic(phoneSearch);
 
     this.ticketColumn.setCellValueFactory((data) -> {
       return new SimpleIntegerProperty(

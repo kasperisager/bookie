@@ -8,6 +8,7 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
 
 <Tab
@@ -27,7 +28,11 @@
         </placeholder>
 
         <columns>
-          <TableColumn fx:id="phoneColumn" text="Tlf. #" resizable="false" sortable="false" />
+          <TableColumn fx:id="phoneColumn" resizable="false" sortable="false">
+            <graphic>
+              <TextField fx:id="phoneFilter" promptText="Telefon" styleClass="phone-search" />
+            </graphic>
+          </TableColumn>
           <TableColumn fx:id="ticketColumn" text="# Billetter" resizable="false" />
           <TableColumn fx:id="movieColumn" text="Film" resizable="false" />
           <TableColumn fx:id="auditoriumColumn" text="Sal" resizable="false" />
