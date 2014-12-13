@@ -39,7 +39,6 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 
 // JavaFX bindings
 import javafx.beans.binding.NumberBinding;
-import javafx.beans.binding.StringBinding;
 import javafx.beans.binding.When;
 
 // FXML utilities
@@ -138,12 +137,14 @@ public final class ShowtimeController {
   /**
    * The currently active showtime.
    */
-  private ReadOnlyObjectWrapper<Showtime> activeShowtime = new ReadOnlyObjectWrapper<>();
+  private ReadOnlyObjectWrapper<Showtime> activeShowtime =
+    new ReadOnlyObjectWrapper<>();
 
   /**
    * The currently active reservation.
    */
-  private ReadOnlyObjectWrapper<Reservation> activeReservation = new ReadOnlyObjectWrapper();
+  private ReadOnlyObjectWrapper<Reservation> activeReservation =
+    new ReadOnlyObjectWrapper();
 
   /**
    * The set of selected seats.
@@ -214,7 +215,7 @@ public final class ShowtimeController {
         );
       }
       catch (SQLException ex) {
-        // Nopes.
+        return null;
       }
 
       return availableSeats;
@@ -642,6 +643,12 @@ public final class ShowtimeController {
     this.makeReservation(buy);
   }
 
+  /**
+   * Given a showtime, count the number of available seats.
+   *
+   * @param showtime  The showtime whose available seats to count.
+   * @return          The number of available seats.
+   */
   private Integer countAvailableSeats(final Showtime showtime) {
     Auditorium auditorium = showtime.auditorium;
 

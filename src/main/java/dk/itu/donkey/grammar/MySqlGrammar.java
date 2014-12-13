@@ -17,6 +17,7 @@ public final class MySqlGrammar extends Grammar {
    *
    * @return The name of auto increment columns.
    */
+  @Override
   public String generatedAutoIncrementRow() {
     return "GENERATED_KEY";
   }
@@ -27,7 +28,8 @@ public final class MySqlGrammar extends Grammar {
    * @param column  The name of the column.
    * @return        The formatted auto incrementing column.
    */
-  public String buildAutoIncrement(final String column) {
+  @Override
+  protected String buildAutoIncrement(final String column) {
     return String.format("%s integer primary key auto_increment", column);
   }
 
@@ -36,6 +38,7 @@ public final class MySqlGrammar extends Grammar {
    *
    * @param column The name of the column.
    */
+  @Override
   public void addAutoIncrement(final String column) {
     this.addColumn(this.buildAutoIncrement(column));
   }
