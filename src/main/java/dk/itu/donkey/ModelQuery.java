@@ -257,7 +257,7 @@ public final class ModelQuery<T extends Model> {
             model.setField(fieldName, context);
           }
           else {
-            List<T> value = this.setRelations(
+            List<T> value = this.getRelations(
               model, fieldType, modelRows.get(model.id())
             );
 
@@ -303,59 +303,59 @@ public final class ModelQuery<T extends Model> {
       // If the field being looked at is a list, get the generic type of the
       // list.
       if (List.class.isAssignableFrom(fieldType)) {
-	fieldType = Model.getGenericType(field);
+        fieldType = Model.getGenericType(field);
 
-	// Remember that the field type was a list.
-	isList = true;
+        // Remember that the field type was a list.
+        isList = true;
       }
 
       if (Model.class.isAssignableFrom(fieldType)) {
-	T inner = Model.instantiate(fieldType);
+        T inner = Model.instantiate(fieldType);
 
-	// If the model hasn't already been added as a relation, join it into
-	// the query if it represents a single field, e.g. a comment belonging
-	// to a post, and look for further relations...
-	//
-	// Example:
-	// [...] from showtimes join movies on showtimes.movie = movies.id
-	if (!this.tables.contains(inner.table())) {
-	  if (!isList) {
-	    this.query.leftJoin(
-	      inner.table(),
-	      String.format("%s.%s", outer.table(), fieldName),
-	      String.format("%s.%s", inner.table(), "id")
-	    );
+        // If the model hasn't already been added as a relation, join it into
+        // the query if it represents a single field, e.g. a comment belonging
+        // to a post, and look for further relations...
+        //
+        // Example:
+        // [...] from showtimes join movies on showtimes.movie = movies.id
+        if (!this.tables.contains(inner.table())) {
+          if (!isList) {
+            this.query.leftJoin(
+              inner.table(),
+              String.format("%s.%s", outer.table(), fieldName),
+              String.format("%s.%s", inner.table(), "id")
+            );
 
-	    // Remember that this table has already been added as a relation.
-	    this.tables.add(inner.table());
-	  }
+            // Remember that this table has already been added as a relation.
+            this.tables.add(inner.table());
+          }
 
-	  // Look for further relations.
-	  this.getRelations(fieldType);
-	}
-	// ...otherwise, assume that the model is a relation of an already
-	// joined model. This will be the case in a two-way relation (either
-	// One-to-One or One-to-Many) and so a reverse join is performed if the
-	// field isn't a list, e.g. joining a single post with a list of
-	// comments.
-	//
-	// Example:
-	// [...] from showtimes join tickets on showtimes.id = tickets.showtime
-	else if (!isList) {
-	  this.query.leftJoin(
-	    outer.table(),
-	    String.format("%s.%s", inner.table(), "id"),
-	    String.format("%s.%s", outer.table(), fieldName)
-	  );
-	}
+          // Look for further relations.
+          this.setRelations(fieldType);
+        }
+        // ...otherwise, assume that the model is a relation of an already
+        // joined model. This will be the case in a two-way relation (either
+        // One-to-One or One-to-Many) and so a reverse join is performed if the
+        // field isn't a list, e.g. joining a single post with a list of
+        // comments.
+        //
+        // Example:
+        // [...] from showtimes join tickets on showtimes.id = tickets.showtime
+        else if (!isList) {
+          this.query.leftJoin(
+            outer.table(),
+            String.format("%s.%s", inner.table(), "id"),
+            String.format("%s.%s", outer.table(), fieldName)
+          );
+        }
       }
       else {
-	// Prefix all the columns of the model with its table name to ensure
-	// that non-unique columns can be differentiated if other data is
-	// joined in. I.e. people.name becomes people_name.
-	this.query.select(String.format(
-	  "%s.%s as %1$s_%2$s", outer.table(), fieldName.toLowerCase()
-	));
+        // Prefix all the columns of the model with its table name to ensure
+        // that non-unique columns can be differentiated if other data is
+        // joined in. I.e. people.name becomes people_name.
+        this.query.select(String.format(
+          "%s.%s as %1$s_%2$s", outer.table(), fieldName.toLowerCase()
+        ));
       }
     }
   }
