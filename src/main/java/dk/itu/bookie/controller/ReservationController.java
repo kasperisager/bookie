@@ -262,8 +262,8 @@ public final class ReservationController {
   public void deleteReservation(final Reservation reservation) {
     Action response = Dialogs
       .create()
-      .title("Confirm action")
-      .masthead("Are you sure you want to delete the reservation?")
+      .title("Bekræft handling")
+      .masthead("Er du sikker på, at du vil slette reservationen?")
       .actions(Dialog.ACTION_OK, Dialog.ACTION_CANCEL)
       .showConfirm();
 

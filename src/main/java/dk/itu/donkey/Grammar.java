@@ -158,7 +158,7 @@ public abstract class Grammar {
    * @param table The table to format.
    * @return      The formatted table.
    */
-  public final String buildTable(final String table) {
+  protected final String buildTable(final String table) {
     return table.trim();
   }
 
@@ -180,7 +180,7 @@ public abstract class Grammar {
    * @param column  The column to format.
    * @return        The formatted column.
    */
-  public final String buildColumn(final String column) {
+  protected final String buildColumn(final String column) {
     return column.trim();
   }
 
@@ -193,7 +193,7 @@ public abstract class Grammar {
    * @param columns The formatted columns.
    * @return        A comma-seprated list of columns.
    */
-  public final String buildColumns(final List<String> columns) {
+  protected final String buildColumns(final List<String> columns) {
     return String.join(", ", columns);
   }
 
@@ -216,7 +216,7 @@ public abstract class Grammar {
    * @param value The value to format.
    * @return      The formatted value.
    */
-  public final String buildValue(final Object value) {
+  protected final String buildValue(final Object value) {
     return "?";
   }
 
@@ -229,7 +229,7 @@ public abstract class Grammar {
    * @param values  The formatted values.
    * @return        A comma-separated list of values.
    */
-  public final String buildValues(final List<String> values) {
+  protected final String buildValues(final List<String> values) {
     return String.join(", ", values);
   }
 
@@ -255,7 +255,7 @@ public abstract class Grammar {
    * @param value   The formatted value of the set clause.
    * @return        The formatted set clause.
    */
-  public final String buildSet(final String column, final String value) {
+  protected final String buildSet(final String column, final String value) {
     return String.format("%s = %s", column, value);
   }
 
@@ -270,7 +270,7 @@ public abstract class Grammar {
    * @param values  The values of the set clause.
    * @return        A list of comma-separated set clauses.
    */
-  public final String buildSets(
+  protected final String buildSets(
     final List<String> columns,
     final List<String> values
   ) {
@@ -294,7 +294,7 @@ public abstract class Grammar {
    * @param foreignColumn The column in the foreign table.
    * @return              A formatted join clause.
    */
-  public final String buildJoin(
+  protected final String buildJoin(
     final String type,
     final String foreignTable,
     final String localColumn,
@@ -316,7 +316,7 @@ public abstract class Grammar {
    * @param joins The formatted join clauses.
    * @return      A space-separated list of joins.
    */
-  public final String buildJoins(final List<String> joins) {
+  protected final String buildJoins(final List<String> joins) {
     return String.join(" ", joins);
   }
 
@@ -353,7 +353,7 @@ public abstract class Grammar {
    * @param comparator  The comparator to use.
    * @return            The formatted where clause.
    */
-  public final String buildWhere(
+  protected final String buildWhere(
     final String column,
     final String operator,
     final Object value,
@@ -381,7 +381,7 @@ public abstract class Grammar {
    * @param wheres  The formatted where clauses.
    * @return        A comma-separated list of where clauses.
    */
-  public final String buildWheres(final List<String> wheres) {
+  protected final String buildWheres(final List<String> wheres) {
     if (!wheres.isEmpty()) {
       return "where " + String.join(" ", wheres).replaceAll("^and |^or ", "");
     }
@@ -417,7 +417,10 @@ public abstract class Grammar {
    * @param direction The direction of the ordering.
    * @return          The formatted order by clause.
    */
-  public final String buildOrder(final String column, final String direction) {
+  protected final String buildOrder(
+    final String column,
+    final String direction
+  ) {
     return String.format(
       "%s %s",
       this.buildColumn(column),
@@ -435,7 +438,7 @@ public abstract class Grammar {
    * @param orders  The formatted order by clauses.
    * @return        A comma-separated list of order by clauses.
    */
-  public final String buildOrders(final List<String> orders) {
+  protected final String buildOrders(final List<String> orders) {
     if (!orders.isEmpty()) {
       return "order by " + String.join(", ", orders);
     }
@@ -463,7 +466,7 @@ public abstract class Grammar {
    * @param limit The limit.
    * @return      The formatted limit clause.
    */
-  public final String buildLimit(final int limit) {
+  protected final String buildLimit(final int limit) {
     return (limit > 0) ? "limit " + limit : "";
   }
 
@@ -485,7 +488,7 @@ public abstract class Grammar {
    * @param offset  The offset.
    * @return        The formatted offset.
    */
-  public final String buildOffset(final int offset) {
+  protected final String buildOffset(final int offset) {
     return (offset > 0) ? "offset " + offset : "";
   }
 
@@ -511,7 +514,7 @@ public abstract class Grammar {
    * @param required  Whether or not this column is required.
    * @return          The formatted column clause.
    */
-  public final String buildDataType(
+  protected final String buildDataType(
     final String column,
     final String type,
     final int length,
@@ -533,7 +536,7 @@ public abstract class Grammar {
    * @param required  Whether or not this column is required.
    * @return          The formatted column clause.
    */
-  public final String buildDataType(
+  protected final String buildDataType(
     final String column,
     final String type,
     final boolean required
@@ -587,7 +590,7 @@ public abstract class Grammar {
    * @param foreignColumn The foreign column.
    * @return              The formatted foreign key clause.
    */
-  public final String buildForeignKey(
+  protected final String buildForeignKey(
     final String column,
     final String foreignTable,
     final String foreignColumn
@@ -606,7 +609,7 @@ public abstract class Grammar {
    * @param foreignKeys The formatted foreign keys.
    * @return            A comma-separated list of foreign keys.
    */
-  public final String buildForeignKeys(final List<String> foreignKeys) {
+  protected final String buildForeignKeys(final List<String> foreignKeys) {
     if (!foreignKeys.isEmpty()) {
       return ", " + String.join(", ", foreignKeys);
     }
@@ -650,7 +653,7 @@ public abstract class Grammar {
    * @param column  The name of the column.
    * @return        A formatted auto incrementing column.
    */
-  public abstract String buildAutoIncrement(final String column);
+  protected abstract String buildAutoIncrement(final String column);
 
   /**
    * Add an auto incrementing column to the grammar.
