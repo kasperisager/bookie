@@ -71,6 +71,9 @@ public final class ReservationController {
   @FXML
   private TableColumn<Reservation, Number> phoneColumn;
 
+  /**
+   * The text field for filtering the phone column.
+   */
   @FXML
   private TextField phoneFilter;
 

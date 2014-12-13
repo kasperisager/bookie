@@ -626,8 +626,9 @@ public final class ShowtimeController {
       return;
     }
 
-    this.phone.setText("");
-    this.phone.setDisable(false);
+    this.clearPhone();
+    this.enablePhone();
+
     this.activeReservation.set(null);
   }
 
@@ -649,24 +650,5 @@ public final class ShowtimeController {
     }
 
     this.makeReservation(buy);
-  }
-
-  /**
-   * Given a showtime, count the number of available seats.
-   *
-   * @param showtime  The showtime whose available seats to count.
-   * @return          The number of available seats.
-   */
-  private Integer countAvailableSeats(final Showtime showtime) {
-    Auditorium auditorium = showtime.auditorium;
-
-    int totalSeatCount = auditorium.rows * auditorium.seats;
-    int reservedSeatCount = 0;
-
-    for (Reservation reservation: showtime.reservations) {
-      reservedSeatCount += reservation.tickets.size();
-    }
-
-    return totalSeatCount - reservedSeatCount;
   }
 }
