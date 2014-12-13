@@ -229,7 +229,7 @@ Det bør også nævnes, at \texttt{setRelations()}-metoden sørger for at præfi
 
 \texttt{ModelQuery}-klassens \texttt{getRelations()}-metode står slutteligt for at tolke den liste af \texttt{Row}s, som måtte resultere fra eksekveringen af et \texttt{Query}. Da \texttt{ModelQuery} som beskrevet ovenfor automatisk sammenkører tabeller for at løse relationer mellem datamodeller, svarer een \texttt{Row} nu ikke nødvendigvis til een datamodel. Er en af de pågældende relationer af typen en-til-mange, vil der være mulighed for, at flere \texttt{Row}s beskriver samme datamodel. Det er derfor nødvendigt at partitionere listen af \texttt{Row}s således, at denne bliver oversat til en struktur af datamodeller frem for en flad liste af databaserækker.
 
-Tag for eksempel følgende tabel af artikler (datamodel \texttt{Post} med tabel \\texttt{posts}) sammenkørt med deres kommentarer (datamodel \texttt{Comment} med tabel \texttt{comments}):
+Tag for eksempel følgende tabel af artikler (datamodel \texttt{Post} med tabel \texttt{posts}) sammenkørt med deres kommentarer (datamodel \texttt{Comment} med tabel \texttt{comments}):
 
 \begin{table}[h]
   \centering
@@ -250,7 +250,7 @@ Tag for eksempel følgende tabel af artikler (datamodel \texttt{Post} med tabel 
     \hline
 
   \end{tabular}
-  \caption{}
+  \caption{Tabel af artikler sammenkørt med deres kommentarer}
   \label{data-table:posts}
 \end{table}
 
@@ -264,7 +264,7 @@ Med udgangspunkt i den forespurgte datamodel \texttt{Post} skal listen af række
 
     \texttt{posts\_id} & \texttt{posts\_title} & \texttt{comments\_id} & \texttt{comments\_body} \\
 
-    \hline
+    \hline\hline
 
     1 & "A day at the arcade" & 1 & "Wow, I totally want to go!" \\
     1 & "A day at the arcade" & 2 & "Fun times, thanks for sharing." \\
@@ -278,7 +278,7 @@ Med udgangspunkt i den forespurgte datamodel \texttt{Post} skal listen af række
     \hline
 
   \end{tabular}
-  \caption{}
+  \caption{Partioneret version af tabel \ref{data-table:posts}}
   \label{data-table:posts-partition}
 \end{table}
 
