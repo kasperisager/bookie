@@ -2,7 +2,7 @@
 
 \section{Databaseabstraktion}
 
-I parallel med Bookie har vi udviklet en databaseabstraktion ved navn \textit{Donkey}. Donkey er bygget oven på JDBC (Java Database Connectivity) og har til formål at muliggøre persistens af datamodeller uden at en udvikler behøver at skrive en eneste linje SQL. Dette opnås gennem såkaldt \textit{object-relational mapping} (forkortet \textit{ORM}), hvor et objekt i et objekt-orienteret system – i vores tilfælde Java – automatisk kan konverteres til en mere simpel struktur, som kan gemmes i et databasesystem (\cite{wiki:orm}).
+I parallel med Bookie har vi udviklet en databaseabstraktion ved navn \textit{Donkey}. Donkey er bygget oven på \textit{Java Database Connectivity} (forkortet \textit{JDBC}) og har til formål at muliggøre persistens af datamodeller uden at en udvikler behøver at skrive en eneste linje SQL. Dette opnås gennem såkaldt \textit{object-relational mapping} (forkortet \textit{ORM}), hvor et objekt i et objekt-orienteret system – i vores tilfælde Java – automatisk kan konverteres til en mere simpel struktur, som kan gemmes i et databasesystem (\cite{wiki:orm}).
 
 Donkey understøtter på nuværende tidspunkt tre forskellige relationelle databasesystemer: MySQL\footnote{\url{http://www.mysql.com/}}, PostgreSQL\footnote{\url{http://www.postgresql.org/}}, samt SQLite\footnote{\url{http://sqlite.org/}}. Mens Bookie udelukkende gør brug af SQLite, er understøttelse af de resterende databasesystemer medtaget for at sikre en solid løsning, som kan tage forbehold for eventuelle forskelle mellem databasesystemer.
 
@@ -139,11 +139,13 @@ Figur \ref{code-example:sql-execution} viser første eksempel på injektion af a
 
 \subsection{Schema}
 
-Modsat \texttt{Query} beskæftiger \texttt{Schema} sig med de typer af SQL-udtryk, der er kendt som \textit{Data Definition Language} (forkortet \textit{DDL}). Mens DML som sagt tager sig af at hente samt manipulere data i databasetabeller, så benyttes DDL til at definere strukturen af disse (\cite{wiki:ddl}). Som var tilfældet med \texttt{Query}, instantieres \texttt{Schema} ved at injicere en instans af \texttt{Database} hvorfra der er adgang til et \texttt{Grammar}-objekt passende til det pågældende databasesystem.
+Modsat \texttt{Query} beskæftiger \texttt{Schema} sig med de typer af SQL-udtryk, der er kendt som \textit{Data Definition Language} (forkortet \textit{DDL}). Mens DML som sagt tager sig af at hente samt manipulere data i databasetabeller, så benyttes DDL til at definere strukturen af disse (\cite{wiki:ddl}). Som var tilfældet med \texttt{Query}, instantieres \texttt{Schema} ved at injicere en instans af \texttt{Database}, hvorfra der er adgang til et \texttt{Grammar}-objekt passende til det pågældende databasesystem.
+
+Det bør nævnes, at alle kolonner oprettet via \texttt{Schema} er påkrævede og derfor ikke kan være \texttt{null}. Dette designvalg blev taget, da vi udelukkende så brug for påkrævede dataværdier i Bookies datamodeller.
 
 Der henvises til figur \ref{class-diagram:database-abstraction} for de specikke \texttt{Grammar}-metoder, som \texttt{Schema} indkapsler. Disse er primært baserede på \texttt{addDataType()}-metoden i \texttt{Grammar}, der kompilerer datatypekolonner til SQL \texttt{create}-udtryk.
 
-Ligesom med \texttt{Query} er \texttt{Schema} tiltænkt brugt gennem \texttt{Database} via dennes \texttt{schema()}-metode:
+Ligesom \texttt{Query} er \texttt{Schema} tiltænkt brugt gennem \texttt{Database} via dennes \texttt{schema()}-metode:
 
 \begin{figure}[h]
   \begin{minted}{java}
@@ -157,9 +159,130 @@ Ligesom med \texttt{Query} er \texttt{Schema} tiltænkt brugt gennem \texttt{Dat
   \label{code-example:schema-create}
 \end{figure}
 
+\begin{table}[h]
+  \centering
+  \begin{tabular}{l | l | l | l | l}
+
+    \multicolumn{3}{l}{\textbf{Navn}: \texttt{table}} \\
+
+    \hline
+
+    \textbf{Kolonne} & \textbf{Påkrævet} & \textbf{Type} & \textbf{Primær nøgle} & \textbf{Fremmed nøgle} \\
+
+    \hline
+
+    \texttt{col1} & Ja & \texttt{integer} & Nej & Nej \\
+    \texttt{col2} & Ja & \texttt{text} & Nej & Nej \\
+
+    \hline
+
+  \end{tabular}
+  \caption{Tabellen resulterende fra forespørgslen i figur \ref{code-example:schema-create}}
+\end{table}
+
 \subsection{Model}
 
+\begin{wrapfigure}{r}{0.35\textwidth}
+  \centering
+  \includegraphics[width=0.275\textwidth]{model-class.pdf}
+  \caption{Klassediagram for \texttt{Model}}
+  \label{class-diagram:model}
+\end{wrapfigure}
+
+\texttt{Model}-klassen benytter sig af de foregående klasser til at implemenetere object-relational mapping. Dette gøres ud fra konventionen om, at subklasser af \texttt{Model} repræsenterer databasetabeller, mens subklassernes felter repræsenterer kolonnerne i disse tabeller. \texttt{Model} gør således stor brug af Javas Relfection API'er\footnote{\url{http://docs.oracle.com/javase/tutorial/reflect/}} til at hente information om de offentlige felter i en given subklasse.
+
+\texttt{Model} benytter sig af \texttt{Schema} til at gennemløbe datamodellers offentlige felter og definere datatypekolonner for disse via \texttt{Model}s private \texttt{defineSchema()}-metode.
+
+\texttt{Query} bliver i \texttt{Model} brugt til at indsætte, opdatere, og slette datamodeller med hjælp fra klassens \texttt{getRow()}-metode. Denne gennemløber de offentligt tilgængelige felter i en datamodel og oversætter disse til kolonner i et \texttt{Row}-objekt.
+
+\texttt{Model} understøtter på nuværende tidspunkt en håndfuld af Javas simple typer samt disses indkapslede typer:
+
+\begin{multicols}{3}
+\begin{itemize}
+  \item \texttt{String}
+  \item \texttt{Integer} and \texttt{int}
+  \item \texttt{Double} and \texttt{double}
+  \item \texttt{Float} and \texttt{float}
+  \item \texttt{Long} and \texttt{long}
+  \item \texttt{Boolean} and \texttt{boolean}
+\end{itemize}
+\end{multicols}
+
+Derudover er subklasser af \texttt{Model}, samt lister hvis generiske typer er subklasser af \texttt{Model}, også understøttede og benyttes til at indikere relationer datamodeller imellem.
+
+Alle modeller indeholder kolonnen \texttt{id}, hvilken er automatisk stigende og modellens primære nøgle. Når relationer til andre datamodeller defineres, bliver dette derfor gjort via fremmede nøgler til den relaterede models \texttt{id}-kolonne.
+
 \subsection{ModelQuery}
+
+\begin{wrapfigure}{r}{0.35\textwidth}
+  \centering
+  \includegraphics[width=0.275\textwidth]{modelquery-class.pdf}
+  \caption{Klassediagram for \texttt{ModelQuery}}
+  \label{class-diagram:modelquery}
+\end{wrapfigure}
+
+\texttt{ModelQuery}-klassen indkapsler en række af \texttt{Query}-klassens metoder og benyttes til at hente modeller ud af en database. Modsat \texttt{Query}, hvis metoder returnerer lister af \texttt{Row}s, er resultatet af at eksekvere et \texttt{ModelQuery} istedet en liste af modeller.
+
+\texttt{ModelQuery} tager ydermere forbehold for relationer mellem datamodeller og sammenkøre automatisk tabeller hvor nødvendigt. Dette opnåes gennem klassens \texttt{setRelations()}-metode, der rekursivt gennemløber relationer i datamodeller og tilføjer \texttt{join}s til \texttt{ModelQuery}-instansens \texttt{Query}-objekt (se figur \ref{class-diagram:modelquery}). Mens dette stykke funktionalitet har potentiale til at forårsage unødigt komplekse SQL-forespørgsler ved at sammenkøre tabeller, som ikke nødvendigvis skal benyttes, er det medtaget, da det gør selv komplekse relationer trivielle at arbejde med.
+
+Det bør også nævnes, at \texttt{setRelations()}-metoden sørger for at præfikse samtlige kolonner med navnet på deres tilhørende tabel for at sikre, at sammenkørte tabeller ikke overskriver hinandens kolonner. Således vil kolonnen \texttt{col1} fra \texttt{table1} blive valgt som \texttt{table1\_col1} når forespurgt via et \texttt{ModelQuery}.
+
+\texttt{ModelQuery}-klassens \texttt{getRelations()}-metode står slutteligt for at tolke den liste af \texttt{Row}s, som måtte resultere fra eksekveringen af et \texttt{Query}. Da \texttt{ModelQuery} som beskrevet ovenfor automatisk sammenkører tabeller for at løse relationer mellem datamodeller, svarer een \texttt{Row} nu ikke nødvendigvis til een datamodel. Er en af de pågældende relationer af typen en-til-mange, vil der være mulighed for, at flere \texttt{Row}s beskriver samme datamodel. Det er derfor nødvendigt at partitionere listen af \texttt{Row}s således, at denne bliver oversat til en struktur af datamodeller frem for en flad liste af databaserækker.
+
+Tag for eksempel følgende tabel af artikler (datamodel \texttt{Post} med tabel \\texttt{posts}) sammenkørt med deres kommentarer (datamodel \texttt{Comment} med tabel \texttt{comments}):
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{l | l | l | l}
+
+    \hline
+
+    \texttt{posts\_id} & \texttt{posts\_title} & \texttt{comments\_id} & \texttt{comments\_body} \\
+
+    \hline
+
+    1 & "A day at the arcade" & 1 & "Wow, I totally want to go!" \\
+    1 & "A day at the arcade" & 2 & "Fun times, thanks for sharing." \\
+    2 & "How to make bagels" & 3 & "Mmmmm, looks delicious." \\
+    2 & "How to make bagels" & 4 & "What a fantastic recipe!" \\
+    2 & "How to make bagels" & 5 & "I like New York bagels better." \\
+
+    \hline
+
+  \end{tabular}
+  \caption{}
+  \label{data-table:posts}
+\end{table}
+
+Med udgangspunkt i den forespurgte datamodel \texttt{Post} skal listen af rækker partitioneres på følgende vis:
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{l | l | l | l}
+
+    \hline
+
+    \texttt{posts\_id} & \texttt{posts\_title} & \texttt{comments\_id} & \texttt{comments\_body} \\
+
+    \hline
+
+    1 & "A day at the arcade" & 1 & "Wow, I totally want to go!" \\
+    1 & "A day at the arcade" & 2 & "Fun times, thanks for sharing." \\
+
+    \hline\hline
+
+    2 & "How to make bagels" & 3 & "Mmmmm, looks delicious." \\
+    2 & "How to make bagels" & 4 & "What a fantastic recipe!" \\
+    2 & "How to make bagels" & 5 & "I like New York bagels better." \\
+
+    \hline
+
+  \end{tabular}
+  \caption{}
+  \label{data-table:posts-partition}
+\end{table}
+
+Herefter kan der instantieres to datamodeller af typen \texttt{Post}. Disses relationer kan nu gennemløbes og partitionering foretages på ny på de to partitioner set i figur \ref{data-table:posts-partition}. Dette vil resultere i henholdsvis 2 og 3 nye partitioner, denne gang med udgangspunkt i datamodellen \texttt{Comment}. Disse partitioner kan igen instantieres som datamodeller, og tilføjes som relationer i de allerede instantierede \texttt{Post}-modeller. Det endelige resultat er to instanser af \texttt{Post}-modellen, hver med henholdsvis to og tre instanser af \texttt{Comment}-modellen.
 
 \section{Databasedesign}
 
