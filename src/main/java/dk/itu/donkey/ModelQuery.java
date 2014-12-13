@@ -167,87 +167,6 @@ public final class ModelQuery<T extends Model> {
   }
 
   /**
-   * Recursively traverse a model and join in its relations on the current
-   * query object.
-   *
-   * @param type The model type to traverse.
-   */
-  private void getRelations(final Class<?> type) {
-    T outer = Model.instantiate(type);
-
-    // Remember that this model has already been added as a relation.
-    this.tables.add(outer.table());
-
-    // Select the ID column of the model in the format "table_id".
-    this.query.select(String.format("%s.id as %1$s_id", outer.table()));
-
-    for (Field field: outer.getFields()) {
-      String fieldName = field.getName();
-      Class<?> fieldType = field.getType();
-
-      boolean isList = false;
-
-      // If the field being looked at is a list, get the generic type of the
-      // list.
-      if (List.class.isAssignableFrom(fieldType)) {
-        fieldType = Model.getGenericType(field);
-
-        // Remember that the field type was a list.
-        isList = true;
-      }
-
-      if (Model.class.isAssignableFrom(fieldType)) {
-        T inner = Model.instantiate(fieldType);
-
-        // If the model hasn't already been added as a relation, join it into
-        // the query if it represents a single field, e.g. a comment belonging
-        // to a post, and look for further relations...
-        //
-        // Example:
-        // [...] from showtimes join movies on showtimes.movie = movies.id
-        if (!this.tables.contains(inner.table())) {
-          if (!isList) {
-            this.query.leftJoin(
-              inner.table(),
-              String.format("%s.%s", outer.table(), fieldName),
-              String.format("%s.%s", inner.table(), "id")
-            );
-
-            // Remember that this table has already been added as a relation.
-            this.tables.add(inner.table());
-          }
-
-          // Look for further relations.
-          this.getRelations(fieldType);
-        }
-        // ...otherwise, assume that the model is a relation of an already
-        // joined model. This will be the case in a two-way relation (either
-        // One-to-One or One-to-Many) and so a reverse join is performed if the
-        // field isn't a list, e.g. joining a single post with a list of
-        // comments.
-        //
-        // Example:
-        // [...] from showtimes join tickets on showtimes.id = tickets.showtime
-        else if (!isList) {
-          this.query.leftJoin(
-            outer.table(),
-            String.format("%s.%s", inner.table(), "id"),
-            String.format("%s.%s", outer.table(), fieldName)
-          );
-        }
-      }
-      else {
-        // Prefix all the columns of the model with its table name to ensure
-        // that non-unique columns can be differentiated if other data is
-        // joined in. I.e. people.name becomes people_name.
-        this.query.select(String.format(
-          "%s.%s as %1$s_%2$s", outer.table(), fieldName.toLowerCase()
-        ));
-      }
-    }
-  }
-
-  /**
    * Recursively traverse a model and initialize its relations based on a
    * database response.
    *
@@ -256,7 +175,7 @@ public final class ModelQuery<T extends Model> {
    * @param rows    The database rows to use for initializing the models.
    * @return        A list of models initialized with their relations.
    */
-  private List<T> setRelations(
+  private List<T> getRelations(
     final T context,
     final Class<?> type,
     final List<Row> rows
@@ -361,6 +280,87 @@ public final class ModelQuery<T extends Model> {
   }
 
   /**
+   * Recursively traverse a model and join in its relations on the current
+   * query object.
+   *
+   * @param type The model type to traverse.
+   */
+  private void setRelations(final Class<?> type) {
+    T outer = Model.instantiate(type);
+
+    // Remember that this model has already been added as a relation.
+    this.tables.add(outer.table());
+
+    // Select the ID column of the model in the format "table_id".
+    this.query.select(String.format("%s.id as %1$s_id", outer.table()));
+
+    for (Field field: outer.getFields()) {
+      String fieldName = field.getName();
+      Class<?> fieldType = field.getType();
+
+      boolean isList = false;
+
+      // If the field being looked at is a list, get the generic type of the
+      // list.
+      if (List.class.isAssignableFrom(fieldType)) {
+	fieldType = Model.getGenericType(field);
+
+	// Remember that the field type was a list.
+	isList = true;
+      }
+
+      if (Model.class.isAssignableFrom(fieldType)) {
+	T inner = Model.instantiate(fieldType);
+
+	// If the model hasn't already been added as a relation, join it into
+	// the query if it represents a single field, e.g. a comment belonging
+	// to a post, and look for further relations...
+	//
+	// Example:
+	// [...] from showtimes join movies on showtimes.movie = movies.id
+	if (!this.tables.contains(inner.table())) {
+	  if (!isList) {
+	    this.query.leftJoin(
+	      inner.table(),
+	      String.format("%s.%s", outer.table(), fieldName),
+	      String.format("%s.%s", inner.table(), "id")
+	    );
+
+	    // Remember that this table has already been added as a relation.
+	    this.tables.add(inner.table());
+	  }
+
+	  // Look for further relations.
+	  this.getRelations(fieldType);
+	}
+	// ...otherwise, assume that the model is a relation of an already
+	// joined model. This will be the case in a two-way relation (either
+	// One-to-One or One-to-Many) and so a reverse join is performed if the
+	// field isn't a list, e.g. joining a single post with a list of
+	// comments.
+	//
+	// Example:
+	// [...] from showtimes join tickets on showtimes.id = tickets.showtime
+	else if (!isList) {
+	  this.query.leftJoin(
+	    outer.table(),
+	    String.format("%s.%s", inner.table(), "id"),
+	    String.format("%s.%s", outer.table(), fieldName)
+	  );
+	}
+      }
+      else {
+	// Prefix all the columns of the model with its table name to ensure
+	// that non-unique columns can be differentiated if other data is
+	// joined in. I.e. people.name becomes people_name.
+	this.query.select(String.format(
+	  "%s.%s as %1$s_%2$s", outer.table(), fieldName.toLowerCase()
+	));
+      }
+    }
+  }
+
+  /**
    * Perform the query and return a list of matching models.
    *
    * @return A list of models.
@@ -368,8 +368,8 @@ public final class ModelQuery<T extends Model> {
    * @throws SQLException In case of a SQL error.
    */
   public List<T> get() throws SQLException {
-    this.getRelations(this.type);
+    this.setRelations(this.type);
 
-    return this.setRelations(null, this.type, this.query.get());
+    return this.getRelations(null, this.type, this.query.get());
   }
 }
