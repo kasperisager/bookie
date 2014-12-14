@@ -32,7 +32,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
 
 // JavaFX properties
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 
@@ -185,17 +184,17 @@ public final class ShowtimeController {
     });
 
     this.movieColumn.setCellValueFactory((data) -> {
-      return new SimpleStringProperty(data.getValue().movie.name);
+      return data.getValue().movie.get().name;
     });
 
     this.movieColumn.setGraphic(new Filter("Film", Filter.TEXT));
 
     this.auditoriumColumn.setCellValueFactory((data) -> {
-      return new SimpleStringProperty(data.getValue().auditorium.name);
+      return data.getValue().auditorium.get().name;
     });
 
     this.dateColumn.setCellValueFactory((data) -> {
-      return new SimpleStringProperty(data.getValue().date());
+      return data.getValue().date();
     });
 
     this.dateColumn.setGraphic(new Filter("Dato", Filter.DATE));
@@ -216,7 +215,7 @@ public final class ShowtimeController {
     });
 
     this.timeColumn.setCellValueFactory((data) -> {
-      return new SimpleStringProperty(data.getValue().time());
+      return data.getValue().time();
     });
 
     this.reserve.setOnAction((e) -> {
@@ -269,8 +268,8 @@ public final class ShowtimeController {
    * @param auditorium The auditorium whose seat labels to render.
    */
   private void renderAuditoriumLabels(final Auditorium auditorium) {
-    int rows = auditorium.rows;
-    int seats = auditorium.seats;
+    int rows = auditorium.rows.get();
+    int seats = auditorium.seats.get();
 
     for (int row = 1; row <= (rows + 1); row++) {
       for (int seat = 1; seat <= (seats + 1); seat++) {
@@ -304,8 +303,8 @@ public final class ShowtimeController {
    * @param auditorium The auditorium whose seats to render.
    */
   private void renderAuditoriumSeats(final Auditorium auditorium) {
-    int rows = auditorium.rows;
-    int seats = auditorium.seats;
+    int rows = auditorium.rows.get();
+    int seats = auditorium.seats.get();
 
     ReadOnlyDoubleProperty width = this.auditorium.widthProperty();
     ReadOnlyDoubleProperty height = this.auditorium.heightProperty();
@@ -433,13 +432,13 @@ public final class ShowtimeController {
    * @return            A double boolean array indicating reserved seats.
    */
   private boolean[][] getSeats(final Reservation reservation) {
-    int rows = reservation.showtime.auditorium.rows;
-    int seats = reservation.showtime.auditorium.seats;
+    int rows = reservation.showtime.get().auditorium.get().rows.get();
+    int seats = reservation.showtime.get().auditorium.get().seats.get();
 
     boolean[][] reservedSeats = new boolean[rows][seats];
 
     for (Ticket ticket: reservation.tickets) {
-      reservedSeats[ticket.row][ticket.seat] = true;
+      reservedSeats[ticket.row.get()][ticket.seat.get()] = true;
     }
 
     return reservedSeats;
@@ -452,14 +451,14 @@ public final class ShowtimeController {
    * @return          A double boolean array indicating reserved seats.
    */
   private boolean[][] getSeats(final Showtime showtime) {
-    int rows = showtime.auditorium.rows;
-    int seats = showtime.auditorium.seats;
+    int rows = showtime.auditorium.get().rows.get();
+    int seats = showtime.auditorium.get().seats.get();
 
     boolean[][] reservedSeats = new boolean[rows][seats];
 
     for (Reservation reservation: showtime.reservations) {
       for (Ticket ticket: reservation.tickets) {
-        reservedSeats[ticket.row][ticket.seat] = true;
+        reservedSeats[ticket.row.get()][ticket.seat.get()] = true;
       }
     }
 
@@ -480,13 +479,13 @@ public final class ShowtimeController {
       this.enablePhone();
     }
 
-    this.renderAuditoriumLabels(showtime.auditorium);
-    this.renderAuditoriumSeats(showtime.auditorium);
+    this.renderAuditoriumLabels(showtime.auditorium.get());
+    this.renderAuditoriumSeats(showtime.auditorium.get());
 
     for (Reservation reservation: showtime.reservations) {
       boolean[][] seats = this.getSeats(reservation);
 
-      if (!reservation.bought) {
+      if (!reservation.bought.get()) {
         this.renderReservedSeats(seats);
       }
       else {
@@ -555,9 +554,9 @@ public final class ShowtimeController {
    * @param reservation The reservation whose auditorium to render.
    */
   private void renderReservation(final Reservation reservation) {
-    this.showtimes.getSelectionModel().select(reservation.showtime);
+    this.showtimes.getSelectionModel().select(reservation.showtime.get());
 
-    this.setPhone(reservation.phoneNumber);
+    this.setPhone(reservation.phoneNumber.get());
     this.disablePhone();
 
     this.renderSelectedSeats(this.getSeats(reservation));
@@ -587,9 +586,9 @@ public final class ShowtimeController {
 
     try {
       Reservation reservation = new Reservation();
-      reservation.showtime = showtime;
-      reservation.phoneNumber = phoneNumber;
-      reservation.bought = buy;
+      reservation.showtime.set(showtime);
+      reservation.phoneNumber.set(phoneNumber);
+      reservation.bought.set(buy);
       reservation.insert();
 
       // Add the reservation to the corresponding showtime.
@@ -608,9 +607,9 @@ public final class ShowtimeController {
         seats.remove();
 
         Ticket ticket = new Ticket();
-        ticket.row = seat.getRow();
-        ticket.seat = seat.getSeat();
-        ticket.reservation = reservation;
+        ticket.row.set(seat.getRow());
+        ticket.seat.set(seat.getSeat());
+        ticket.reservation.set(reservation);
         ticket.insert();
         reservation.tickets.add(ticket);
 
@@ -642,7 +641,7 @@ public final class ShowtimeController {
 
     try {
       reservation.delete();
-      reservation.showtime.reservations.remove(reservation);
+      reservation.showtime.get().reservations.remove(reservation);
       ApplicationController.reservations().removeAll(reservation);
     }
     catch (SQLException ex) {

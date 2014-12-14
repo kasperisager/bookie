@@ -235,7 +235,7 @@ public final class ModelQuery<T extends Model> {
       // relations.
       for (Field field: model.getFields()) {
         String fieldName = field.getName();
-        Class<?> fieldType = field.getType();
+        Class<?> fieldType = model.getFieldType(field);
 
         boolean isList = false;
 
@@ -254,23 +254,29 @@ public final class ModelQuery<T extends Model> {
           // oneanother's type, e.g. a post with a list of comments and a
           // comment that belongs to a post.
           if (context != null && fieldType == context.getClass()) {
-            model.setField(fieldName, context);
+            model.setField(fieldName, model.parseIncomingFieldValue(
+              field, context
+            ));
           }
           else {
-            List<T> value = this.getRelations(
+            List<T> relations = this.getRelations(
               model, fieldType, modelRows.get(model.id())
             );
 
-            if (value == null) {
+            if (relations == null) {
               continue;
             }
 
+            Object value;
+
             if (isList) {
-              model.setField(fieldName, value);
+              value = model.parseIncomingFieldValue(field, relations);
             }
             else {
-              model.setField(fieldName, value.get(0));
+              value = model.parseIncomingFieldValue(field, relations.get(0));
             }
+
+            model.setField(fieldName, value);
           }
         }
       }
@@ -296,7 +302,7 @@ public final class ModelQuery<T extends Model> {
 
     for (Field field: outer.getFields()) {
       String fieldName = field.getName();
-      Class<?> fieldType = field.getType();
+      Class<?> fieldType = outer.getFieldType(field);
 
       boolean isList = false;
 

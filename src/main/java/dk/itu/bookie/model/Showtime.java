@@ -4,9 +4,7 @@
 package dk.itu.bookie.model;
 
 // General utilities
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 // Text utilities
@@ -16,8 +14,20 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+// JavaFX collections
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
+// JavaFX properties
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+
 // Base model
-import dk.itu.donkey.Model;
+import dk.itu.bookie.FXModel;
 
 // Main application
 import dk.itu.bookie.Bookie;
@@ -27,26 +37,30 @@ import dk.itu.bookie.Bookie;
  *
  * @version 1.0.0
  */
-public final class Showtime extends Model {
+public final class Showtime extends FXModel {
   /**
    * The movie to show.
    */
-  public Movie movie;
+  public ObjectProperty<Movie> movie =
+    new SimpleObjectProperty<>();
 
   /**
    * The auditorium in which the movie is shown.
    */
-  public Auditorium auditorium;
+  public ObjectProperty<Auditorium> auditorium =
+    new SimpleObjectProperty<>();
 
   /**
    * List of reservations.
    */
-  public List<Reservation> reservations = new ArrayList<>();
+  public ObservableList<Reservation> reservations =
+    FXCollections.observableArrayList();
 
   /**
    * The time at which the movie is playing.
    */
-  public Long playingAt;
+  public LongProperty playingAt =
+    new SimpleLongProperty();
 
   /**
    * Initialize a showtime.
@@ -69,8 +83,10 @@ public final class Showtime extends Model {
    *
    * @return A formatted showtime date.
    */
-  public String date() {
-    return this.dateFormat().format(new Date(this.playingAt));
+  public StringProperty date() {
+    return new SimpleStringProperty(
+      this.dateFormat().format(new Date(this.playingAt.get()))
+    );
   }
 
   /**
@@ -87,8 +103,10 @@ public final class Showtime extends Model {
    *
    * @return A formatted showtime time.
    */
-  public String time() {
-    return this.timeFormat().format(new Date(this.playingAt));
+  public StringProperty time() {
+    return new SimpleStringProperty(
+      this.timeFormat().format(new Date(this.playingAt.get()))
+    );
   }
 
   /**
@@ -107,8 +125,10 @@ public final class Showtime extends Model {
     final int hour,
     final int minute
   ) {
-    this.playingAt = LocalDateTime
-      .of(year, month, day, hour, minute)
-      .toEpochSecond(ZoneOffset.of("Z")) * 1000;
+    this.playingAt.set(
+      LocalDateTime
+        .of(year, month, day, hour, minute)
+        .toEpochSecond(ZoneOffset.of("Z")) * 1000
+    );
   }
 }

@@ -60,9 +60,9 @@ public final class Seeder {
 
     for (int i = 0; i < auditoriumData.length; i++) {
       Auditorium auditorium = new Auditorium();
-      auditorium.name = (String) auditoriumData[i][0];
-      auditorium.rows = (int) auditoriumData[i][1];
-      auditorium.seats = (int) auditoriumData[i][2];
+      auditorium.name.set((String) auditoriumData[i][0]);
+      auditorium.rows.set((int) auditoriumData[i][1]);
+      auditorium.seats.set((int) auditoriumData[i][2]);
       auditorium.insert();
       auditoriums[i] = auditorium;
     }
@@ -81,7 +81,7 @@ public final class Seeder {
 
     for (int i = 0; i < movieData.length; i++) {
       Movie movie = new Movie();
-      movie.name = movieData[i];
+      movie.name.set(movieData[i]);
       movie.insert();
       movies[i] = movie;
     }
@@ -94,10 +94,10 @@ public final class Seeder {
       Showtime showtime = new Showtime();
 
       // Get the next auditorium.
-      showtime.auditorium = auditoriums[i % auditoriums.length];
+      showtime.auditorium.set(auditoriums[i % auditoriums.length]);
 
       // Get a random movie.
-      showtime.movie = movies[(int) (Math.random() * movies.length)];
+      showtime.movie.set(movies[(int) (Math.random() * movies.length)]);
 
       // Set the showtime date.
       showtime.playingAt(
@@ -116,19 +116,19 @@ public final class Seeder {
 
     for (int i = 0; i < 100; i++) {
       Showtime showtime = showtimes[i % showtimes.length];
-      Auditorium auditorium = showtime.auditorium;
+      Auditorium auditorium = showtime.auditorium.get();
 
       Reservation reservation = new Reservation();
-      reservation.phoneNumber = 10000000 + (int) (Math.random() * 90000000);
-      reservation.showtime = showtime;
-      reservation.bought = Math.random() > 0.5;
+      reservation.phoneNumber.set(10000000 + (int) (Math.random() * 90000000));
+      reservation.showtime.set(showtime);
+      reservation.bought.set(Math.random() > 0.5);
       reservation.insert();
 
-      for (int j = 0; j < (int) (Math.random() * 10); j++) {
+      for (int j = 1; j <= (int) (Math.random() * 10); j++) {
         Ticket ticket = new Ticket();
-        ticket.reservation = reservation;
-        ticket.row = (int) (Math.random() * auditorium.rows);
-        ticket.seat = (int) (Math.random() * auditorium.seats);
+        ticket.reservation.set(reservation);
+        ticket.row.set((int) (Math.random() * auditorium.rows.get()));
+        ticket.seat.set((int) (Math.random() * auditorium.seats.get()));
         ticket.insert();
       }
     }

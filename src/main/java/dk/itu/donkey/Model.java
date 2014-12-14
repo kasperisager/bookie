@@ -66,18 +66,6 @@ public abstract class Model {
   }
 
   /**
-   * Get the generic type of a field.
-   *
-   * @param field The field to inspect.
-   * @return      The generic type of the field.
-   */
-  public static final Class<?> getGenericType(final Field field) {
-    ParameterizedType type = (ParameterizedType) field.getGenericType();
-
-    return (Class<?>) type.getActualTypeArguments()[0];
-  }
-
-  /**
    * Get a public field from the model.
    *
    * @param label The name of the field.
@@ -102,6 +90,28 @@ public abstract class Model {
   }
 
   /**
+   * Given a field, get its type.
+   *
+   * @param field The field whose type to get.
+   * @return      The type of the field.
+   */
+  protected Class<?> getFieldType(final Field field) {
+    return field.getType();
+  }
+
+  /**
+   * Get the generic type of a field.
+   *
+   * @param field The field to inspect.
+   * @return      The generic type of the field.
+   */
+  public static final Class<?> getGenericType(final Field field) {
+    ParameterizedType type = (ParameterizedType) field.getGenericType();
+
+    return (Class<?>) type.getActualTypeArguments()[0];
+  }
+
+  /**
    * Set the value of a public field in the model.
    *
    * @param label The name of the field.
@@ -114,6 +124,34 @@ public abstract class Model {
     catch (Exception e) {
       return;
     }
+  }
+
+  /**
+   * Parse an incoming field value.
+   *
+   * @param field The field whose value to parse.
+   * @param value The value to parse.
+   * @return      The parsed value.
+   */
+  protected Object parseIncomingFieldValue(
+    final Field field,
+    final Object value
+  ) {
+    return value;
+  }
+
+  /**
+   * Parse an outgoing field value.
+   *
+   * @param field The field whose value to parse.
+   * @param value The value to parse.
+   * @return      The parsed value.
+   */
+  protected Object parseOutgoingFieldValue(
+    final Field field,
+    final Object value
+  ) {
+    return value;
   }
 
   /**
@@ -163,7 +201,7 @@ public abstract class Model {
 
     for (Field field: this.getFields()) {
       String fieldName = field.getName();
-      Class<?> fieldType = field.getType();
+      Class<?> fieldType = this.getFieldType(field);
       String column = fieldName.toLowerCase();
 
       // String type
@@ -258,7 +296,7 @@ public abstract class Model {
 
     for (Field field: this.getFields()) {
       String fieldName = field.getName();
-      Class<?> fieldType = field.getType();
+      Class<?> fieldType = this.getFieldType(field);
       String column = fieldName.toLowerCase();
 
       Object value = null;
@@ -269,6 +307,8 @@ public abstract class Model {
       catch (Exception e) {
         continue;
       }
+
+      value = this.parseOutgoingFieldValue(field, value);
 
       if (Model.class.isAssignableFrom(fieldType)) {
         value = ((Model) value).id();
@@ -306,6 +346,7 @@ public abstract class Model {
 
     for (Field field: this.getFields()) {
       String fieldName = field.getName();
+      Class<?> fieldType = this.getFieldType(field);
       String column = fieldName.toLowerCase();
       Object value = row.get(column);
 
@@ -314,6 +355,12 @@ public abstract class Model {
           "%s_%s", this.table(), column
         ));
       }
+
+      if (value == null) {
+        continue;
+      }
+
+      value = this.parseIncomingFieldValue(field, value);
 
       this.setField(fieldName, value);
     }

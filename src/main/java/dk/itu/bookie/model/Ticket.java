@@ -3,8 +3,14 @@
  */
 package dk.itu.bookie.model;
 
+// JavaFX properties
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
+
 // Base model
-import dk.itu.donkey.Model;
+import dk.itu.bookie.FXModel;
 
 // Main application
 import dk.itu.bookie.Bookie;
@@ -14,21 +20,24 @@ import dk.itu.bookie.Bookie;
  *
  * @version 1.0.0
  */
-public final class Ticket extends Model {
+public final class Ticket extends FXModel {
   /**
    * The row number of the ticket.
    */
-  public int row;
+  public IntegerProperty row =
+    new SimpleIntegerProperty();
 
   /**
    * The seat number of the ticket.
    */
-  public int seat;
+  public IntegerProperty seat =
+    new SimpleIntegerProperty();
 
   /**
    * The reservation that this ticket is part of.
    */
-  public Reservation reservation;
+  public ObjectProperty<Reservation> reservation =
+    new SimpleObjectProperty<>();
 
   /**
    * Initialize a ticket.

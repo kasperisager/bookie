@@ -3,8 +3,12 @@
  */
 package dk.itu.bookie.model;
 
+// JavaFX properties
+import javafx.beans.property.StringProperty;
+import javafx.beans.property.SimpleStringProperty;
+
 // Base model
-import dk.itu.donkey.Model;
+import dk.itu.bookie.FXModel;
 
 // Main application
 import dk.itu.bookie.Bookie;
@@ -14,11 +18,12 @@ import dk.itu.bookie.Bookie;
  *
  * @version 1.0.0
  */
-public final class Movie extends Model {
+public final class Movie extends FXModel {
   /**
    * The name of the movie.
    */
-  public String name;
+  public StringProperty name =
+    new SimpleStringProperty();
 
   /**
    * Initialize a movie.

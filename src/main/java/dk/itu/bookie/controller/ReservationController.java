@@ -28,7 +28,6 @@ import javafx.collections.transformation.SortedList;
 
 // JavaFX properties
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 
 // JavaFX bindings
@@ -139,9 +138,7 @@ public final class ReservationController {
     );
 
     this.phoneColumn.setCellValueFactory((data) -> {
-      return new SimpleIntegerProperty(
-        data.getValue().phoneNumber
-      );
+      return data.getValue().phoneNumber;
     });
 
     this.phoneFilter.textProperty().addListener((ob, ov, nv) -> {
@@ -175,17 +172,15 @@ public final class ReservationController {
     });
 
     this.movieColumn.setCellValueFactory((data) -> {
-      return new SimpleStringProperty(data.getValue().showtime.movie.name);
+      return data.getValue().showtime.get().movie.get().name;
     });
 
     this.auditoriumColumn.setCellValueFactory((data) -> {
-      return new SimpleStringProperty(
-        data.getValue().showtime.auditorium.name
-      );
+      return data.getValue().showtime.get().auditorium.get().name;
     });
 
     this.dateColumn.setCellValueFactory((data) -> {
-      return new SimpleStringProperty(data.getValue().showtime.date());
+      return data.getValue().showtime.get().date();
     });
 
     this.dateColumn.setComparator((date1, date2) -> {
@@ -204,7 +199,7 @@ public final class ReservationController {
     });
 
     this.timeColumn.setCellValueFactory((data) -> {
-      return new SimpleStringProperty(data.getValue().showtime.time());
+      return data.getValue().showtime.get().time();
     });
 
     this.actionsColumn.setCellValueFactory((data) -> {
@@ -266,7 +261,7 @@ public final class ReservationController {
 
       // Lastly, remove the reservation from the list of reservations in
       // the associated showtime. Circular relations FTW!
-      reservation.showtime.reservations.remove(reservation);
+      reservation.showtime.get().reservations.remove(reservation);
     }
     catch (SQLException ex) {
       return;
