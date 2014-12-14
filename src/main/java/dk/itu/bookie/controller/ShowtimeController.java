@@ -501,6 +501,12 @@ public final class ShowtimeController {
    *          null.
    */
   private Integer getPhone() {
+    String phoneNumber = this.phone.getText();
+
+    if (!phoneNumber.matches("^[1-9][0-9]{7}$")) {
+      return null;
+    }
+
     try {
       return Integer.parseInt(this.phone.getText());
     }
