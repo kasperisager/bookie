@@ -43,6 +43,11 @@ import javafx.beans.binding.When;
 // FXML utilities
 import javafx.fxml.FXML;
 
+// ControlsFX
+import org.controlsfx.validation.ValidationSupport;
+import org.controlsfx.validation.Validator;
+import org.controlsfx.validation.Severity;
+
 // Components
 import dk.itu.bookie.component.Filter;
 import dk.itu.bookie.component.Seat;
@@ -59,6 +64,11 @@ import dk.itu.bookie.model.Ticket;
  * @version 1.0.0
  */
 public final class ShowtimeController {
+  /**
+   * Regular expression for matching 8-digit phone number.
+   */
+  private static final String PHONE_REGEX = "^[1-9][0-9]{7}$";
+
   /**
    * The singleton instance of the controller.
    */
@@ -142,7 +152,8 @@ public final class ShowtimeController {
   /**
    * The set of selected seats.
    */
-  private ObservableSet<Seat> selectedSeats;
+  private ObservableSet<Seat> selectedSeats =
+    FXCollections.observableSet();
 
   /**
    * Get the singleton instance of the controller.
@@ -235,6 +246,15 @@ public final class ShowtimeController {
         this.editReservation(true);
       }
     });
+
+    ValidationSupport validationSupport = new ValidationSupport();
+
+    validationSupport.registerValidator(
+      this.phone,
+      Validator.createRegexValidator(
+        "Ugyldigt telefonnummer", this.PHONE_REGEX, Severity.ERROR
+      )
+    );
   }
 
   /**
@@ -501,8 +521,14 @@ public final class ShowtimeController {
    *          null.
    */
   private Integer getPhone() {
+    String phoneNumber = this.phone.getText();
+
+    if (!phoneNumber.matches(this.PHONE_REGEX)) {
+      return null;
+    }
+
     try {
-      return Integer.parseInt(this.phone.getText());
+      return Integer.parseInt(phoneNumber);
     }
     catch (NumberFormatException ex) {
       return null;

@@ -3,9 +3,6 @@
  */
 package dk.itu.bookie.controller;
 
-// General utilities
-import java.util.List;
-
 // SQL utilities
 import java.sql.SQLException;
 
