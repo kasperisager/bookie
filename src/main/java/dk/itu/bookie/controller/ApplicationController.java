@@ -3,9 +3,6 @@
  */
 package dk.itu.bookie.controller;
 
-// General utilities
-import java.util.List;
-
 // SQL utilities
 import java.sql.SQLException;
 
@@ -14,6 +11,7 @@ import javafx.scene.control.TabPane;
 
 // JavaFX collections
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
 // FXML utilities
@@ -39,6 +37,11 @@ public final class ApplicationController {
   private TabPane tabs;
 
   /**
+   * Has the data been fetched yet?
+   */
+  private static boolean fetchedData;
+
+  /**
    * The singleton instance of the controller.
    */
   private static ApplicationController instance;
@@ -46,12 +49,14 @@ public final class ApplicationController {
   /**
    * List of showtimes.
    */
-  private static ObservableList<Showtime> showtimes;
+  private static ObservableList<Showtime> showtimes =
+    FXCollections.observableArrayList();
 
   /**
    * List of reservations.
    */
-  private static ObservableList<Reservation> reservations;
+  private static ObservableList<Reservation> reservations =
+    FXCollections.observableArrayList();
 
   /**
    * Get the singleton instance of the controller.
@@ -86,6 +91,46 @@ public final class ApplicationController {
   }
 
   /**
+   * Fetch initial data from the database.
+   *
+   * @throws SQLException In case of a SQL error.
+   */
+  public static void fetchData() throws SQLException {
+    if (ApplicationController.fetchedData) {
+      return;
+    }
+
+    ApplicationController.showtimes.addAll(
+      Model
+        .find(Showtime.class)
+        .where("playingat", ">", System.currentTimeMillis())
+        .orderBy("movies.name")
+        .orderBy("playingat")
+        .get()
+    );
+
+    for (Showtime showtime: ApplicationController.showtimes) {
+      ApplicationController.reservations.addAll(showtime.reservations);
+
+      showtime.reservations.addListener(
+        (ListChangeListener.Change<? extends Reservation> c)-> {
+          while (c.next()) {
+            if (c.wasAdded()) {
+              ApplicationController.reservations.addAll(c.getAddedSubList());
+            }
+
+            if (c.wasRemoved()) {
+              ApplicationController.reservations.removeAll(c.getRemoved());
+            }
+          }
+        }
+      );
+    }
+
+    ApplicationController.fetchedData = true;
+  }
+
+  /**
    * Grab all showtimes from the database.
    *
    * @return Observable list of showtimes.
@@ -93,16 +138,7 @@ public final class ApplicationController {
    * @throws SQLException In case of a SQL error.
    */
   public static ObservableList<Showtime> showtimes() throws SQLException {
-    if (ApplicationController.showtimes == null) {
-      ApplicationController.showtimes = FXCollections.observableArrayList(
-        Model
-          .find(Showtime.class)
-          .where("playingat", ">", System.currentTimeMillis())
-          .orderBy("movies.name")
-          .orderBy("playingat")
-          .get()
-      );
-    }
+    ApplicationController.fetchData();
 
     return ApplicationController.showtimes;
   }
@@ -115,15 +151,7 @@ public final class ApplicationController {
    * @throws SQLException In case of a SQL error.
    */
   public static ObservableList<Reservation> reservations() throws SQLException {
-    if (ApplicationController.reservations == null) {
-      List<Showtime> showtimes = ApplicationController.showtimes();
-
-      ApplicationController.reservations = FXCollections.observableArrayList();
-
-      for (Showtime showtime: showtimes) {
-        ApplicationController.reservations.addAll(showtime.reservations);
-      }
-    }
+    ApplicationController.fetchData();
 
     return ApplicationController.reservations;
   }
