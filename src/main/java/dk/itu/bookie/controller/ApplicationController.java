@@ -93,6 +93,11 @@ public final class ApplicationController {
     this.tabs.getSelectionModel().select(1);
   }
 
+  /**
+   * Fetch initial data form the database.
+   *
+   * @throws SQLException In case of a SQL error.
+   */
   public static void fetchData() throws SQLException {
     if (ApplicationController.fetchedData) {
       return;
