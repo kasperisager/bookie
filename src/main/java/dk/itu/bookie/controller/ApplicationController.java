@@ -94,7 +94,7 @@ public final class ApplicationController {
   }
 
   /**
-   * Fetch initial data form the database.
+   * Fetch initial data from the database.
    *
    * @throws SQLException In case of a SQL error.
    */
