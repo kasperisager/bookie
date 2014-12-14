@@ -289,3 +289,22 @@ Herefter kan der instantieres to datamodeller af typen \texttt{Post}. Disses rel
 \section{Databasedesign}
 
 \section{Brugergrænseflade}
+
+\subsection{Controller}
+
+\subsubsection{ApplicationController}
+
+\subsubsection{ShowtimeController}
+
+\textit{ShowtimeController} styrer alt som foregår inde på siden \textit{Forestillinger}. Gitteret har fået et antal af sæder og rækker, samt en placering, og der bliver tilføjet bogstaver og tal til både sæderne og rækkerne. Der bliver muligt at vælge sæder, samt at se om de er reserverede eller købte. Dette er muligt med en Lytter på \textit{Reservér}-knappen og en Lytter på sæderne. Salen i sig selv har fået en størrelse, og placeringen af selve gitteret bliver også justeret. Der er også kommet en begrænsning på telefonnumrene. Inde i feltet er der kun muligt at indtaste otte-cifrede numre (og de kan ikke starte med \textit{0}).
+
+Denne kontroller håndterer præsentation af forestillinger under fanen \textit{Forestillinger}. Et \texttt{TableView} benyttes... Biografsalen og dennes tilknyttede elementer (...) bliver anrettede i et \texttt{GridPane}-layout og... De valgte sæder gemmes i et \texttt{ObservableSet}, hvilket sikrer... Verificering af telefonnumre foretages via et regex, som... 
+  
+\subsubsection{ReservationController}
+
+\textit{ReservationController} tager og kontrollerer alt inde på \textit{Reservationer}. Udover et filter, er hele siden én stor tabel. Alle kolonner bliver justeret. Der 
+
+\subsubsection{ErrorController}
+
+\textit{ErrorController} kontrollerer når Bookie bryder sammen. Når det sker, kommer der en boks frem med en besked, som forklarer hvad der er gået 
+galt.

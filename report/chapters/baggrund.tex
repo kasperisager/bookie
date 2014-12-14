@@ -2,8 +2,9 @@
 
 Hvordan kan et softwaresystem laves, således at en ekspedient i en biograf kan håndtere en kundes reservation,  ?
 
+En ekspedient skal kunne betjene billetlugen og telefonen i en mindre biograf. Opgaven er stillet sådan, at ekspedienten skal kunne betjene begge former for kundehenvendelse uden brug af "EKSTERNE MIDLER - SKAL ÆNDRES!!". Ekspedienten skal kunne reservere pladser/billetter til forskellige forestillinger, lave ændringer på dem, men ikke sælge dem.
 
-En ekspedient skal kunne betjene billetlugen og telefonen i en mindre biograf. Opgaven er stillet sådan, at ekspedienten skal kunne betjene begge former for kundehenvendelse uden brug af . Ekspedienten skal kunne reservere pladser/billetter til forskellige forestillinger, lave ændringer på dem, men ikke sælge dem. Et softwaresystem er blevet udviklet til at løse visse krav og brugsscenarier, som er stillet i opgaven - og som gør det lettere for ekspedienten at fuldføre sit arbejde.
+Et softwaresystem er blevet udviklet til at løse visse krav og brugsscenarier, som er stillet i opgaven - og som gør det lettere for ekspedienten at fuldføre sit arbejde.
 
 De arbejdsopgaver som vores ekspedient skal kunne løse er:
 \begin{itemize}
@@ -19,7 +20,24 @@ Der er en chance for, at der ikke er nok billetter til den valgte forestilling, 
 Brugsscenarierne bliver alle løst på forskellige måder. For det første må der eksistere nogle forestillinger, sale, rækker og sæder før der kan laves nogle reservationer. Forestillingerne i sig selv er en kombination af film, sal, tidspunkt og dag. Disse forskellige elementer skal kunne ses på brugergrænsefladen. Da rækkerne og sæderne skal kunne resereveres til kunder, må der ikke være muligt for ekspedienten at dobbeltreservere.
 
 For det andet skal man bl.a. kunne koble et kunde-id (i form af telefonnummer) sammen med en forestilling, hvorefter disse informationer skal kunne gemmes, hentes igen, evt. redigeres og slettes. Databaser bliver her et nødvendigt redskab.
+\\\\
 
-Da vi har et telefonnummer, som er forbundet til en forestilling, en forestilling der er forbundet til en sal og en film, og en billet der er forbundet til reservation, så har vi kun det der hedder et "one-to-many"-forhold. Ud over det, så fungerer forholdet også kun den ene vej. F.eks. er det kun forestillingen der er forbundet til en sal og en film, hvor filmen og salen ikke er forbundet til forestillingen. Der er altså mulighed for, at både have en film uden at have en forestilling, og en sal uden at have en forestilling. På samme måde fungerer det med telefonnummeret og billetten.
+skal i dette tilfælde laves i Java og JavaFX eller Java Swing, hvilket er et krav, hvor vi har valgt at bruge JavaFX, samt en database efter eget valg. Disse sprog skal sammensættes, og resultatet kan blive optimalt.
+
+For at nå frem til resulatet, er det en god idé at prøve at have så meget overblik som muligt. Dette kan gøres ved at finde alle komponenter og elementer, som skal være i systemet, og derefter bygge det brik for brik. Hvorefter det så sættes sammen til det samlede projekt til sidst (med justeringer hen ad vejen).
+
+Når en database bliver brugt, så skal der passes på, at der ikke kommer en SQL-injicering 
+
+Dog skal der passes på, da der kan opstå mange fejl. I værste tilfælde kan et program bryde sammen, fordi der ikke er taget højde for forskellige ting. Her kan der siges, at unit-test hjælper med at holde det på rette spor. 
+
+ 
+
+
+
+HVAD OG HVORDAN !! 
 
 Der er taget det valg, at bruge et klient-tungt system, som inkluderer at det godt kan bruges uafhængigt af en server. Der er ikke et behov for forbindelse til hverken en server eller et netværk. Al data er placeret lokalt, og bl.a. fordi vi får givet, at biografen kun skal have én billetluge og tillader ikke reservationer over nettet. Dette inkluderer, at det ikke er muligt at lave forskellige opdateringer til databasen på samme tid. Her er SQLite en optimal mulighed i forhold til MYSQL og PostgreSQL.
+
+
+
+Det færdige projekt skal kunne tage højde for fejl, uden at bryde sammen, 
