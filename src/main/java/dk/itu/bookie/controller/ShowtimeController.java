@@ -594,9 +594,6 @@ public final class ShowtimeController {
       // Add the reservation to the corresponding showtime.
       showtime.reservations.add(reservation);
 
-      // Add the reservation to the list of reservations.
-      ApplicationController.reservations().add(reservation);
-
       Iterator<Seat> seats = this.selectedSeats.iterator();
 
       while (seats.hasNext()) {
@@ -642,7 +639,6 @@ public final class ShowtimeController {
     try {
       reservation.delete();
       reservation.showtime.get().reservations.remove(reservation);
-      ApplicationController.reservations().removeAll(reservation);
     }
     catch (SQLException ex) {
       return;

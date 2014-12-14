@@ -253,12 +253,6 @@ public final class ReservationController {
       // a SQL exception will be thrown.
       reservation.delete();
 
-      // Once the reservation has been deleted from the database, remove it
-      // from the list of reservations.
-      ApplicationController
-        .reservations()
-        .removeAll(reservation);
-
       // Lastly, remove the reservation from the list of reservations in
       // the associated showtime. Circular relations FTW!
       reservation.showtime.get().reservations.remove(reservation);
