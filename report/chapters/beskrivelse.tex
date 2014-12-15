@@ -289,22 +289,32 @@ Med udgangspunkt i den forespurgte datamodel \texttt{Post} skal listen af række
 Herefter kan der instantieres to datamodeller af typen \texttt{Post}. Disses relationer kan nu gennemløbes og partitionering foretages på ny på de to partitioner set i figur \ref{data-table:posts-partition}. Dette vil resultere i henholdsvis 2 og 3 nye partitioner, denne gang med udgangspunkt i datamodellen \texttt{Comment}. Disse partitioner kan igen instantieres som datamodeller, og tilføjes som relationer i de allerede instantierede \texttt{Post}-modeller. Det endelige resultat er to instanser af \texttt{Post}-modellen, hver med henholdsvis to og tre instanser af \texttt{Comment}-modellen.
 
 \section{Datamodeller}
+Alle datamodeller i Bookie er lavet sådan, at selve modellerne er separate klasser, hvor felterne i den enkelte klasse er kolonner. Dette er muligt på grund af \textit{Donkey}. Hvilket gør det meget simpelt og let at implantere(?) %kan man sige det??
+nyt data.
 
-\subsection{Auditorim}
+\subsection{Auditorium}
+
 
 \subsection{Movie}
 
+
 \subsection{Reservation}
+
 
 \subsection{Showtime}
 
+
 \subsection{Ticket}
+
 
 \section{Brugergrænseflade}
 
+
 \subsection{Controllere}
 
+
 \subsubsection{ApplicationController}
+
 
 \subsubsection{ShowtimeController}
 
