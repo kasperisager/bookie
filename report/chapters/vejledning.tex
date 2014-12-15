@@ -1,23 +1,23 @@
 \chapter{Brugervejledning}
 
+I dette kapitel gennemgåes brugen af det udviklede reservationssystem, Bookie. Vejledningen vil undervejs blive understøttet af billeder, der har til formål af eksemplificere de tilhørende instruktioner.
+
 \section{Forestillinger}
 
 Når Bookie åbnes, vises fanen \textit{Forestillinger}, der indeholder listen af forestillinger samt reservationsskærmen som set på figur \ref{screenshot:bookie}. På denne figur ses ydermere følgende elementer: Placeringen af lærredet i biografsalen, legenden over sædestatus (ledig, valgt, reserveret, og købt), samt formularen til reservation af sæder. En biografsal er imidlertid endnu ikke synlig, da der ikke er valgt en forestilling.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=\textwidth]{bookie.png}
+  \includegraphics[width=\textwidth]{showtimes.png}
   \caption{Bookies startside straks efter opstart}
   \label{screenshot:bookie}
 \end{figure}
 
 \subsection{Valg af forestilling}
 
-Der er mulighed for at sortere listen af forestillinger efter film, sal, ledige sæder, dato, og tidspunkt. Det er derfor let at finde præcist den forestilling, som kunden måtte ønske.
+Der er mulighed for at sortere listen af forestillinger efter film, sal, dato, og tidspunkt. Det er derfor let at finde præcist den forestilling, som kunden måtte ønske. En forestilling vælges ved at klikke på den i listen.
 
-%I tilfælde af, at listen med forestillinger bliver uoverskueligt lang, kan den filtreres på enten film eller dato således, at kun et ønsket udsnit af forestillinger er synlige på listen.
-
-På figur \ref{screenshot:chosen-showtime}) er vist hvorledes en forestillingen vælges, hvorefter dennes biografsal bliver synlig på skærmen.
+%I tilfælde af, at listen med forestillinger bliver uoverskueligt lang, kan filtrering på enten film eller dato foretages således, at kun et ønsket udsnit af forestillinger er synlige på listen.
 
 \begin{figure}[h]
   \centering
@@ -36,43 +36,38 @@ På figur \ref{screenshot:chosen-showtime}) er vist hvorledes en forestillingen 
   \label{screenshot:chosen-seats}
 \end{wrapfigure}
 
-Sæderne er angivet i rækker og kolonner, hvor rækkerne har navne efter alfabetet og kolonnerne efter tal. Holdes musen hen over et af de ledige sæder (markerede med grøn) og trykkes der på det, vil sædet skifte farve til grå som indikation på, at det er valgt til reservation.
+Holdes musen hen over et af de ledige sæder (markerede med grøn) og trykkes der på det, vil sædet skifte farve til grå som indikation på, at det er valgt til reservation.
+
+Det er ikke muligt at oprette en reservation uden minimum at vælge et enkelt sæde.
 
 \subsection{Reservation af sæder}
 
-\begin{wrapfigure}[4]{r}{0.4\textwidth}
-  \centering
-  \vspace{-12pt}
-  \includegraphics[width=0.35\textwidth]{phone-number.png}
-  \caption{Et telefonnr. bliver indtastet}
-  \label{screenshot:phone-number}
-\end{wrapfigure}
-
-Efter at de ønskede sæder er blevet valgt, er det muligt at indtaste et telefonnummer (se figur \ref{screenshot:phone-number}) for reservationen. Trykkes der derefter på \textit{Reservér}-knappen, ændres sædernes farve til blå som indikation på, at reservationen er gennemført.
-
-%\begin{figure}[h]
-%  \centering
-%  \includegraphics[width=0.4\textwidth]{booked-seats.png}
-%  \caption{Reserverede sæder.}
-%  \label{screenshot:booked-seats}
-%\end{figure}
-
-\section{Reservationer}
-
-\begin{wrapfigure}[3]{r}{0.4\textwidth}
-  \centering
-  \vspace{-12pt}
-  \includegraphics[width=0.35\textwidth]{go-to-reservations.png}
-  \caption{Gå til alle reservationer.}
-  \label{screenshot:go-to-reservations}
-\end{wrapfigure}
-
-Når en reservation er oprettet, kan denne findes under fanen \textit{Reservationer} (figur \ref{screenshot:go-to-reservations}). Alle eksisterende reservationer kan ligeledes findes under denne fane som set på figur \ref{screenshot:all-reservations}.
+Efter de ønskede sæder er blevet valgt, er det muligt at indtaste et telefonnummer (se figur \ref{screenshot:phone-number}) for reservationen. Trykkes der derefter på \textit{Reservér}-knappen, ændres sædernes farve til blå som indikation på, at reservationen er gennemført. Det samme gør gældende med \textit{Køb-knappen}, hvor sædernes farve dog istedet vil ændres til rød. Efter gennemført reservation vil telefonnummer-feltet blive ryddet.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=\textwidth]{all-reservations.png}
-  \caption{Alle reservationer bliver vist.}
+  \begin{minipage}[b]{0.4\linewidth}
+    \centering
+    \includegraphics[width=\textwidth]{phone-number-invalid.png}
+  \end{minipage}
+  \hspace{0.5cm}
+  \begin{minipage}[b]{0.4\linewidth}
+    \centering
+    \includegraphics[width=\textwidth]{phone-number.png}
+  \end{minipage}
+
+  \caption{Eksempel på indtastning af ugyldigt (tv.) og gyldigt (th.) telefonnummer}
+  \label{screenshot:phone-number}
+\end{figure}
+
+\section{Reservationer}
+
+Når en reservation er oprettet, kan denne findes under fanen \textit{Reservationer}. Alle eksisterende reservationer kan ligeledes findes under denne fane som set på figur \ref{screenshot:all-reservations}.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{reservations.png}
+  \caption{Visning af alle reservationer}
   \label{screenshot:all-reservations}
 \end{figure}
 
@@ -86,28 +81,29 @@ Når en reservation er oprettet, kan denne findes under fanen \textit{Reservatio
   \label{screenshot:filter3}
 \end{wrapfigure}
 
-I øverste, venstre hjørne af reservationslisten findes et felt til filtrering af telefonnumrene (figur \ref{screenshot:filter3}). Der kan søges på enten fulde telefonnumre eller brydstykker af disse, hvilket gør det let af finde den/de ønskede reservationer.
+I øverste, venstre hjørne af reservationslisten findes et felt til filtrering af telefonnumrene (figur \ref{screenshot:filter3}). Der kan søges på enten fulde telefonnumre eller brydstykker af disse, hvilket gør det let af finde den eller de ønskede reservationer.
 
 \subsection{Redigering af reservationer}
 
 \begin{wrapfigure}{r}{0.4\textwidth}
   \centering
   \vspace{-12pt}
-  \includegraphics[width=0.35\textwidth]{edit-button.png}
-  \caption{Mulighed for at redigere den enkelte reservation.}
+  \includegraphics[width=0.2\textwidth]{edit-button.png}
+  \caption{Mulighed for redigering af reservationer}
   \label{screenshot:edit-button}
 \end{wrapfigure}
 
-Når den ønskede reservation er fundet, kan denne hurtigt redigeres ved at trykke på \textit{Redigér}-knappen fundet i højre side af skærmen (figur \ref{screenshot:edit-button}). \textit{Forestillinger}-fanen vil da blive vist, hvorefter der enten kan fjernes eller tilføjes flere sæder til den pågældende reservation (figur \ref{screenshot:edit1}).
+Når den ønskede reservation er fundet, kan denne hurtigt redigeres ved at trykke på \textit{Redigér}-knappen fundet i højre side af skærmen (figur \ref{screenshot:edit-button}). \textit{Forestillinger}-fanen vil da blive vist, hvorefter der enten kan fjernes sæder fra eller føjes flere sæder til den pågældende reservation (figur \ref{screenshot:edit-button}).
 
-%Hvis det skulle ske, at kunden vil ændre reservationen således, at han/hun vil se den valgte film på et andet tidspunkt, så vil ekspedienten slette hele reservationen og oprette en ny, da Bookie ikke er lavet til at flytte reservationerne fra tidspunkt til tidspunkt.
+Skulle det ske, at reservationen ønskes flyttet til en anden forestilling, skal reservationen da først slettes, hvorefter en ny reservation kan oprettes til den ønskede forestilling. Sletning af reservationer gennemgåes nedenfor.
 
 \subsection{Sletning af reservationer}
 
 \begin{wrapfigure}{r}{0.4\textwidth}
   \centering
-  \includegraphics[width=0.35\textwidth]{delete-button.png}
-  \caption{Mulighed for at slette den enkelte reservation.}
+  \vspace{-12pt}
+  \includegraphics[width=0.2\textwidth]{delete-button.png}
+  \caption{Mulighed for sletning af reservationer}
   \label{screenshot:delete-button}
 \end{wrapfigure}
 
@@ -119,12 +115,3 @@ At slette er reservation er lige så smertefrit som at arbejde i resten af Booki
   \caption{Sletning af reservation.}
   \label{screenshot:delete-reservation}
 \end{figure}
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.4\textwidth]{after-delete.png}
-  \caption{Efter at en reservation er slettet.}
-  \label{screenshot:after-delete}
-\end{figure}
-
-Det viser sig, at det er meget nemt for ekspedienten at finde rundt i Bookie. Hvilket er meget godt, da der kan være meget pres, f.eks. til premieren til \textit{The Hobbit - The Battle of the Five Armies} her i december måned. Selv om der kun er én ekspedient der kan bruge Bookie ad gangen, så må man kunne holde hovedet koldt, når der skal serviceres en billetluge og en telefon på samme tid.
