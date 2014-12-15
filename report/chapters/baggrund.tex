@@ -2,6 +2,8 @@
 
 Hvordan kan et softwaresystem laves, således at en ekspedient i en biograf kan håndtere en kundes reservation,  ?
 
+%Mangler alt muligt .. 
+
 En ekspedient skal kunne betjene billetlugen og telefonen i en mindre biograf. Opgaven er stillet sådan, at ekspedienten skal kunne betjene begge former for kundehenvendelse uden brug af "EKSTERNE MIDLER - SKAL ÆNDRES!!". Ekspedienten skal kunne reservere pladser/billetter til forskellige forestillinger, lave ændringer på dem, men ikke sælge dem.
 
 Et softwaresystem er blevet udviklet til at løse visse krav og brugsscenarier, som er stillet i opgaven - og som gør det lettere for ekspedienten at fuldføre sit arbejde.
@@ -22,23 +24,17 @@ Brugsscenarierne bliver alle løst på forskellige måder. For det første må d
 
 For det andet skal man bl.a. kunne koble et kunde-id (i form af telefonnummer) sammen med en forestilling, hvorefter disse informationer skal kunne gemmes, hentes igen, evt. redigeres og slettes. Databaser bliver her et nødvendigt redskab.
 \\\\
-
+Brugsscenarierne bliver lavet %SOMETHING SOMETHING DARK SIDE !!!!!!!
 skal i dette tilfælde laves i Java og JavaFX eller Java Swing, hvilket er et krav, hvor vi har valgt at bruge JavaFX, samt en database efter eget valg. Disse sprog skal sammensættes, og resultatet kan blive optimalt.
 
 For at nå frem til resulatet, er det en god idé at prøve at have så meget overblik som muligt. Dette kan gøres ved at finde alle komponenter og elementer, som skal være i systemet, og derefter bygge det brik for brik. Hvorefter det så sættes sammen til det samlede projekt til sidst (med justeringer hen ad vejen).
 
-Når en database bliver brugt, så skal der passes på, at der ikke kommer en SQL-injicering 
+Dog skal der passes på, da der kan opstå mange fejl. I værste tilfælde kan et program bryde sammen, hvilket det helst ikke skal gøre. Hvis der ikke er taget højde for det meste, så vil programmet råbe op. Her kan der siges, at unit-test hjælper med at holde det på rette spor. 
 
-Dog skal der passes på, da der kan opstå mange fejl. I værste tilfælde kan et program bryde sammen, fordi der ikke er taget højde for forskellige ting. Her kan der siges, at unit-test hjælper med at holde det på rette spor. 
-
- 
-
-
-
-HVAD OG HVORDAN !! 
-
+Der kan bl.a. ske en SQL-injicering, når en database bliver brugt. Hvis dette kan undgås, så % er alle glade.
+Også dette kan/skal testes .. 
+%HVAD OG HVORDAN !! 
+\\\\
 Der er taget det valg, at bruge et klient-tungt system, som inkluderer at det godt kan bruges uafhængigt af en server. Der er ikke et behov for forbindelse til hverken en server eller et netværk. Al data er placeret lokalt, og bl.a. fordi vi får givet, at biografen kun skal have én billetluge og tillader ikke reservationer over nettet. Dette inkluderer, at det ikke er muligt at lave forskellige opdateringer til databasen på samme tid. Her er SQLite en optimal mulighed i forhold til MYSQL og PostgreSQL.
-
-
-
-Det færdige projekt skal kunne tage højde for fejl, uden at bryde sammen, 
+\\\\
+Det færdige projekt skal kunne håndtere alle krav, som er blevet stillet. Det skal kunne tilfredsstille kunden og ekspedienten således, at der hverken er problemer eller mangel på muligheder vedrørende reservationer eller redigering af dem. Det skal kunne tage højde for alle slags fejl, uden først og fremmest at bryde sammen, men også så at de enkelte elementer i programmet ikke kan kontrolleres således, at det kan holdes opdateret.
