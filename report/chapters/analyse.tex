@@ -1,5 +1,9 @@
 \chapter{Problemanalyse}
 
+\section{Databasedesign}
+
+\section{Præsentation af data}
+
 Det første skridt mod et program er ofte et mockup. Et mockup visualiserer en idé, og får en brainstorm til at være mere konkret. Ud fra dette bliver der arbejdet med hvert enkle element i mockup'en, hvilket ofte gør, at hvert element bliver en klasse i en kode. Ud fra mockup'en er det også lettere at se hvilke klasser skal være forbundet til hinanden, og derefter også hvor data skal placeres (hvis data skal være med).
 
 \section{Beskrivelse}
@@ -107,5 +111,23 @@ Denne klasse har fire felte: \textit{phoneNumber, bought, showtime} og \textit{t
   \item \textit{reservation} har typen \textit{Reservation}, og viser at der er et forhold til \textit{Reservation} klassen.
 \end{itemize}
 
+\section{Systemarkitektur}
 
+Med udgangspunkt i de tidligere beskrevne krav til reservationssystemet, ser vi god grund til at benytte os af den ofte brugte \textit{Model-view-controller} arkitektur (forkortet \textit{MVC}). Denne beskriver en streng opdeling af et systems komponenter (\cite{wiki:mvc}):
 
+\begin{itemize}
+  \item
+    \textbf{Model}
+  
+    En Model beskriver i MVC et stykke data samt den underliggende logik for dette. Dette oversættes i reservationssystemet til de forskellige typer af data, som skal håndteres: Film, reservationer, billetter, mv.
+  \item
+    \textbf{View}
+    
+    Et View beskriver i MVC præsentationen af et systems forskellige Models. I reservationssystemet oversættes dette til de FXML-filer, som benyttes til af opbygge den visuelle del af brugergrænsefladen og dermed præsentationen af systemets data.
+  \item
+    \textbf{Controller}
+    
+    En Controller er i MVC som oftest bindeledet mellem et View og dennes bagvedliggende Model og står for at håndterede brugerinput samt at supplere Views med deres tilhørende Models. Controllere i MVC er også set brugt udelukkende som fortolker af brugerinput, og deres forhold til Models og Views er derfor ikke nødvendigvis fastdefineret (\cite{burbeck1987}).
+    
+    Controllere i reservationssystemet er dermed de klasser, som i systemets FXML Views måtte være refererede via \texttt{fx:controller}-attributten.
+\end{itemize}

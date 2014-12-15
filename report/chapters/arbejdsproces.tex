@@ -1,1 +1,25 @@
 \chapter{Arbejdsproces}
+
+\section{Brug af redskaber}
+
+Der har under hele arbejdsforløbet været fokus på brug af redskaber, som kan afhjælpe ofte opstående problemstillinger i softwareprojekter:
+
+\begin{itemize}
+  \item Manglende versionskontrol af kode
+  \item Oversete fejl ved introduktion af ny kode
+  \item Manglende overblik ved testning af kode
+  \item Manglende dokumentation af kode
+  \item Inkonsistent struktur og udseende af kode
+\end{itemize}
+
+\subsection{Versionskontrol}
+
+Al kode holdes under versionstyring ved hjælp af git\footnote{\url{http://www.git-scm.com/}}, hvilket sikrer, at alle udviklere på projektet har adgang til samme kodebase og inkrementalt kan indføre og holde styr på ændringer til denne. Som centraliseret git-server har vi benyttet os af GitHub\footnote{\url{https://github.com/}} og dennes udbud af gratis hosting af open source projekter: \url{https://github.com/kasperisager/bookie}
+
+\subsection{Automatiseret testning}
+
+For at komme problemet med oversete fejl ved introduktion af ny kode til livs, har vi valgt at benytte os af \textit{continuous integration} (forkortet \textit{CI}) i forlængelse af vores brug af versionskontrol. CI involverer løbende sammenfletning af de forskellige udvikleres arbejdskopier af kodebasen i sammenkobling med automatisk kørsel af tests ved hver sammenfletning (\cite{wiki:ci}). Dette sikrer, at fejl resulterende fra ikke-passerende tests kan findes førend de indtræder i andre udvikleres kopi af kodebasen.
+
+Til afvikling af CI, og dermed automatisk kørsel af tests, har vi benyttet os af Travis CI\footnote{\url{https://travis-ci.org/}}, der ligesom GitHub tilbyder gratis service for open source projekter. Bookie kan findes på Travis CI via følgende adresse: \url{https://travis-ci.org/kasperisager/bookie}.
+
+Som nævnt i kapitel \ref{subsection:kodedeakning} har vi med vores tests taget udgangspunkt i kodedækningsrapporter. For at opnå størst muligt overblik over dækningen af vores kode, har vi benyttet os af Coveralls\footnote{\url{https://coveralls.io}} til inkremental rapportering af kodebasens dækningsprocent som del af CI.
