@@ -410,7 +410,7 @@ public abstract class Model {
    *
    * @throws SQLException In case of a SQL error.
    */
-  public final boolean insert() throws SQLException {
+  public boolean insert() throws SQLException {
     if (this.id != null) {
       return false;
     }
@@ -437,7 +437,7 @@ public abstract class Model {
    *
    * @throws SQLException In case of a SQL error.
    */
-  public final boolean update() throws SQLException {
+  public boolean update() throws SQLException {
     if (this.id == null) {
       return false;
     }
@@ -465,7 +465,7 @@ public abstract class Model {
    *
    * @throws SQLException In case of a SQL error.
    */
-  public final boolean delete() throws SQLException {
+  public boolean delete() throws SQLException {
     if (this.id == null) {
       return false;
     }
