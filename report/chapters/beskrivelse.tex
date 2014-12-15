@@ -1,10 +1,8 @@
 \chapter{Teknisk beskrivelse}
 
-Reservationssystemet tager som nævnt i kapitel udgangpunkt i \textit{Model-View-Controller} arkitekturen (forkortet \textit{MVC}), og der er derfor lavet en streng opdeling mellem datamodelering, datahåndtering, og datapræsentation. En \textit{Model} er i MVC-arkitekturen et stykke data
-
 \section{Databaseabstraktion}
 
-I parallel med Bookie har vi udviklet en databaseabstraktion ved navn \textit{Donkey}. Donkey er bygget oven på \textit{Java Database Connectivity} (forkortet \textit{JDBC}) og har til formål at muliggøre persistens af datamodeller uden at en udvikler behøver at skrive en eneste linje SQL. Dette opnås gennem såkaldt \textit{object-relational mapping} (forkortet \textit{ORM}), hvor et objekt i et objekt-orienteret system – i vores tilfælde Java – automatisk kan konverteres til en mere simpel struktur, som kan gemmes i et databasesystem (\cite{wiki:orm}).
+I parallel med reservationssystemet har vi udviklet en databaseabstraktion ved navn \textit{Donkey}. Donkey er bygget oven på \textit{Java Database Connectivity} (forkortet \textit{JDBC}) og har til formål at muliggøre persistens af datamodeller uden at en udvikler behøver at skrive en eneste linje SQL. Dette opnås gennem såkaldt \textit{object-relational mapping} (forkortet \textit{ORM}), hvor et objekt i et objekt-orienteret system – i vores tilfælde Java – automatisk kan konverteres til en mere simpel struktur, som kan gemmes i et databasesystem (\cite{wiki:orm}).
 
 Donkey understøtter på nuværende tidspunkt tre forskellige relationelle databasesystemer: MySQL\footnote{\url{http://www.mysql.com/}}, PostgreSQL\footnote{\url{http://www.postgresql.org/}}, samt SQLite\footnote{\url{http://sqlite.org/}}. Mens Bookie udelukkende gør brug af SQLite, er understøttelse af de resterende databasesystemer medtaget for at sikre en solid løsning, som kan tage forbehold for eventuelle forskelle mellem databasesystemer.
 
@@ -289,8 +287,8 @@ Med udgangspunkt i den forespurgte datamodel \texttt{Post} skal listen af række
 Herefter kan der instantieres to datamodeller af typen \texttt{Post}. Disses relationer kan nu gennemløbes og partitionering foretages på ny på de to partitioner set i figur \ref{data-table:posts-partition}. Dette vil resultere i henholdsvis 2 og 3 nye partitioner, denne gang med udgangspunkt i datamodellen \texttt{Comment}. Disse partitioner kan igen instantieres som datamodeller, og tilføjes som relationer i de allerede instantierede \texttt{Post}-modeller. Det endelige resultat er to instanser af \texttt{Post}-modellen, hver med henholdsvis to og tre instanser af \texttt{Comment}-modellen.
 
 \section{Datamodeller}
-Alle datamodeller i Bookie er lavet sådan, at selve modellerne er separate klasser, hvor felterne i den enkelte klasse er kolonner. Dette er muligt på grund af \textit{Donkey}. Hvilket gør det meget simpelt og let at implantere(?) %kan man sige det??
-nyt data.
+
+
 
 \subsection{Auditorium}
 
@@ -309,19 +307,12 @@ nyt data.
 
 \section{Brugergrænseflade}
 
-
 \subsection{Controllere}
-
 
 \subsubsection{ApplicationController}
 
-
 \subsubsection{ShowtimeController}
-
-\textit{ShowtimeController} styrer alt som foregår inde på siden \textit{Forestillinger}. Gitteret har fået et antal af sæder og rækker, samt en placering, og der bliver tilføjet bogstaver og tal til både sæderne og rækkerne. Der bliver muligt at vælge sæder, samt at se om de er reserverede eller købte. Dette er muligt med en Lytter på \textit{Reservér}-knappen og en Lytter på sæderne. Salen i sig selv har fået en størrelse, og placeringen af selve gitteret bliver også justeret. Der er også kommet en begrænsning på telefonnumrene. Inde i feltet er der kun muligt at indtaste otte-cifrede numre (og de kan ikke starte med \textit{0}).
 
 Denne kontroller håndterer præsentation af forestillinger under fanen \textit{Forestillinger}. Et \texttt{TableView} benyttes... Biografsalen og dennes tilknyttede elementer (...) bliver anrettede i et \texttt{GridPane}-layout og... De valgte sæder gemmes i et \texttt{ObservableSet}, hvilket sikrer... Verificering af telefonnumre foretages via et regex, som... 
   
 \subsubsection{ReservationController}
-
-\textit{ReservationController} tager og kontrollerer alt inde på \textit{Reservationer}. Udover et filter, er hele siden én stor tabel. Alle kolonner bliver justeret. Der 

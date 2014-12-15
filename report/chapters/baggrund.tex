@@ -1,21 +1,31 @@
 \chapter{Baggrund og problemstilling}
 
-Hvordan kan et softwaresystem laves, således at en ekspedient i en biograf kan håndtere en kundes reservation,  ?
+En ekspedient skal med et reservationssystem kunne betjene billetlugen og telefonen i en mindre biograf. Ekspedienten skal kunne reservere billetter til forestillinger samt lave ændringer på eller slette eksisterende reservationer.
 
-%Mangler alt muligt .. 
+\section{Brugerhistorier}
 
-En ekspedient skal kunne betjene billetlugen og telefonen i en mindre biograf. Opgaven er stillet sådan, at ekspedienten skal kunne betjene begge former for kundehenvendelse uden brug af "EKSTERNE MIDLER - SKAL ÆNDRES!!". Ekspedienten skal kunne reservere pladser/billetter til forskellige forestillinger, lave ændringer på dem, men ikke sælge dem.
+Følgende brugerhistorier (\cite{wiki:user-story}) er udarbejde som krav til reservationssystemet og tager udgangspunkt i ekspedientens såvel som kundens rolle i reservationsprocessen.
 
-Et softwaresystem er blevet udviklet til at løse visse krav og brugsscenarier, som er stillet i opgaven - og som gør det lettere for ekspedienten at fuldføre sit arbejde.
-
-De arbejdsopgaver som vores ekspedient skal kunne løse er:
+\subsection{Ekspedientens rolle}
 
 \begin{itemize}
-  \item En kunde skal kunne bestille så mange billetter vedkommende har lyst til.
-  \item Billetterne skal være knyttet til vilkårlige eller bestemte sæder
-  \item Ekspedienten skal kunne fjerne, ændre og tilføje reservationer.
-  \item Mulighed for at vælge én bestemt forestilling eller vilkårlige forestillinger.
-  \item Mulighed for at vælge ét bestemt tidspunkt eller vilkårlige tidspunkter i løbet af den periode, de forskellige forestillinger bliver vist.
+  \item Som en ekspedient vil jeg reservere en eller flere billetter til den forestilling, som en kunde måtte ønske.
+  \item Som en ekspedient vil jeg sortere i listen af forestillinger, så jeg kan finde den forestilling, som en kunde måtte ønske.
+  \item Som en ekspedient vil jeg se hvilke sæder er ledige til en given forestilling, så jeg kan finde de sæder, som en kunde måtte ønske.
+  \item Som en ekspedient vil jeg knytte en kundes telefonnummer til en reservation, så jeg senere kan finde den igen.
+  \item Som en ekspedient vil jeg søge på en kundes telefonnummer, så jeg kan finde deres reservationer igen.
+  \item Som en ekspedient vil jeg slette en kundes reservation hvis nødvendigt.
+  \item Som en ekspedient vil jeg tilføje billetter til  fra en kundes reservation hvis nødvendigt.
+\end{itemize}
+  
+\subsection{Kundens rolle}
+
+\begin{itemize}
+  \item Som en kunde vil jeg se en bestemt eller vilkårlig film på en bestemt eller vilkårlig dag samt et bestemt eller vilkårligt tidspunkt af dagen.
+  \item Som en kunde vil jeg have de ledige sæder, som jeg bedst synes om.
+  \item Som en kunde vil jeg afreservere mine billetter hvis jeg ikke kan komme til forestillingen.
+  \item Som en kunde vil jeg tilføje billetter til fra min reservation hvis nødvendigt.
+  \item Som en kunde vil jeg fjerne billetter fra min reservation hvis nødvendigt.
 \end{itemize}
 
 Der er en chance for, at der ikke er nok billetter til den valgte forestilling, eller at der ikke er en forestilling på det valgte tidspunkt. Også har vi det eksempel, at hvis en kunde ringer og spørger efter 10 billetter til en bestemt forestilling, hvor der er pladser nok, men pladserne er desværre ikke placeret ved siden af hinanden, hvilke muligheder er der så? Disse problemer kan visuelt afkodes af brugergrænsefladen. Hvis biografen ikke kan udbyde kundens efterspørgsel, så vil der ikke ske andet, end at kunden må finde en anden forestilling eller acceptere, at han/hun ikke kommer i biograf på det valgte tidspunkt.
@@ -23,7 +33,7 @@ Der er en chance for, at der ikke er nok billetter til den valgte forestilling, 
 Brugsscenarierne bliver alle løst på forskellige måder. For det første må der eksistere nogle forestillinger, sale, rækker og sæder før der kan laves nogle reservationer. Forestillingerne i sig selv er en kombination af film, sal, tidspunkt og dag. Disse forskellige elementer skal kunne ses på brugergrænsefladen. Da rækkerne og sæderne skal kunne resereveres til kunder, må der ikke være muligt for ekspedienten at dobbeltreservere.
 
 For det andet skal man bl.a. kunne koble et kunde-id (i form af telefonnummer) sammen med en forestilling, hvorefter disse informationer skal kunne gemmes, hentes igen, evt. redigeres og slettes. Databaser bliver her et nødvendigt redskab.
-\\\\
+
 Brugsscenarierne bliver lavet %SOMETHING SOMETHING DARK SIDE !!!!!!!
 skal i dette tilfælde laves i Java og JavaFX eller Java Swing, hvilket er et krav, hvor vi har valgt at bruge JavaFX, samt en database efter eget valg. Disse sprog skal sammensættes, og resultatet kan blive optimalt.
 
@@ -31,10 +41,6 @@ For at nå frem til resulatet, er det en god idé at prøve at have så meget ov
 
 Dog skal der passes på, da der kan opstå mange fejl. I værste tilfælde kan et program bryde sammen, hvilket det helst ikke skal gøre. Hvis der ikke er taget højde for det meste, så vil programmet råbe op. Her kan der siges, at unit-test hjælper med at holde det på rette spor. 
 
-Der kan bl.a. ske en SQL-injicering, når en database bliver brugt. Hvis dette kan undgås, så % er alle glade.
-Også dette kan/skal testes .. 
-%HVAD OG HVORDAN !! 
-\\\\
 Der er taget det valg, at bruge et klient-tungt system, som inkluderer at det godt kan bruges uafhængigt af en server. Der er ikke et behov for forbindelse til hverken en server eller et netværk. Al data er placeret lokalt, og bl.a. fordi vi får givet, at biografen kun skal have én billetluge og tillader ikke reservationer over nettet. Dette inkluderer, at det ikke er muligt at lave forskellige opdateringer til databasen på samme tid. Her er SQLite en optimal mulighed i forhold til MYSQL og PostgreSQL.
-\\\\
+
 Det færdige projekt skal kunne håndtere alle krav, som er blevet stillet. Det skal kunne tilfredsstille kunden og ekspedienten således, at der hverken er problemer eller mangel på muligheder vedrørende reservationer eller redigering af dem. Det skal kunne tage højde for alle slags fejl, uden først og fremmest at bryde sammen, men også så at de enkelte elementer i programmet ikke kan kontrolleres således, at det kan holdes opdateret.
