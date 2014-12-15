@@ -1,5 +1,7 @@
 \chapter{Teknisk beskrivelse}
 
+Reservationssystemet tager udgangpunkt i \textit{Model-View-Controller} arkitekturen (forkortet \textit{MVC}), og der er derfor lavet en streng opdeling mellem datamodelering, datahåndtering, og datapræsentation. En \textit{Model} er i MVC-arkitekturen et stykke data
+
 \section{Databaseabstraktion}
 
 I parallel med Bookie har vi udviklet en databaseabstraktion ved navn \textit{Donkey}. Donkey er bygget oven på \textit{Java Database Connectivity} (forkortet \textit{JDBC}) og har til formål at muliggøre persistens af datamodeller uden at en udvikler behøver at skrive en eneste linje SQL. Dette opnås gennem såkaldt \textit{object-relational mapping} (forkortet \textit{ORM}), hvor et objekt i et objekt-orienteret system – i vores tilfælde Java – automatisk kan konverteres til en mere simpel struktur, som kan gemmes i et databasesystem (\cite{wiki:orm}).
@@ -78,9 +80,9 @@ Den abstrakte \texttt{Grammar}-klasse benyttes til at bygge de forskellige delko
 
 Læg i figur \ref{code-example:grammar-select-compilation} specielt mærke til hvorledes værdierne \texttt{123} og \texttt{"bar"} bliver erstattede med \texttt{?} i det kompilerede SQL-udtryk. Hvorfor dette gøres, vil vi komme tilbage til senere.
 
-Målet med \texttt{Grammar}-klassen er at definere en grammatik for de mest typiske og standardiserede SQL-udtryk. Klassen er imidlertid abstrakt, da ikke alle understøttede SQL-udtryk er standardiserede mellem de forskellige databasesystemer. Dette inkluderer på nuværende tidspunkt definitionen af automatisk stigende kolonner, hvilket ikke håndteres ens mellem de understøttede databasesystemer. \texttt{Grammar} definerer derfor dette stykke funktionalitet som en abstrakt metode, der overlades til underklasser at implementere.
+Målet med \texttt{Grammar}-klassen er at definere en grammatik for de mest typiske og standardiserede SQL-udtryk. Klassen er imidlertid abstrakt, da ikke alle understøttede SQL-udtryk er standardiserede mellem de forskellige databasesystemer. Dette inkluderer på nuværende tidspunkt definitionen af automatisk stigende kolonner, hvilket ikke håndteres ens mellem de understøttede databasesystemer. \texttt{Grammar} definerer derfor dette stykke funktionalitet som en abstrakt metode, der overlades til subklasser at implementere.
 
-Figur \ref{class-diagram:grammar-class} viser de vigtigste offentlige metoder tilgængelige i \texttt{Grammar}-klassen. Alle metodeparametre er fjernede, da disse ikke umiddelbart har betydning for at danne et billede af den overordnede funktionalitet tilgængelig i \texttt{Grammar}. Med denne funktionalitet, omend lidt sparsommelig, er det muligt at dække de hyppigst forekommende SQL-udtryk, i hvert fald i det omfang vi vil benytte i Bookie.
+Figur \ref{class-diagram:grammar-class} viser de vigtigste offentlige metoder tilgængelige i \texttt{Grammar}-klassen. Alle metodeparametre er fjernede, da disse ikke umiddelbart har betydning for at danne et billede af den overordnede funktionalitet tilgængelig i \texttt{Grammar}.
 
 \subsection{Driver}
 
@@ -286,11 +288,21 @@ Med udgangspunkt i den forespurgte datamodel \texttt{Post} skal listen af række
 
 Herefter kan der instantieres to datamodeller af typen \texttt{Post}. Disses relationer kan nu gennemløbes og partitionering foretages på ny på de to partitioner set i figur \ref{data-table:posts-partition}. Dette vil resultere i henholdsvis 2 og 3 nye partitioner, denne gang med udgangspunkt i datamodellen \texttt{Comment}. Disse partitioner kan igen instantieres som datamodeller, og tilføjes som relationer i de allerede instantierede \texttt{Post}-modeller. Det endelige resultat er to instanser af \texttt{Post}-modellen, hver med henholdsvis to og tre instanser af \texttt{Comment}-modellen.
 
-\section{Databasedesign}
+\section{Datamodeller}
+
+\subsection{Auditorim}
+
+\subsection{Movie}
+
+\subsection{Reservation}
+
+\subsection{Showtime}
+
+\subsection{Ticket}
 
 \section{Brugergrænseflade}
 
-\subsection{Controller}
+\subsection{Controllere}
 
 \subsubsection{ApplicationController}
 
@@ -303,8 +315,3 @@ Denne kontroller håndterer præsentation af forestillinger under fanen \textit{
 \subsubsection{ReservationController}
 
 \textit{ReservationController} tager og kontrollerer alt inde på \textit{Reservationer}. Udover et filter, er hele siden én stor tabel. Alle kolonner bliver justeret. Der 
-
-\subsubsection{ErrorController}
-
-\textit{ErrorController} kontrollerer når Bookie bryder sammen. Når det sker, kommer der en boks frem med en besked, som forklarer hvad der er gået 
-galt.
