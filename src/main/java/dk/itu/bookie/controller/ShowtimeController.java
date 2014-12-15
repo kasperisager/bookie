@@ -65,11 +65,6 @@ import dk.itu.bookie.model.Ticket;
  */
 public final class ShowtimeController {
   /**
-   * Regular expression for matching 8-digit phone number.
-   */
-  private static final String PHONE_REGEX = "^[1-9][0-9]{7}$";
-
-  /**
    * The singleton instance of the controller.
    */
   private static ShowtimeController instance;
@@ -252,7 +247,9 @@ public final class ShowtimeController {
     validationSupport.registerValidator(
       this.phone,
       Validator.createRegexValidator(
-        "Ugyldigt telefonnummer", this.PHONE_REGEX, Severity.ERROR
+        "Ugyldigt telefonnummer",
+        Reservation.getPhoneNumberValidationRegex(),
+        Severity.ERROR
       )
     );
   }
@@ -523,7 +520,7 @@ public final class ShowtimeController {
   private Integer getPhone() {
     String phoneNumber = this.phone.getText();
 
-    if (!phoneNumber.matches(this.PHONE_REGEX)) {
+    if (!Reservation.validatePhoneNumber(phoneNumber)) {
       return null;
     }
 
@@ -617,9 +614,6 @@ public final class ShowtimeController {
       reservation.bought.set(buy);
       reservation.insert();
 
-      // Add the reservation to the corresponding showtime.
-      showtime.reservations.add(reservation);
-
       Iterator<Seat> seats = this.selectedSeats.iterator();
 
       while (seats.hasNext()) {
@@ -664,7 +658,6 @@ public final class ShowtimeController {
 
     try {
       reservation.delete();
-      reservation.showtime.get().reservations.remove(reservation);
     }
     catch (SQLException ex) {
       return;
