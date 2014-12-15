@@ -18,17 +18,18 @@ Der er i samtlige tests, som involverer interaktion med en database, testet dire
 \textit{Code coverage}-rapporter er blevet benyttede til at sikre en systematisk tilgang til implementation af tests. Disse rapporter er generede via kodedækningsredskabet JaCoCo\footnote{\url{https://github.com/jacoco/jacoco}} (se figur \ref{code-coverage:donkey}) og giver overblik over præcist hvilke instruktioner og eksekveringsgrene, der er berørte af de underliggende tests (\cite{wiki:code-cov}).
 
 \begin{figure}[h]
-\begin{minipage}[b]{0.45\linewidth}
-  \centering
-  \includegraphics[width=\textwidth]{jacoco-donkey.png}
-\end{minipage}
-\hspace{0.5cm}
-\begin{minipage}[b]{0.45\linewidth}
-  \centering
-  \includegraphics[width=\textwidth]{jacoco-model.png}
-\end{minipage}
-\caption{To udsnit af en JaCoCo kodedækningsrapport}
-\label{code-coverage:donkey}
+  \begin{minipage}[b]{0.45\linewidth}
+    \centering
+    \includegraphics[width=\textwidth]{jacoco-donkey.png}
+  \end{minipage}
+  \hspace{0.5cm}
+  \begin{minipage}[b]{0.45\linewidth}
+    \centering
+    \includegraphics[width=\textwidth]{jacoco-model.png}
+  \end{minipage}
+  
+  \caption{To udsnit af en JaCoCo kodedækningsrapport}
+  \label{code-coverage:donkey}
 \end{figure}
 
 Vi har tilstræbet en dækningsprocent på minimum 80\% gennem vores testning af databaseabstraktionen under antagelse af, at de sidste 20\% overvejende er ikke- eller svært-testbar kode.
