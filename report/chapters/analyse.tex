@@ -1,16 +1,23 @@
 \chapter{Problemanalyse}
 
 \section{Databasedesign}
+Al data er bygget op i data-modeller. \textit{Film}, \textit{Sal}, \textit{Reservation}, \textit{Billet} og \textit{Forestilling} er vores data-modeller, hvor de hver især har fået tildelt en portion data.
 
 \subsection{Film}
+For at have en funktionel biograf, er det nødvendigt at have en film. 
+Filmen/e får tildelt et navn.
 
 \subsection{Sal}
-
-\subsection{Forestilling}
-
-\subsection{Billet}
+Udover en film, er det også nødvendigt at have en sal for at vise filmen. På samme måde som \textit{Film}, får salene også tildelt navn. For at det ikke skal være alt for ubehageligt for publikum, så har salene også et antal rækker og sæder. 
 
 \subsection{Reservation}
+Det er muligt at reservere sæderne for at se en film. Dog kun, hvis der er en forestilling. Til reservationerne skal der oplyses et telefonnummer, og hvor mange billetter reservationen skal have.
+
+\subsection{Billet}
+Billetterne er en liste som tilhører \textit{Reservation}, hvor der er tildelt en række og et sæde pr. billet. 
+
+\subsection{Forestilling}
+En forestilling har både en reservation, en sal, en film og nogle billetter.
 
 \section{Præsentation af data}
 
