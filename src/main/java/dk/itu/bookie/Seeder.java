@@ -99,8 +99,8 @@ public final class Seeder {
 
       // Set the showtime date.
       showtime.playingAt(
-        cal.get(Calendar.YEAR),
-        cal.get(Calendar.MONTH) + 1,
+        2015,
+        3,
         (i % 27) + 1,
         i % 23,
         ((i % 2) * 30) % 60

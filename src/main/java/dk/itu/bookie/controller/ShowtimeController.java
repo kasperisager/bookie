@@ -522,6 +522,8 @@ public final class ShowtimeController {
    */
   private void renderShowtime(final Showtime showtime) {
     this.auditorium.getChildren().clear();
+    this.clearPhone();
+    this.enablePhone();
 
     if (this.activeReservation.isNotNull().get()) {
       this.activeReservation.set(null);
