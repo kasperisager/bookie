@@ -615,9 +615,10 @@ public final class ShowtimeController {
    * @param reservation The reservation whose auditorium to render.
    */
   private void renderReservation(final Reservation reservation) {
+    this.refresh();
+
     this.showtimes.getSelectionModel().select(reservation.showtime.get());
 
-    this.selectedSeats.clear();
     this.setPhone(reservation.phoneNumber.get());
     this.disablePhone();
 
