@@ -87,12 +87,7 @@ public final class Seat extends Rectangle {
         return;
       }
 
-      if (!this.selected.get()) {
-        this.select();
-      }
-      else {
-        this.deselect();
-      }
+      this.toggle();
     });
   }
 
@@ -132,6 +127,18 @@ public final class Seat extends Rectangle {
     }
 
     this.selected.set(false);
+  }
+
+  /**
+   * Toggle the selected state of a seat.
+   */
+  public void toggle() {
+    if (!this.selected.get()) {
+      this.select();
+    }
+    else {
+      this.deselect();
+    }
   }
 
   /**

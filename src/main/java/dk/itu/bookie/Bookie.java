@@ -7,6 +7,9 @@ package dk.itu.bookie;
 import java.sql.SQLException;
 import java.util.Properties;
 
+// IO utilties
+import java.io.File;
+
 // JavaFX utilities
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -58,11 +61,14 @@ public final class Bookie extends Application {
    * @throws SQLException In case of a SQL exception during seeding.
    */
   public static void main(final String[] args) throws SQLException {
-    // Clear the demo database.
-    Seeder.reset();
+    // Run the seeder if the local database doesn't exist.
+    if (!(new File("Bookie.db").isFile())) {
+      // Clear the demo database.
+      Seeder.reset();
 
-    // Initialize the demo database.
-    Seeder.init();
+      // Initialize the demo database.
+      Seeder.init();
+    }
 
     // Liftoff!
     Bookie.launch(args);
