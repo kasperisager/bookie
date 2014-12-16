@@ -28,7 +28,7 @@ Helt konkret består Donkey af følgende klasser:
 \end{itemize}
 \end{multicols}
 
-Donkey er fra bunden opbygget efter \textit{dependency injection} designmønstret, hvor afhængigheder injiceres i afhængende klasser, frem for selv at lade de afhængende klasser finde og instantiere deres afhængigheder (\cite{wiki:di}). Dette designmønster har vi fulgt, da det gav større kontrol over, hvorledes afhængigheder flød igennem systemet. Eftersom \texttt{Grammar}-klassen er en afhængighed i næsten samtlige andre klasser (mere om dette følger), og da \texttt{Grammar} er abstrakt med de konkerete implementationer \texttt{My\-Sql\-Grammar}, \texttt{Postgre\-Sql\-Grammar}, og \texttt{Sqlite\-Grammar}, ville det have været yderst besværligt at opbygge systemet, hvis ikke denne grundlæggende afhængighed kunne injiceres i de afhængende klasser. Figur \ref{class-diagram:database-abstraction} forsøger at tydeliggøre, hvorledes de forskellige afhængigheder flyder gennem systemet samt hvordan disse injiceres i de afhængende klasser.
+Donkey er fra bunden opbygget efter \textit{dependency injection} designmønstret, hvor afhængigheder injiceres i afhængende klasser, frem for selv at lade de afhængende klasser finde og instantiere deres afhængigheder (\cite{wiki:di}). Dette designmønster har vi fulgt, da det gav større kontrol over, hvorledes afhængigheder flød igennem systemet. Eftersom \texttt{Grammar}-klassen er en afhængighed i næsten samtlige andre klasser (mere om dette følger), og da \texttt{Grammar} er abstrakt med de konkerete implementationer \texttt{My\-Sql\-Grammar}, \texttt{Postgre\-Sql\-Grammar}, og \texttt{Sqlite\-Grammar}, ville det have været yderst besværligt at opbygge systemet, hvis ikke denne grundlæggende afhængighed kunne injiceres i de afhængende klasser. Figur \ref{class-diagram:database-abstraction} forsøger at tydeliggøre, hvorledes de forskellige afhængigheder flyder gennem systemet, samt hvordan disse injiceres i de afhængende klasser.
 
 \begin{figure}[h]
   \centering
@@ -45,11 +45,11 @@ De næste sektioner vil gennemgå hver klasse i det niveau af detalje, som mått
 
 \texttt{Row}-klassen benytter sig af de generiske typer \texttt{String} og \texttt{Object} til nøgler og værdier, respektivt, i et \texttt{Linked\-Hash\-Map}. Dette gør det muligt at associere en databasekolonne (nøglen) med en hvilken som helst datatype (værdien), hvilket er hensigtmæssigt, da en databasetabel kan indeholde mange forskellige typer af data.
 
-Slutteligt bør det nævnes, at et \texttt{Linked\-Hash\-Map} blev valgt, da iterationsrækkefølgen af kolonnerne i en tabel i visse tilfælde \textit{kan} have betydning.
+Til sidst bør det nævnes, at et \texttt{Linked\-Hash\-Map} blev valgt, da iterationsrækkefølgen af kolonnerne i en tabel i visse tilfælde \textit{kan} have betydning.
 
 \subsection{Grammar}
 
-Den abstrakte \texttt{Grammar}-klasse benyttes til at bygge de forskellige delkomponenter af SQL-udtryk samt til at kompilere disse delkomponenter til fulde SQL-udtryk. Som navnet på klassen indikerer, bruges den dermed til at beskrive grammatikken for SQL-udtryk:
+Den abstrakte \texttt{Grammar}-klasse benyttes til at bygge de forskellige delkomponenter af SQL-udtryk, samt til at kompilere disse delkomponenter til fulde SQL-udtryk. Som navnet på klassen indikerer, bruges den dermed til at beskrive grammatikken for SQL-udtryk:
 
 \begin{figure}[h]
   \begin{minted}{java}
@@ -84,7 +84,7 @@ Figur \ref{class-diagram:grammar-class} viser de vigtigste offentlige metoder ti
 
 \subsection{Driver}
 
-\texttt{Driver}-enumeratoren har til opgave at oprette forbindelse til de understøttede databasesystemer via JDBCs \texttt{Driver\-Manager}\footnote{\url{http://docs.oracle.com/javase/8/docs/api/java/sql/DriverManager.html}} og de tredjepartsdrivere, som måtte være tilgængelige for det pågældende databasesystem. Derudover står \texttt{Driver}-enumeratoren også for at instantiere de konkrete \texttt{Grammar}-objekter, som skal benyttes til de forskellige databasesystemer. MySQL-driveren opretter dermed instanser af \texttt{MySql\-Grammar}, PostgreSQL-driveren instanser af \texttt{PostgreSql\-Grammar}, og slutteligt SQLite-driveren instanser af \texttt{Sqlite\-Grammar}.
+\texttt{Driver}-enumeratoren har til opgave at oprette forbindelse til de understøttede databasesystemer via JDBCs \texttt{Driver\-Manager}\footnote{\url{http://docs.oracle.com/javase/8/docs/api/java/sql/DriverManager.html}} og de tredjepartsdrivere, som måtte være tilgængelige for det pågældende databasesystem. Derudover står \texttt{Driver}-enumeratoren også for at instantiere de konkrete \texttt{Grammar}-objekter, som skal benyttes til de forskellige databasesystemer. MySQL-driveren opretter dermed instanser af \texttt{MySql\-Grammar}, PostgreSQL-driveren instanser af \texttt{PostgreSql\-Grammar}, og til sidst SQLite-driveren instanser af \texttt{Sqlite\-Grammar}.
 
 \texttt{Driver} er implementeret som en enumerator og ikke en klasse, da vi ikke så mening i at have et interface med tre implementerende klasser hver med kun to statiske metoder. En enumerator med to abstrakte metoder, som implementeres i hver af enumratorens elementer, var derfor at foretrække.
 
@@ -96,9 +96,9 @@ Der henvises til figur \ref{class-diagram:database-abstraction} for klassediagra
 
 Alle SQL-forespørgsler bliver eksekverede som \texttt{Prepared\-Statement}s\footnote{\url{http://docs.oracle.com/javase/8/docs/api/java/sql/PreparedStatement.html}}, og det er her, at \texttt{?}-tegnene fra de af \texttt{Grammar} kompilerede SQL-udtryk kommer ind i billedet. Et \texttt{Prepared\-Statement} bliver i første omgang sendt til SQL-serveren og pre-kompileret uden eventuelle brugergenerede parametre. Herefter indsættes de brugergenerede parametre istedet for \texttt{?}-tegnene i den pre-kompilerede forespørgsel, som herefter igen eksekveres mod serveren. Dette negerer effektivt al SQL injektion, idet SQL-serveren nu behandler de brugergenerede parametre som netop det; brugergenerede parametre. Der er derfor ikke tvivl om, at de \textit{ikke} er del af et SQL-udtryk. Ondsindet, omend gyldig SQL kan derfor indsættes som parameter, uden at det vil få indflydelse på den allerede kompilerede SQL-forespørgsel.
 
-Ovenstående er årsagen til inklusionen af metoder som \texttt{compile\-Select\-Values()}, \texttt{compile\-Insert\-Values()}, m.v. som set i figur \ref{class-diagram:grammar-class}. Disse bliver brugt til at kompilere lister af de værdier, som måtte være blevet erstattede med \texttt{?}-tegn i de kompilerede SQL-udtryk.
+Ovenstående er årsagen til inklusionen af metoder som \texttt{compile\-Select\-Values()}, \texttt{compile\-Insert\-Values()}, m.v. som set i figur \ref{class-diagram:grammar-class}. Disse bliver brugt til at kompilere lister af de værdier, hvilke bliver erstattede med \texttt{?}-tegn i de kompilerede SQL-udtryk.
 
-Slutteligt står \texttt{Database} for at tolke de \texttt{Result\-Set}s, som måtte resultere fra SQL-forespørgsler. Efter hver forespørgsel gennemløbes det resulterende \texttt{Result\-Set} og oversættes til en liste af \texttt{Row}s. Forbindelsen til det pågældende \texttt{Result\-Set} kan herefter lukkes, mens indholdet – nu oversat til \texttt{Row}s – kan returneres til kalderen.
+Til sidst står \texttt{Database} for at tolke de \texttt{Result\-Set}s, som måtte resultere fra SQL-forespørgsler. Efter hver forespørgsel gennemløbes det resulterende \texttt{Result\-Set} og oversættes til en liste af \texttt{Row}s. Forbindelsen til det pågældende \texttt{Result\-Set} kan herefter lukkes, mens indholdet – nu oversat til \texttt{Row}s – kan returneres til kalderen.
 
 Givet et konkret \texttt{Grammar}-objekt (\texttt{g}) kan SQL eksekveres mod en server på følgende måde:
 
@@ -142,7 +142,7 @@ Figur \ref{code-example:sql-execution} viser første eksempel på injektion af a
 
 Modsat \texttt{Query} beskæftiger \texttt{Schema} sig med de typer af SQL-udtryk, der er kendt som \textit{Data Definition Language} (forkortet \textit{DDL}). Mens DML som sagt tager sig af at hente samt manipulere data i databasetabeller, så benyttes DDL til at definere strukturen af disse (\cite{wiki:ddl}). Som var tilfældet med \texttt{Query}, instantieres \texttt{Schema} ved at injicere en instans af \texttt{Database}, hvorfra der er adgang til et \texttt{Grammar}-objekt passende til det pågældende databasesystem.
 
-Det bør nævnes, at alle kolonner oprettet via \texttt{Schema} er påkrævede og derfor ikke kan være \texttt{null}. Dette designvalg blev taget, da vi udelukkende så brug for påkrævede dataværdier i Bookies datamodeller.
+Det bør nævnes, at alle kolonner oprettet via \texttt{Schema} er påkrævede, og derfor ikke kan være \texttt{null}. Dette designvalg blev taget, da vi udelukkende så brug for påkrævede dataværdier i Bookies datamodeller.
 
 Der henvises til figur \ref{class-diagram:database-abstraction} for de specikke \texttt{Grammar}-metoder, som \texttt{Schema} indkapsler. Disse er primært baserede på \texttt{addDataType()}-metoden i \texttt{Grammar}, der kompilerer datatypekolonner til SQL \texttt{create}-udtryk.
 
@@ -192,7 +192,7 @@ Ligesom \texttt{Query} er \texttt{Schema} tiltænkt brugt gennem \texttt{Databas
   \label{class-diagram:model}
 \end{wrapfigure}
 
-\texttt{Model}-klassen benytter sig af de foregående klasser til at implemenetere object-relational mapping. Dette gøres ud fra konventionen om, at subklasser af \texttt{Model} repræsenterer databasetabeller, mens subklassernes felter repræsenterer kolonnerne i disse tabeller. \texttt{Model} gør således stor brug af Javas Relfection API'er\footnote{\url{http://docs.oracle.com/javase/tutorial/reflect/}} til at hente information om de offentlige felter i en given subklasse.
+\texttt{Model}-klassen benytter sig af de foregående klasser til at implemenetere object-relational mapping. Dette gøres ud fra konventionen om, at subklasser af \texttt{Model} repræsenterer databasetabeller, mens subklassernes felter repræsenterer kolonnerne i disse tabeller. \texttt{Model} gør således stor brug af Javas Reflection API'er\footnote{\url{http://docs.oracle.com/javase/tutorial/reflect/}} til at hente information om de offentlige felter i en given subklasse.
 
 \texttt{Model} benytter sig af \texttt{Schema} til at gennemløbe datamodellers offentlige felter og definere datatypekolonner for disse via \texttt{Model}s private \texttt{defineSchema()}-metode.
 
@@ -227,11 +227,11 @@ Alle modeller indeholder kolonnen \texttt{id}, hvilken er automatisk stigende og
 
 \texttt{ModelQuery}-klassen indkapsler en række af \texttt{Query}-klassens metoder og benyttes til at hente modeller ud af en database. Modsat \texttt{Query}, hvis metoder returnerer lister af \texttt{Row}s, er resultatet af at eksekvere et \texttt{ModelQuery} istedet en liste af modeller.
 
-\texttt{ModelQuery} tager ydermere forbehold for relationer mellem datamodeller og sammenkøre automatisk tabeller hvor nødvendigt. Dette opnåes gennem klassens \texttt{setRelations()}-metode, der rekursivt gennemløber relationer i datamodeller og tilføjer \texttt{join}s til \texttt{ModelQuery}-instansens \texttt{Query}-objekt (se figur \ref{class-diagram:modelquery}). Mens dette stykke funktionalitet har potentiale til at forårsage unødigt komplekse SQL-forespørgsler ved at sammenkøre tabeller, som ikke nødvendigvis skal benyttes, er det medtaget, da det gør selv komplekse relationer trivielle at arbejde med.
+\texttt{ModelQuery} tager ydermere forbehold for relationer mellem datamodeller og sammenkører automatisk tabeller hvor nødvendigt. Dette opnåes gennem klassens \texttt{setRelations()}-metode, der rekursivt gennemløber relationer i datamodeller og tilføjer \texttt{join}s til \texttt{ModelQuery}-instansens \texttt{Query}-objekt (se figur \ref{class-diagram:modelquery}). Mens dette stykke funktionalitet har potentiale til at forårsage unødigt komplekse SQL-forespørgsler ved at sammenkøre tabeller, som ikke nødvendigvis skal benyttes, er det medtaget, da det gør selv komplekse relationer trivielle at arbejde med.
 
 Det bør også nævnes, at \texttt{setRelations()}-metoden sørger for at præfikse samtlige kolonner med navnet på deres tilhørende tabel for at sikre, at sammenkørte tabeller ikke overskriver hinandens kolonner. Således vil kolonnen \texttt{col1} fra \texttt{table1} blive valgt som \texttt{table1\_col1} når forespurgt via et \texttt{ModelQuery}.
 
-\texttt{ModelQuery}-klassens \texttt{getRelations()}-metode står slutteligt for at tolke den liste af \texttt{Row}s, som måtte resultere fra eksekveringen af et \texttt{Query}. Da \texttt{ModelQuery} som beskrevet ovenfor automatisk sammenkører tabeller for at løse relationer mellem datamodeller, svarer een \texttt{Row} nu ikke nødvendigvis til een datamodel. Er en af de pågældende relationer af typen en-til-mange, vil der være mulighed for, at flere \texttt{Row}s beskriver samme datamodel. Det er derfor nødvendigt at partitionere listen af \texttt{Row}s således, at denne bliver oversat til en struktur af datamodeller frem for en flad liste af databaserækker.
+\texttt{ModelQuery}-klassens \texttt{getRelations()}-metode står til sidst for at tolke den liste af \texttt{Row}s, som måtte resultere fra eksekveringen af et \texttt{Query}. Da \texttt{ModelQuery}, som beskrevet ovenfor, automatisk sammenkører tabeller for at løse relationer mellem datamodeller, svarer een \texttt{Row} nu ikke nødvendigvis til een datamodel. Er en af de pågældende relationer af typen en-til-mange, vil der være mulighed for, at flere \texttt{Row}s beskriver samme datamodel. Det er derfor nødvendigt at partitionere listen af \texttt{Row}s således, at denne bliver oversat til en struktur af datamodeller frem for en flad liste af databaserækker.
 
 Tag for eksempel følgende tabel af artikler (datamodel \texttt{Post} med tabel \texttt{posts}) sammenkørt med deres kommentarer (datamodel \texttt{Comment} med tabel \texttt{comments}):
 
@@ -286,11 +286,11 @@ Med udgangspunkt i den forespurgte datamodel \texttt{Post} skal listen af række
   \label{data-table:posts-partition}
 \end{table}
 
-Herefter kan der instantieres to datamodeller af typen \texttt{Post}. Disses relationer kan nu gennemløbes og partitionering foretages på ny på de to partitioner set i figur \ref{data-table:posts-partition}. Dette vil resultere i henholdsvis 2 og 3 nye partitioner, denne gang med udgangspunkt i datamodellen \texttt{Comment}. Disse partitioner kan igen instantieres som datamodeller, og tilføjes som relationer i de allerede instantierede \texttt{Post}-modeller. Det endelige resultat er to instanser af \texttt{Post}-modellen, hver med henholdsvis to og tre instanser af \texttt{Comment}-modellen.
+Herefter kan der instantieres to datamodeller af typen \texttt{Post}. Deres relationer kan nu gennemløbes og partitionering foretages på ny på de to partitioner set i figur \ref{data-table:posts-partition}. Dette vil resultere i henholdsvis 2 og 3 nye partitioner, denne gang med udgangspunkt i datamodellen \texttt{Comment}. Disse partitioner kan igen instantieres som datamodeller, og tilføjes som relationer i de allerede instantierede \texttt{Post}-modeller. Det endelige resultat er to instanser af \texttt{Post}-modellen, hver med henholdsvis to og tre instanser af \texttt{Comment}-modellen.
 
 \section{Datamodeller}
 
-Reservationssystemets datamodeller er byggede ud fra en subklasse af Donkeys \texttt{Model}-klasse ved navn \texttt{FXModel}. Denne tilføjer understøttelse af følgende JavaFX typer og disses subtyper:
+Reservationssystemets datamodeller er byggede ud fra en subklasse af Donkeys \texttt{Model}-klasse ved navn \texttt{FXModel}. Denne tilføjer understøttelse af følgende JavaFX typer og deres subtyper:
 
 \begin{multicols}{3}
 \begin{itemize}
