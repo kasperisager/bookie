@@ -108,7 +108,7 @@ public final class Seeder {
 
       showtime.insert();
 
-      for (int j = 0; j <= 5; j++) {
+      for (int j = 0; j <= (int) (Math.random() * 5); j++) {
         Auditorium auditorium = showtime.auditorium.get();
 
         Reservation reservation = new Reservation();
@@ -119,7 +119,7 @@ public final class Seeder {
         reservation.bought.set(Math.random() > 0.5);
         reservation.insert();
 
-        for (int k = 0; k <= 10; k++) {
+        for (int k = 0; k <= (int) (Math.random() * 10); k++) {
           Ticket ticket = new Ticket();
           ticket.reservation.set(reservation);
           ticket.row.set((int) (Math.random() * auditorium.rows.get()));
