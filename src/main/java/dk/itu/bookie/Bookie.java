@@ -45,7 +45,7 @@ public final class Bookie extends Application {
   public static Database db() {
     if (Bookie.db == null) {
       Properties config = new Properties();
-      config.put("database", "Bookie");
+      config.put("database", "bookie");
 
       Bookie.db = new Database(Driver.SQLITE, config);
     }
@@ -62,7 +62,7 @@ public final class Bookie extends Application {
    */
   public static void main(final String[] args) throws SQLException {
     // Run the seeder if the local database doesn't exist.
-    if (!(new File("Bookie.db").isFile())) {
+    if (!(new File("bookie.db").isFile())) {
       // Clear the demo database.
       Seeder.reset();
 

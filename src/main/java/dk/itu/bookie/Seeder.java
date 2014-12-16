@@ -22,12 +22,6 @@ import dk.itu.bookie.model.Showtime;
  * @version 1.0.0
  */
 public final class Seeder {
-  private static final int SHOWTIME_COUNT = 80;
-
-  private static final int RESERVATION_COUNT = 5;
-
-  private static final int TICKET_COUNT = 10;
-
   /**
    * Don't allow instantiating the class.
    */
@@ -94,7 +88,7 @@ public final class Seeder {
 
     Calendar cal = Calendar.getInstance();
 
-    for (int i = 0; i < Seeder.SHOWTIME_COUNT; i++) {
+    for (int i = 0; i < 100; i++) {
       Showtime showtime = new Showtime();
 
       // Get the next auditorium.
@@ -105,8 +99,8 @@ public final class Seeder {
 
       // Set the showtime date.
       showtime.playingAt(
-        cal.get(Calendar.YEAR),
-        cal.get(Calendar.MONTH) + 1,
+        2015,
+        3,
         (i % 27) + 1,
         i % 23,
         ((i % 2) * 30) % 60
@@ -114,16 +108,18 @@ public final class Seeder {
 
       showtime.insert();
 
-      for (int j = 1; j <= (int) (Math.random() * Seeder.RESERVATION_COUNT); j++) {
+      for (int j = 0; j <= (int) (Math.random() * 5); j++) {
         Auditorium auditorium = showtime.auditorium.get();
 
         Reservation reservation = new Reservation();
-        reservation.phoneNumber.set(10000000 + (int) (Math.random() * 90000000));
+        reservation.phoneNumber.set(
+          10000000 + (int) (Math.random() * 90000000)
+        );
         reservation.showtime.set(showtime);
         reservation.bought.set(Math.random() > 0.5);
         reservation.insert();
 
-        for (int k = 1; k <= (int) (Math.random() * Seeder.TICKET_COUNT); k++) {
+        for (int k = 0; k <= (int) (Math.random() * 10); k++) {
           Ticket ticket = new Ticket();
           ticket.reservation.set(reservation);
           ticket.row.set((int) (Math.random() * auditorium.rows.get()));

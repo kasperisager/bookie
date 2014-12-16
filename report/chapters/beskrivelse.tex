@@ -311,6 +311,8 @@ I overenstemmelse med MVC-arkitekturen, har vi forsøgt at håndtere så meget m
 
 \section{Brugergrænseflade}
 
+Reservationssystemets brugergrænseflade er ikke synderligt kompleks, da den i kraft af MVC-arkitekturen blot præsenterer data gennem FXMl Views og via de bagvedliggende JavaFX Controllere delegere brugerinput videre til systemets datamodeller.
+
 \subsection{Controllere}
 
 Følgende sektion vil kort redegøre for de vigtigste af de Controllere, der ligger til grund for reservationssystemets JavaFX-baserede brugergrænseflade.
@@ -323,8 +325,8 @@ Denne Controller håndterer al data i reservationssystemet. Den er den eneste Co
 
 \subsubsection{ShowtimeController}
 
-Denne Controller håndterer præsentation af forestillinger under fanen \textit{Forestillinger}. Et \texttt{TableView} benyttes... Biografsalen og dennes tilknyttede elementer (...) bliver anrettede i et \texttt{GridPane}-layout og... De valgte sæder gemmes i et \texttt{ObservableSet}, hvilket sikrer... Verificering af telefonnumre foretages via et regex, som... 
+Denne Controller håndterer præsentation af forestillinger under fanen \textit{Forestillinger}. Controlleren henter data fra \texttt{ApplicationController} og viser det i et \texttt{TableView}. Ved valg af forestilling står Controlleren for at tegne et auditories forskellige rækker og sæder samt allerede oprettede reservationer til forestillingen. Controlleren står også for at visualisere gyldigheden af indtastede telefonnumre.
   
 \subsubsection{ReservationController}
 
-Denne Controller håndterer præsentation af reservation under fanen \textit{Reservatoner}.
+Denne Controller håndterer præsentation af reservationer under fanen \textit{Reservatoner}. Data hentes som ved den forrige Controller ind fra \texttt{ApplicationController} og vises i et \texttt{TableView}. Der er herfra mulighed for henholdsvis redigering og sletning af reservationer.
