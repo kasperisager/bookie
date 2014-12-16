@@ -50,7 +50,6 @@ import org.controlsfx.validation.Validator;
 import org.controlsfx.validation.Severity;
 
 // Components
-import dk.itu.bookie.component.Filter;
 import dk.itu.bookie.component.Seat;
 
 // Models
@@ -194,8 +193,6 @@ public final class ShowtimeController {
       return data.getValue().movie.get().name;
     });
 
-    this.movieColumn.setGraphic(new Filter("Film", Filter.TEXT));
-
     this.auditoriumColumn.setCellValueFactory((data) -> {
       return data.getValue().auditorium.get().name;
     });
@@ -203,8 +200,6 @@ public final class ShowtimeController {
     this.dateColumn.setCellValueFactory((data) -> {
       return data.getValue().date();
     });
-
-    this.dateColumn.setGraphic(new Filter("Dato", Filter.DATE));
 
     this.dateColumn.setComparator((date1, date2) -> {
       Date date1Parsed = null;
