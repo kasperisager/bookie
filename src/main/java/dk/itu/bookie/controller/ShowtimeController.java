@@ -617,6 +617,7 @@ public final class ShowtimeController {
   private void renderReservation(final Reservation reservation) {
     this.showtimes.getSelectionModel().select(reservation.showtime.get());
 
+    this.selectedSeats.clear();
     this.setPhone(reservation.phoneNumber.get());
     this.disablePhone();
 
