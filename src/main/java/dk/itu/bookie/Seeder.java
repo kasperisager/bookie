@@ -22,6 +22,12 @@ import dk.itu.bookie.model.Showtime;
  * @version 1.0.0
  */
 public final class Seeder {
+  private static final int SHOWTIME_COUNT = 80;
+
+  private static final int RESERVATION_COUNT = 5;
+
+  private static final int TICKET_COUNT = 10;
+
   /**
    * Don't allow instantiating the class.
    */
@@ -86,11 +92,9 @@ public final class Seeder {
       movies[i] = movie;
     }
 
-    Showtime[] showtimes = new Showtime[80];
-
     Calendar cal = Calendar.getInstance();
 
-    for (int i = 0; i < 80; i++) {
+    for (int i = 0; i < Seeder.SHOWTIME_COUNT; i++) {
       Showtime showtime = new Showtime();
 
       // Get the next auditorium.
@@ -103,33 +107,29 @@ public final class Seeder {
       showtime.playingAt(
         cal.get(Calendar.YEAR),
         cal.get(Calendar.MONTH) + 1,
-        (i % 29) + 1,
+        (i % 27) + 1,
         i % 23,
         ((i % 2) * 30) % 60
       );
 
       showtime.insert();
-      showtimes[i] = showtime;
-    }
 
-    Reservation[] reservations = new Reservation[100];
+      for (int j = 1; j <= (int) (Math.random() * Seeder.RESERVATION_COUNT); j++) {
+        Auditorium auditorium = showtime.auditorium.get();
 
-    for (int i = 0; i < 100; i++) {
-      Showtime showtime = showtimes[i % showtimes.length];
-      Auditorium auditorium = showtime.auditorium.get();
+        Reservation reservation = new Reservation();
+        reservation.phoneNumber.set(10000000 + (int) (Math.random() * 90000000));
+        reservation.showtime.set(showtime);
+        reservation.bought.set(Math.random() > 0.5);
+        reservation.insert();
 
-      Reservation reservation = new Reservation();
-      reservation.phoneNumber.set(10000000 + (int) (Math.random() * 90000000));
-      reservation.showtime.set(showtime);
-      reservation.bought.set(Math.random() > 0.5);
-      reservation.insert();
-
-      for (int j = 1; j <= (int) (Math.random() * 10); j++) {
-        Ticket ticket = new Ticket();
-        ticket.reservation.set(reservation);
-        ticket.row.set((int) (Math.random() * auditorium.rows.get()));
-        ticket.seat.set((int) (Math.random() * auditorium.seats.get()));
-        ticket.insert();
+        for (int k = 1; k <= (int) (Math.random() * Seeder.TICKET_COUNT); k++) {
+          Ticket ticket = new Ticket();
+          ticket.reservation.set(reservation);
+          ticket.row.set((int) (Math.random() * auditorium.rows.get()));
+          ticket.seat.set((int) (Math.random() * auditorium.seats.get()));
+          ticket.insert();
+        }
       }
     }
   }

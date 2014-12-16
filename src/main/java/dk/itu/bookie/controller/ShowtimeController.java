@@ -29,7 +29,8 @@ import javafx.geometry.VPos;
 
 // JavaFX collections
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableSet;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 
 // JavaFX properties
 import javafx.beans.property.ReadOnlyDoubleProperty;
@@ -145,10 +146,10 @@ public final class ShowtimeController {
     new ReadOnlyObjectWrapper();
 
   /**
-   * The set of selected seats.
+   * The list of selected seats.
    */
-  private ObservableSet<Seat> selectedSeats =
-    FXCollections.observableSet();
+  private ObservableList<Seat> selectedSeats =
+    FXCollections.observableArrayList();
 
   /**
    * Get the singleton instance of the controller.
@@ -252,6 +253,43 @@ public final class ShowtimeController {
         Severity.ERROR
       )
     );
+
+    validationSupport.invalidProperty().addListener(
+      (ob, ov, nv) -> {
+        boolean disable = nv;
+
+        if (this.selectedSeats.isEmpty()) {
+          disable = true;
+        }
+
+        this.reserve.setDisable(disable);
+        this.buy.setDisable(disable);
+      }
+    );
+
+    this.selectedSeats.addListener(
+      (ListChangeListener.Change<? extends Seat> c) -> {
+        boolean disable = this.selectedSeats.isEmpty();
+
+        if (validationSupport.isInvalid()) {
+          disable = true;
+        }
+
+        this.reserve.setDisable(disable);
+        this.buy.setDisable(disable);
+      }
+    );
+  }
+
+  /**
+   * Force a re-render of the current showtime.
+   */
+  public void refresh() {
+    Showtime showtime = this.activeShowtime.get();
+    this.activeShowtime.set(null);
+    this.activeShowtime.set(showtime);
+    this.clearPhone();
+    this.enablePhone();
   }
 
   /**
@@ -336,7 +374,7 @@ public final class ShowtimeController {
         height.subtract(60).divide(rows).subtract(4)
       );
 
-    this.selectedSeats = FXCollections.observableSet();
+    this.selectedSeats.clear();
 
     for (int row = 2; row <= (rows + 1); row++) {
       for (int seat = 2; seat <= (seats + 1); seat++) {
@@ -347,10 +385,10 @@ public final class ShowtimeController {
 
         auditoriumSeat.getState().addListener((e, ov, nv) -> {
           if (nv) {
-            this.selectedSeats.add(auditoriumSeat);
+            this.selectedSeats.addAll(auditoriumSeat);
           }
           else {
-            this.selectedSeats.remove(auditoriumSeat);
+            this.selectedSeats.removeAll(auditoriumSeat);
           }
         });
 

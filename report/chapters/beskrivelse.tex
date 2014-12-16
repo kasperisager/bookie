@@ -181,6 +181,8 @@ Ligesom \texttt{Query} er \texttt{Schema} tiltænkt brugt gennem \texttt{Databas
   \caption{Tabellen resulterende fra forespørgslen i figur \ref{code-example:schema-create}}
 \end{table}
 
+\clearpage
+
 \subsection{Model}
 
 \begin{wrapfigure}{r}{0.35\textwidth}
@@ -288,31 +290,41 @@ Herefter kan der instantieres to datamodeller af typen \texttt{Post}. Disses rel
 
 \section{Datamodeller}
 
+Reservationssystemets datamodeller er byggede ud fra en subklasse af Donkeys \texttt{Model}-klasse ved navn \texttt{FXModel}. Denne tilføjer understøttelse af følgende JavaFX typer og disses subtyper:
 
+\begin{multicols}{3}
+\begin{itemize}
+  \item \texttt{StringProperty}
+  \item \texttt{IntegerProperty}
+  \item \texttt{DoubleProperty}
+  \item \texttt{FloatProperty}
+  \item \texttt{LongProperty}
+  \item \texttt{BooleanProperty}
+\end{itemize}
+\end{multicols}
 
-\subsection{Auditorium}
+Derudover tilføjer \texttt{FXModel} også understøttelse af \texttt{ObjectProperty} samt \texttt{ObservableList} til definition af enkelte og lister af \texttt{Model}-subklasser.
 
+Samtlige tabeller beskrevet i kapitel \ref{section:databasedesign} er implementerede som modeller i form af subklasser af \texttt{FXModel} med de felter, som måtte være sig nødvendige for den enkelte model.
 
-\subsection{Movie}
-
-
-\subsection{Reservation}
-
-
-\subsection{Showtime}
-
-
-\subsection{Ticket}
-
+I overenstemmelse med MVC-arkitekturen, har vi forsøgt at håndtere så meget model-speficik logik som muligt i modellerne selv. Dette inkluderer bl.a. verifikation af telefonnumre når reservationer oprettes.
 
 \section{Brugergrænseflade}
 
 \subsection{Controllere}
 
+Følgende sektion vil kort redegøre for de vigtigste af de Controllere, der ligger til grund for reservationssystemets JavaFX-baserede brugergrænseflade.
+
+For mere effektivt at håndterede systemets tilstand, er samtlige Controllere implementerede som \textit{singletons}.
+
 \subsubsection{ApplicationController}
+
+Denne Controller håndterer al data i reservationssystemet. Den er den eneste Controller, som forespørger data fra databasen og henter dette ad een gang, når systemet startes. Samtlige forestillinger bliver her hentet, hvilket i kraft af databaseabstraktionen automatisk inkluderer disses relationer, samt relationernes relationer mv.; film, sale, reservationer, og billetter.
 
 \subsubsection{ShowtimeController}
 
-Denne kontroller håndterer præsentation af forestillinger under fanen \textit{Forestillinger}. Et \texttt{TableView} benyttes... Biografsalen og dennes tilknyttede elementer (...) bliver anrettede i et \texttt{GridPane}-layout og... De valgte sæder gemmes i et \texttt{ObservableSet}, hvilket sikrer... Verificering af telefonnumre foretages via et regex, som... 
+Denne Controller håndterer præsentation af forestillinger under fanen \textit{Forestillinger}. Et \texttt{TableView} benyttes... Biografsalen og dennes tilknyttede elementer (...) bliver anrettede i et \texttt{GridPane}-layout og... De valgte sæder gemmes i et \texttt{ObservableSet}, hvilket sikrer... Verificering af telefonnumre foretages via et regex, som... 
   
 \subsubsection{ReservationController}
+
+Denne Controller håndterer præsentation af reservation under fanen \textit{Reservatoner}.

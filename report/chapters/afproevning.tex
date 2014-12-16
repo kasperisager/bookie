@@ -46,7 +46,14 @@ Med udgangspunkt i kodedækningsrapporten kan vi med stor sikkerhed konkludere, 
 
 \section{Brugerafprøvning}
 
-Mens systematisk automatiseret testning af reservationssystemets JavaFX-baserede brugergrænseflade endnu er en mangelvare, vil vi lade brugervejledningen stå som manuel brugerafprøvning. Den beskrevne funktionalitet i vejledningen er dermed den tilsigtede måde hvorpå reservationsystemets brugergrænseflade fungerer.
+Mens systematisk automatiseret testning af reservationssystemets JavaFX-baserede brugergrænseflade endnu er en mangelvare, vil vi lade brugervejledningen stå som brugerafprøvning. Den beskrevne funktionalitet i vejledningen er dermed den tilsigtede måde hvorpå reservationsystemets brugergrænseflade fungerer.
+
+\subsection{Udestående fejl}
+
+Som følge af brugerafprøvningen kan nævnes følgende fejl, som systemet endnu indeholder:
+
+\begin{itemize}
+  \item Vælges sæder (figur \ref{screenshot:chosen-seats}) og gåes der herefter til \textit{Reservationer}-fanen (figur \ref{screenshot:all-reservations}) hvorefter en reservation slettes (figur \ref{screenshot:delete-button}), vil de tidligere valgte sæder i længere være valgte, når der igen navigeres tilbage til \textit{Forestillinger}-fanen (figur \ref{screenshot:bookie}). Dette skyldes, er der efter sletning af en reservation foretages en genindlæsning af den valgte forestilling, således eventuelt nye reservationer bliver synlige.
+\end{itemize}
 
 \section{Vurdering}
-

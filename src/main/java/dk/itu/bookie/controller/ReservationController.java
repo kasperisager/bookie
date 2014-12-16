@@ -291,6 +291,7 @@ public final class ReservationController {
 
       deleteButton.setOnAction((e) -> {
         ReservationController.getInstance().deleteReservation(reservation);
+        ShowtimeController.getInstance().refresh();
       });
 
       buttons.getChildren().add(editButton);
