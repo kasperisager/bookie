@@ -14,16 +14,16 @@ Der har under hele arbejdsforløbet været fokus på brug af redskaber, som kan 
 
 \subsection{Versionskontrol}
 
-Al kode holdes under versionstyring ved hjælp af git\footnote{\url{http://www.git-scm.com/}}, hvilket sikrer, at alle udviklere på projektet har adgang til samme kodebase og inkrementalt kan indføre og holde styr på ændringer til denne. Som centraliseret git-server har vi benyttet os af GitHub\footnote{\url{https://github.com/}} og dennes udbud af gratis hosting af open source projekter: \url{https://github.com/kasperisager/bookie}
+Al kode holdes under versionstyring ved hjælp af git\footnote{\url{http://www.git-scm.com/}}, hvilket sikrer, at alle udviklere på projektet har adgang til samme kodebase og inkrementalt kan indføre og holde styr på ændringer til denne. Som centraliseret git-server har vi benyttet os af GitHub\footnote{\url{https://github.com/}}, og dennes udbud af gratis hosting af open source projekter: \url{https://github.com/kasperisager/bookie}
 
 \subsection{Automatiseret testning}
 
-For at komme problemet med oversete fejl ved introduktion af ny kode til livs, har vi valgt at benytte os af \textit{continuous integration} (forkortet \textit{CI}) i forlængelse af vores brug af versionskontrol. CI involverer løbende sammenfletning af de forskellige udvikleres arbejdskopier af kodebasen i sammenkobling med automatisk kørsel af tests ved hver sammenfletning (\cite{wiki:ci}). Dette sikrer, at fejl resulterende fra ikke-passerende tests kan findes førend de indtræder i andre udvikleres kopi af kodebasen.
+For at komme problemet med oversete fejl ved introduktion af ny kode til livs, har vi valgt at benytte os af \textit{continuous integration} (forkortet \textit{CI}) i forlængelse af vores brug af versionskontrol. CI involverer løbende sammenfletning af de forskellige udvikleres arbejdskopier af kodebasen. Dette i sammenkobling med automatisk kørsel af tests ved hver sammenfletning (\cite{wiki:ci}). Dette sikrer, at fejl resulterende fra ikke-passerende tests kan findes førend de indtræder i andre udvikleres kopi af kodebasen.
 
 Til afvikling af CI, og dermed automatisk kørsel af tests, har vi benyttet os af Travis CI\footnote{\url{https://travis-ci.org/}}, der ligesom GitHub tilbyder gratis service for open source projekter. Bookie kan findes på Travis CI via følgende adresse: \url{https://travis-ci.org/kasperisager/bookie}.
 
 Som nævnt i kapitel \ref{subsection:kodedeakning} har vi med vores tests taget udgangspunkt i kodedækningsrapporter. For at opnå størst muligt overblik over dækningen af vores kode, har vi benyttet os af Coveralls\footnote{\url{https://coveralls.io}} til inkremental rapportering af kodebasens dækningsprocent som del af CI.
 
-\subsection{Kodestil}
-
 \section{Vurdering}
+
+Både GitHub, Travis CI, Checkstyle og Coveralls har været til stor hjælp for at holde et overblik og kontrol over tests og eventuelle fejl. Det ville kort sagt være umuligt at håndtere dette manuelt. Hvilket medfører, at disse redskaber kun kan anbefales, når der skal laves nye programmer.
