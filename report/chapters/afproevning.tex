@@ -3,7 +3,7 @@
 
 \section{Automatiserede tests}
 
-I kraft af separationen mellem datamodeller og præsentationen samt håndteringen af disse, har vi valgt at implementere en række automatiserede tests udelukkende af datamodellerne.
+I kraft af separationen mellem datamodeller og præsentationen, samt håndteringen af disse, har vi valgt at implementere en række automatiserede tests udelukkende af datamodellerne.
 
 Der er i samtlige tests, som involverer interaktion med en database, testet direkte mod de af Donkey understøttede databasesystemer. For at undgå utilsigtet indflydelse af tilstanden af testtabellerne, bliver disse derfor enten slettede eller tømt førend hver test. Ønskes testene kørt lokalt, gør vi derfor også opmærksomme på, at fungerende installationer af MySQL samt PostgreSQL er et krav. Disse skal ydermere være opsat med følgende databaser og tilhørende brugere (sans kodeord):
 
@@ -47,3 +47,6 @@ Med udgangspunkt i kodedækningsrapporten kan vi med stor sikkerhed konkludere, 
 \section{Brugerafprøvning}
 
 Mens systematisk automatiseret testning af reservationssystemets JavaFX-baserede brugergrænseflade endnu er en mangelvare, vil vi lade brugervejledningen stå som manuel brugerafprøvning. Den beskrevne funktionalitet i vejledningen er dermed den tilsigtede måde hvorpå reservationsystemets brugergrænseflade fungerer.
+
+\section{Vurdering}
+
