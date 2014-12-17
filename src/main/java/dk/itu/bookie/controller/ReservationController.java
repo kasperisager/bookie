@@ -252,7 +252,7 @@ public final class ReservationController {
       reservation.delete();
     }
     catch (SQLException ex) {
-      return;
+      ErrorController.tryAgain();
     }
   }
 
@@ -291,7 +291,7 @@ public final class ReservationController {
 
       deleteButton.setOnAction((e) -> {
         ReservationController.getInstance().deleteReservation(reservation);
-        ShowtimeController.getInstance().refresh();
+        ShowtimeController.getInstance().refreshShowtime();
       });
 
       buttons.getChildren().add(editButton);

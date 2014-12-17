@@ -81,9 +81,7 @@ public final class Reservation extends FXModel {
 
     boolean inserted = super.insert();
 
-    if (inserted) {
-      this.showtime.get().reservations.add(this);
-    }
+    this.showtime.get().reservations.addAll(this);
 
     return inserted;
   }
@@ -99,9 +97,7 @@ public final class Reservation extends FXModel {
   public boolean delete() throws SQLException {
     boolean deleted = super.delete();
 
-    if (deleted) {
-      this.showtime.get().reservations.remove(this);
-    }
+    this.showtime.get().reservations.removeAll(this);
 
     return deleted;
   }

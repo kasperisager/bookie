@@ -36,6 +36,17 @@ public final class ErrorController {
   }
 
   /**
+   * Display a "Try again" error message.
+   */
+  public static void tryAgain() {
+    Dialogs
+      .create()
+      .title("Hovsa!")
+      .masthead("Handlingen fejlede. Prøv igen!")
+      .showError();
+  }
+
+  /**
    * "Graceful" crash handling.
    *
    * @param thread    The thread in which the crash happened.

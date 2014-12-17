@@ -204,7 +204,7 @@ public final class ModelQuery<T extends Model> {
         String.format("%s_%s", model.table(), "id")
       );
 
-      if (id == null) {
+      if (id == null || id <= 0) {
         continue;
       }
 
