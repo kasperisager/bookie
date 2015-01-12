@@ -273,7 +273,9 @@ public final class ModelQuery<T extends Model> {
               value = relations.get(0);
             }
 
-            model.setField(fieldName, model.parseIncomingFieldValue(value));
+            model.setField(fieldName, model.parseIncomingFieldValue(
+              field, value
+            ));
           }
         }
       }
