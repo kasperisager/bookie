@@ -267,16 +267,13 @@ public final class ModelQuery<T extends Model> {
               continue;
             }
 
-            Object value;
+            Object value = relations;
 
-            if (isList) {
-              value = model.parseIncomingFieldValue(field, relations);
-            }
-            else {
-              value = model.parseIncomingFieldValue(field, relations.get(0));
+            if (!isList) {
+              value = relations.get(0);
             }
 
-            model.setField(fieldName, value);
+            model.setField(fieldName, model.parseIncomingFieldValue(value));
           }
         }
       }
