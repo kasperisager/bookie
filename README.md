@@ -7,6 +7,8 @@ _Bookie_ is a ticket reservation system for movie theaters written by [@kasperis
 
 It features a homebrewed data-persistence library named _Donkey_ which sits on top of [JDBC](http://www.oracle.com/technetwork/java/javase/jdbc) and acts as an ORM. Donkey speaks both [MySQL](https://www.mysql.com/), [PostgreSQL](http://www.postgresql.org/), as well as [SQLite](https://sqlite.org/) and takes care of handling any differences between these so we don't have to. We're lazy students after all.
 
+![](report/images/chosen-showtime.png)
+
 ## Donkey
 
 JDBC is not the worst but gets really tiresome to work with. Registering drivers, getting connections, preparing statements, writing SQL, etc. are all things we're simply way too lazy to do. It's 2014: Who writes SQL by hand anymore? Donkey does away with all that, allowing us to focus on what matters: Data modelling. Isn't that really the reason why anyone would write an ORM?
