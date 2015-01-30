@@ -38,4 +38,4 @@ Donkey of course also provides a solid set of tools for working more hands-on wi
 
 ---
 
-Copyright &copy; 2014 [The Authors](https://github.com/kasperisager/bookie/graphs/contributors). Licensed under the terms of the [MIT license](LICENSE.md).
+Copyright &copy; 2014-2015 [The Authors](https://github.com/kasperisager/bookie/graphs/contributors). Licensed under the terms of the [MIT license](LICENSE.md).
